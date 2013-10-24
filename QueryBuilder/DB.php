@@ -53,6 +53,9 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function loadByPrimaryKey(ObjectRelationMapper_ORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
@@ -69,7 +72,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		// LIMIT 0,1
 		$query .= ' LIMIT ' . $orm->getOrderingOffset() . ', ' . $orm->getOrderingLimit();
 
-		$params[] = Array(':primaryKey', $orm->getPrimaryKey());
+		$params[] = Array(':primaryKey', $orm->primaryKey);
 
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
@@ -80,6 +83,9 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function insert(ObjectRelationMapper_ORM $orm)
 	{
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . ' SET ';
@@ -93,70 +99,92 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		}
 
 		$query .= implode(', ', $columns);
-
-
+		if(!empty($columns)){
+			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
+			$id = $this->connector->query('SELECT LAST_INSERT_ID() as id', Array(), $orm->getConfigDbServer());
+			$orm->primaryKey = $id[0]['id'];
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public function update(ObjectRelationMapper_ORM $orm)
+	/**
+	 * @inheritdoc
+	 */
+	public function update(ObjectRelationMapper_ORM $orm, $oldPrimaryKey = NULL)
 	{
-		// TODO: Implement update() method.
+		$query = 'UPDATE ' . $orm->getConfigDbTable() . ' SET ';
+
+		$columns = Array();
+		$params = Array();
+		foreach($orm as $propertyName => $propertyValue){
+			$dbColumn = $orm->getDbField($propertyName);
+			if($dbColumn != $orm->getConfigDbPrimaryKey()){
+				$columns[] = $dbColumn . ' = :' . $dbColumn;
+				$params[] = Array(':' . $dbColumn, $propertyValue);
+			}
+		}
+
+		$query .= implode(', ', $columns);
+
+		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :' . $orm->getConfigDbPrimaryKey();
+		$params[] = Array(':' . $orm->getConfigDbPrimaryKey(), $orm->primaryKey);
+
+		echo $query;
+
+		if(!empty($columns)){
+			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
+			return true;
+		} else {
+			return false;
+		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function delete(ObjectRelationMapper_ORM $orm)
 	{
-		// rozdilne casti pro vsechny typy query
-		if($queryType == self::INSERT){
-			$query .= 'INSERT INTO ';
-		} elseif($queryType == self::UPDATE){
-			$query .= 'UPDATE ';
-		} elseif($queryType == self::DELETE){
-			$query .= 'DELETE FROM ';
-		}
+		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
 
-		// spolecnou casti je jmeno tabulky
-		$query .= ' '. $queryData[self::DEFAULT_CONFIG_ARRAY_NAME_TABLE] . ' ';
+		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :' . $orm->getConfigDbPrimaryKey();
+		$params[] = Array(':' . $orm->getConfigDbPrimaryKey(), $orm->primaryKey);
 
-		// update a insert nyni potrebuji vycet parametru, na to budeme mit pomocnou fci, ktera vrati pole
-		if($queryType == self::INSERT || $queryType == self::UPDATE){
-			$query .= ' SET ';
-
-			//sestaveni query parametru
-			if($queryType == self::INSERT){
-				if($insertPrimaryKey == false){
-					$queryParams = $this->queryArgumentsBuilder($queryData[self::DEFAULT_CONFIG_ARRAY_NAME_PRIMARY_KEY]);
-				} else {
-					$queryParams = $this->queryArgumentsBuilder();
-				}
-
-			} else {
-				$queryParams = $this->queryArgumentsBuilder($queryData[self::DEFAULT_CONFIG_ARRAY_NAME_PRIMARY_KEY]); // chceme vsechny args krome primarniho klice, s tim si hrajem jinak
-			}
-
-			$queryPart = Array();
-
-			if($queryParams == false){ // problem a konec
-				return false;
-			}
-
-			foreach($queryParams['arguments'] as $value){ // sestaveni parametru jako argumentoveho pole pro query
-				$queryPart[] = $value;
-			}
-
-			foreach($queryParams['params'] as $value){ // sestaveni parametroveho pole
-				$params[] = $value;
-			}
-
-			$query .= implode(', ', $queryPart);
-		}
-
-		if($queryType == self::DELETE || $queryType == self::UPDATE){
-			$query .= ' WHERE '. $queryData[self::DEFAULT_CONFIG_ARRAY_NAME_PRIMARY_KEY] . ' = :'.$queryData[self::DEFAULT_CONFIG_ARRAY_NAME_PRIMARY_KEY];
-			$params[] = Array(':'.$queryData[self::DEFAULT_CONFIG_ARRAY_NAME_PRIMARY_KEY], $this->{$this->getAlias($queryData[self::DEFAULT_CONFIG_ARRAY_NAME_PRIMARY_KEY])});
+		if(!empty($columns)){
+			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
+			return true;
+		} else {
+			return false;
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function count(ObjectRelationMapper_ORM $orm)
 	{
-		// TODO: Implement count() method.
+		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
+		$query = 'SELECT count(' . $orm->getConfigDbPrimaryKey() . ') as count FROM ' . $orm->getConfigDbTable();
+
+		$columns = Array();
+		$params = Array();
+		foreach($orm as $propertyName => $propertyValue){
+			$dbColumn = $orm->getDbField($propertyName);
+			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$params[] = Array(':' . $dbColumn, $propertyValue);
+		}
+
+		if(!empty($columns)){
+			$query .= ' WHERE ' . implode(' AND ', $columns);
+		}
+
+		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+
+		if(isset($query[0]['count'])){
+			return $query[0]['count'];
+		} else {
+			return Array();
+		}
 	}
 }

@@ -15,6 +15,8 @@
  * @method getOrderingOffset
  * @method setOrderingLimit
  * @method getOrderingLimit
+ *
+ * @property mixed primaryKey
  */
 abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregate, Countable
 {
@@ -65,7 +67,7 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 	protected $configStorage;
 
 	/**
-	 * @var ObjectRelationMapper_QueryBuilder_ESDB
+	 * @var ObjectRelationMapper_QueryBuilder_DB
 	 */
 	protected $queryBuilder;
 
@@ -74,11 +76,152 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 	 */
 	protected $isLoaded = false;
 
+	/**
+	 * @var bool
+	 */
+	protected $deleteMark = false;
+
 	protected $additionalOrdering = Array(
 		'Order' => Array(),
 		'Offset' => 0,
 		'Limit' => 1
 	);
+
+	/**
+	 * Construct
+	 * @param int $primaryKey
+	 * @throws Exception
+	 */
+	public function __construct($primaryKey = NULL)
+	{
+		$this->setORMStorages();
+		if($this->configurationCheck && (!$this->checkQueryBuilder() || !$this->checkORMConfigStorage())){
+			throw new Exception('Config Storage musi byt instance ObjectRelationMapper_ConfigStorage_Interface. Query Builder musi byt instance
+			ObjectRelationMapper_QueryBuilder_Abstract.');
+		}
+
+		$storage = &$this->configStorage;
+		$finalClass = get_called_class();
+
+		if($storage::configurationExists($finalClass)){
+			$configuration = $storage::getConfiguration($finalClass);
+
+			$this->basicConfiguration = $configuration[$storage::BASIC_CONFIG];
+			$this->columns = $configuration[$storage::DB_COLS];
+			$this->aliases = $configuration[$storage::PHP_ALIASES];
+		} else {
+			$this->setUp();
+
+			if($this->configurationCheck){
+				$this->isConfigurationOk();
+			}
+
+			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases);
+		}
+
+		if(!is_null($primaryKey)){
+			$this->setPrimaryKey($primaryKey);
+			$this->loadByPrimaryKey();
+		}
+	}
+
+	/**
+	 * Destruct
+	 */
+	public function __destruct()
+	{
+		if($this->deleteMark == true){
+			$this->delete(true);
+		}
+	}
+
+	/**
+	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
+	 * @param $property
+	 * @return mixed|null
+	 */
+	public function __get($property)
+	{
+		if($property == 'primaryKey'){
+			return $this->getPrimaryKey();
+		} else {
+			if(isset($this->data[$property])){
+				return $this->data[$property];
+			} else {
+				return NULL;
+			}
+		}
+	}
+
+	/**
+	 * Nastavi hodnotu property
+	 * @param $property
+	 * @param $value
+	 */
+	public function __set($property, $value)
+	{
+		if($property == 'primaryKey'){
+			$this->setPrimaryKey($value);
+		} else {
+			$this->changedVariables[$property] = true;
+			$this->data[$property] = $value;
+		}
+	}
+
+	/**
+	 * Obecny caller pro urctite typy metod
+	 * @param $function
+	 * @param $arguments
+	 * @return mixed
+	 */
+	public function __call($function, Array $arguments)
+	{
+		// getConfig
+		if(preg_match('/^getConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
+			return $this->basicConfiguration[$matches[1]];
+		}
+
+		// setConfig
+		if(preg_match('/^setConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
+			$this->basicConfiguration[$matches[1]] = $arguments[0];
+		}
+
+		if(preg_match('/^setOrdering(.*)$/', $function, $matches)){
+			$this->additionalOrdering[$matches[1]] = $arguments[0];
+		}
+
+		if(preg_match('/^getOrdering(.*)$/', $function, $matches)){
+			return $this->additionalOrdering[$matches[1]];
+		}
+	}
+
+	/**
+	 * Magic Method __isset
+	 * @param $property
+	 * @return bool
+	 */
+	public function __isset($property)
+	{
+		if($property == 'primaryKey'){
+			return isset($this->{$this->getAlias($this->getConfigDbPrimaryKey())});
+		} else {
+			return isset($this->data[$property]);
+		}
+	}
+
+	/**
+	 * Magic Method __empty
+	 * @param $property
+	 * @return bool
+	 */
+	public function __empty($property)
+	{
+		if($property == 'primaryKey'){
+			return empty($this->{$this->getAlias($this->getConfigDbPrimaryKey())});
+		} else {
+			return empty($this->data[$property]);
+		}
+	}
 
 	abstract protected function setUp();
 
@@ -178,51 +321,13 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 		}
 	}
 
-	/**
-	 * Construct
-	 * @param int $primaryKey
-	 * @throws Exception
-	 */
-	public function __construct($primaryKey = NULL)
-	{
-		$this->setORMStorages();
-		if($this->configurationCheck && (!$this->checkQueryBuilder() || !$this->checkORMConfigStorage())){
-			throw new Exception('Config Storage musi byt instance ObjectRelationMapper_ConfigStorage_Interface. Query Builder musi byt instance
-			ObjectRelationMapper_QueryBuilder_Abstract.');
-		}
 
-		$storage = &$this->configStorage;
-		$finalClass = get_called_class();
-
-		if($storage::configurationExists($finalClass)){
-			$configuration = $storage::getConfiguration($finalClass);
-
-			$this->basicConfiguration = $configuration[$storage::BASIC_CONFIG];
-			$this->columns = $configuration[$storage::DB_COLS];
-			$this->aliases = $configuration[$storage::PHP_ALIASES];
-		} else {
-			$this->setUp();
-
-			if($this->configurationCheck){
-				$this->isConfigurationOk();
-			}
-
-			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases);
-		}
-
-		/**
-		 * Neni nastaven primarni klic, nastavime docasny
-		 */
-		if(!is_null($primaryKey)){
-			$this->setPrimaryKey($primaryKey);
-		}
-	}
 
 	/**
 	 * Nastavi primarni klic
 	 * @param $primaryKey
 	 */
-	public function setPrimaryKey($primaryKey)
+	private function setPrimaryKey($primaryKey)
 	{
 		$this->{$this->getAlias($this->getConfigDbPrimaryKey())} = $primaryKey;
 	}
@@ -231,7 +336,7 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 	 * Nastavi primarni klic
 	 * @return mixed
 	 */
-	public function getPrimaryKey()
+	private function getPrimaryKey()
 	{
 		return $this->{$this->getAlias($this->getConfigDbPrimaryKey())};
 	}
@@ -288,56 +393,15 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 	}
 
 	/**
-	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
-	 * @param $property
-	 * @return mixed|null
+	 * Vrati objekt jako pole
+	 * @return Array
 	 */
-	public function __get($property)
+	public function toArray()
 	{
-		if(isset($this->data)){
-			return $this->data[$property];
-		} else {
-			return NULL;
-		}
+		return $this->data;
 	}
 
-	/**
-	 * Nastavi hodnotu property
-	 * @param $property
-	 * @param $value
-	 */
-	public function __set($property, $value)
-	{
-		$this->changedVariables[$property] = true;
-		$this->data[$property] = $value;
-	}
 
-	/**
-	 * Obecny caller pro urctite typy metod
-	 * @param $function
-	 * @param $arguments
-	 * @return mixed
-	 */
-	public function __call($function, Array $arguments)
-	{
-		// getConfig
-		if(preg_match('/^getConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
-			return $this->basicConfiguration[$matches[1]];
-		}
-
-		// setConfig
-		if(preg_match('/^setConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
-			$this->basicConfiguration[$matches[1]] = $arguments[0];
-		}
-
-		if(preg_match('/^setOrdering(.*)$/', $function, $matches)){
-			$this->additionalOrdering[$matches[1]] = $arguments[0];
-		}
-
-		if(preg_match('/^getOrdering(.*)$/', $function, $matches)){
-			return $this->additionalOrdering[$matches[1]];
-		}
-	}
 
 	/**
 	 * Nastavi order
@@ -512,8 +576,7 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 	 */
 	public function loadByPrimaryKey()
 	{
-		$primaryKey = $this->getPrimaryKey();
-		if(!isset($primaryKey) || empty($primaryKey)){
+		if(!isset($this->primaryKey) || empty($this->primaryKey)){
 			throw new Exception('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
@@ -524,6 +587,88 @@ abstract class ObjectRelationMapper_ORM implements ArrayAccess, IteratorAggregat
 		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
 
 		if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
+			return false;
+		}
+	}
+
+	/**
+	 * Spocita, kolik zadanych radku odpovida nastavenym properties
+	 * @return int
+	 */
+	public function countRows()
+	{
+		return $this->queryBuilder->count($this);
+	}
+
+	/**
+	 * Ulozi objekt ORMka
+	 * @param bool $forceInsert
+	 * @return bool
+	 */
+	public function save($forceInsert = false)
+	{
+		if(method_exists($this, 'beforeSave') && $this->beforeSave() === false){
+			return false;
+		}
+
+		if($forceInsert == true || empty($this->primaryKey)){
+			$this->insert();
+		} else {
+			$this->update();
+		}
+
+		if(method_exists($this, 'afterSave') && $this->afterSave() === false){
+			return false;
+		}
+	}
+
+	/**
+	 * Insert Dat
+	 * @return bool
+	 */
+	protected function insert()
+	{
+		if(method_exists($this, 'beforeInsert') && $this->beforeInsert() === false){
+			return false;
+		}
+
+		$this->queryBuilder->insert($this);
+
+		if(method_exists($this, 'afterInsert') && $this->afterInsert() === false){
+			return false;
+		}
+	}
+
+	/**
+	 * Update dat dle PK
+	 * @return bool
+	 */
+	protected function update()
+	{
+		if(method_exists($this, 'beforeUpdate') && $this->beforeUpdate() === false){
+			return false;
+		}
+
+		$this->queryBuilder->update($this);
+
+		if(method_exists($this, 'afterUpdate') && $this->afterUpdate() === false){
+			return false;
+		}
+	}
+
+	/**
+	 * Smaze ORMko z uloziste
+	 * @param bool $deleteNow
+	 */
+	public function delete($deleteNow = false)
+	{
+		if(method_exists($this, 'beforeDelete') && $this->beforeDelete() === false){
+			return false;
+		}
+
+		$this->queryBuilder->delete($this);
+
+		if(method_exists($this, 'afterDelete') && $this->afterDelete() === false){
 			return false;
 		}
 	}
