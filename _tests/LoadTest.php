@@ -20,7 +20,7 @@ class LoadTest extends PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-		$delete = 'DELETE FROM d_queued_commands WHERE qc_id = 5';
+		$delete = 'TRUNCATE TABLE d_queued_commands';
 		mysql_query($delete, $this->connection);
 	}
 

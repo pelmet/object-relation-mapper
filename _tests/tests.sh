@@ -24,14 +24,14 @@ cd ${SCRIPT_LOCATION}
 
 echo -e "Smazani a vytvoreni testovaci DB jmenem ${TEST_DATABASE} a vytvoreni testovaciho usera ormtestuser"
 
-${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "DROP DATABASE IF EXISTS \`${TEST_DATABASE}\`;"
+${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "DROP DATABASE \`${TEST_DATABASE}\`;"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "CREATE DATABASE \`${TEST_DATABASE}\` COLLATE utf8_unicode_ci;"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "CREATE USER 'ormtestuser'@'localhost' IDENTIFIED BY 'testpass';"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "GRANT ALL PRIVILEGES ON \`${TEST_DATABASE}\`.* TO 'ormtestuser'@'localhost';"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "FLUSH PRIVILEGES;"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -u ormtestuser -ptestpass --database ${TEST_DATABASE} < ./database.sql
 
-${PHPUNIT_RUNNER} --bootstrap ./_bootstrap.php ./ || exit 1
+${PHPUNIT_RUNNER} --bootstrap ./_bootstrap.php ./
 
 echo -e "Smazani testovaci db a usera"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "DROP USER 'ormtestuser'@'localhost';"
