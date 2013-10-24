@@ -134,8 +134,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		echo $query;
 
 		if(!empty($columns)){
-			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
-			return true;
+			return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 		} else {
 			return false;
 		}
@@ -150,13 +149,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 
 		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :' . $orm->getConfigDbPrimaryKey();
 		$params[] = Array(':' . $orm->getConfigDbPrimaryKey(), $orm->primaryKey);
-
-		if(!empty($columns)){
-			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
-			return true;
-		} else {
-			return false;
-		}
+		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 	}
 
 	/**

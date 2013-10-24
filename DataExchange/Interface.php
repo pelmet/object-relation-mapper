@@ -13,7 +13,7 @@ interface ObjectRelationMapper_DataExchange_Interface
 	 * @param $data
 	 * @return mixed
 	 */
-	public function load(Array $data);
+	public function load($data);
 
 	/**
 	 * Exportuje data z ORMka do pole
