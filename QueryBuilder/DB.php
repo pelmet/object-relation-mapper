@@ -131,8 +131,6 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :' . $orm->getConfigDbPrimaryKey();
 		$params[] = Array(':' . $orm->getConfigDbPrimaryKey(), $orm->primaryKey);
 
-		echo $query;
-
 		if(!empty($columns)){
 			return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 		} else {
