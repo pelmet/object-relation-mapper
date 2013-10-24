@@ -12,7 +12,7 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 */
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ObjectRelationMapper_ConfigStorage';
+		$this->configStorage 	= 'ObjectRelationMapper_ConfigStorage_Basic';
 		$this->queryBuilder		= new ObjectRelationMapper_QueryBuilder_DB();
 	}
 

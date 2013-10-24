@@ -1,6 +1,6 @@
 <?php
 
-class ObjectRelationMapper_ColumnType_Int extends ObjectRelationMapper_ColumnType implements ObjectRelationMapper_ColumnType_Interface
+class ObjectRelationMapper_ColumnType_Int extends ObjectRelationMapper_ColumnType_Abstract implements ObjectRelationMapper_ColumnType_Interface
 {
 	public function generateDbLine()
 	{

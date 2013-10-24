@@ -1,6 +1,6 @@
 <?php
 
-class ObjectRelationMapper_ConfigStorage extends ObjectRelationMapper_Storage implements ObjectRelationMapper_ConfigStorage_Interface
+class ObjectRelationMapper_ConfigStorage_Basic extends ObjectRelationMapper_ConfigStorage_Abstract implements ObjectRelationMapper_ConfigStorage_Interface
 {
 	protected static $fullyConfigured = Array();
 	protected static $configurationStorage = Array();

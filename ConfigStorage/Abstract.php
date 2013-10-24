@@ -4,7 +4,7 @@
  * Class ObjectRelationMapper_Storage
  * Ulozna pro ORM konfigurace
  */
-class ObjectRelationMapper_Storage
+class ObjectRelationMapper_ConfigStorage_Abstract
 {
 	const BASIC_CONFIG = 1;
 	const DB_COLS = 2;

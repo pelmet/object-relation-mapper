@@ -4,7 +4,7 @@
  * Class ObjectRelationMapper_DBRow
  * Definice Db Radku
  */
-class ObjectRelationMapper_ColumnType
+abstract class ObjectRelationMapper_ColumnType_Abstract
 {
 	protected $col;
 	protected $alias;

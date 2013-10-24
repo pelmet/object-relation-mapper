@@ -470,9 +470,9 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		$s = &$this->configStorage;
 
 		if($includeTableName){
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_Storage::ALL_DB_FIELDS_WITH_TABLE);
+			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS_WITH_TABLE);
 		} else {
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_Storage::ALL_DB_FIELDS);
+			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS);
 		}
 
 		if(!is_null($glue)){
@@ -501,9 +501,9 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		$s = &$this->configStorage;
 
 		if(!is_null($glue)){
-			return implode($glue, $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_Storage::ALL_ALIASES));
+			return implode($glue, $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES));
 		}  else {
-			return  $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_Storage::ALL_ALIASES);
+			return  $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES);
 		}
 	}
 

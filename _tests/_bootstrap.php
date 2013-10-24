@@ -61,6 +61,7 @@ Config::set('develEnvironment', true); // Vypisovat errory? nebo prejit do silen
 Config::addLanguage('cz', __DIR__.'/../Lang/cz.xml'); // prida do jazykoveho pole dalsi jazyky
 Config::set('currentLanguage', 'cz'); // nastavi AKTUALNI JAZYK, da se zmenit kdykoliv do te doby, nez se poprve zavola Lang::get!
 
+EsException::registerErrorHandlers();
 
 if (isset($_SERVER['HTTP_HOST'])) { // neni nastaven v parserech generovalo to obcas chyby
 	Config::set('webDomain', 'http://'.$_SERVER['HTTP_HOST'].'/'); // nastaveni domeny, kterou web povazuje za vychozi bod
