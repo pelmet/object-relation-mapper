@@ -206,7 +206,6 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		}
 
 		$query .= ' LIMIT ' . $orm->getOrderingOffset() . ', ' . $orm->getOrderingLimit();
-
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
 		if(isset($query)){

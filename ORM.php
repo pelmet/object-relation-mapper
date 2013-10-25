@@ -104,6 +104,10 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 */
 	public function save($forceInsert = false)
 	{
+		if($this->readOnly == true){
+			return true;
+		}
+
 		if(method_exists($this, 'beforeSave') && $this->beforeSave() === false){
 			return false;
 		}
@@ -210,5 +214,46 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Vrati naloadovaneho childa a ulozi ho k pozdejsimu pouziti
+	 * @param null $child
+	 * @param null $order
+	 * @param null $direction
+	 * @param null $limit
+	 * @param null $offset
+	 * @return Array
+	 */
+	public function children($child, $order = NULL, $direction = NULL, $limit = NULL, $offset = NULL)
+	{
+		$orm = $this->childs[$child]->ormName;
+		$orm = new $orm();
+
+		if(!is_null($order)){
+			$orm->setOrderingOrder($order, (is_null($direction) ? ObjectRelationMapper_ORM_Abstract::ORDERING_ASCENDING : $order));
+		}
+
+		if(!is_null($limit)){
+			$orm->setOrderingLimit($limit);
+		}
+
+		if(!is_null($offset)){
+			$orm->setOrderingOffset($offset);
+		}
+
+		$localKey = $this->getAlias($this->childs[$child]->localKey);
+		$foreignKey = $orm->getAlias($this->childs[$child]->foreignKey);
+
+		if(!empty($this->{$localKey})){
+			$orm->{$foreignKey} = $this->{$localKey};
+			$collection = $orm->loadMultiple();
+			$this->$child = $collection;
+			return $collection;
+		} else {
+			$this->$child = Array();
+			return Array();
+		}
+
 	}
 }

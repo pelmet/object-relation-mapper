@@ -42,12 +42,26 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * @var array
 	 */
 	protected $columns = Array();
+
+	/**
+	 * @var array
+	 */
 	protected $aliases = Array();
+
+	/**
+	 * @var array
+	 */
+	protected $childs = Array();
+
+	/**
+	 * @var array
+	 */
+	protected $childsData = Array();
 
 	/**
 	 * @var Array
 	 */
-	protected $data;
+	protected $data = Array();
 
 
 	/**
@@ -76,6 +90,11 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * @var boolean
 	 */
 	protected $isLoaded = false;
+
+	/**
+	 * @var bool
+	 */
+	protected $readOnly = false;
 
 	/**
 	 * @var bool
@@ -123,6 +142,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 			$this->basicConfiguration = $configuration[$storage::BASIC_CONFIG];
 			$this->columns = $configuration[$storage::DB_COLS];
 			$this->aliases = $configuration[$storage::PHP_ALIASES];
+			$this->childs = $configuration[$storage::CHILDS];
 		} else {
 			$this->setUp();
 
@@ -130,7 +150,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 				$this->isConfigurationOk();
 			}
 
-			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases);
+			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs);
 		}
 
 		if(!is_null($primaryKey)){
@@ -160,12 +180,14 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		if($property == 'primaryKey'){
 			return $this->getPrimaryKey();
 		} else {
-			if(!isset($this->aliases[$property])){
+			if(!isset($this->aliases[$property]) && !isset($this->childs[$property])){
 				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			if(isset($this->data[$property])){
 				return $this->data[$property];
+			} elseif($this->childsData[$property]){
+				return $this->childsData[$property];
 			} else {
 				return NULL;
 			}
@@ -183,12 +205,16 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		if($property == 'primaryKey'){
 			$this->setPrimaryKey($value);
 		} else {
-			if(!isset($this->aliases[$property])){
+			if(!isset($this->aliases[$property]) && !isset($this->childs[$property])){
 				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
-			$this->changedVariables[$property] = true;
-			$this->data[$property] = $value;
+			if(isset($this->aliases[$property])){
+				$this->changedVariables[$property] = true;
+				$this->data[$property] = $value;
+			} elseif(isset($this->childs[$property])){
+				$this->childsData[$property] = $value;
+			}
 		}
 	}
 
@@ -242,7 +268,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		if($property == 'primaryKey'){
 			return isset($this->{$this->getAlias($this->getConfigDbPrimaryKey())});
 		} else {
-			return isset($this->data[$property]);
+			return isset($this->data[$property]) || isset($this->childsData[$property]);
 		}
 	}
 
@@ -256,7 +282,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		if($property == 'primaryKey'){
 			return empty($this->{$this->getAlias($this->getConfigDbPrimaryKey())});
 		} else {
-			return empty($this->data[$property]);
+			return empty($this->data[$property]) || empty($this->childsData[$property]);
 		}
 	}
 
@@ -265,7 +291,8 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * @param string $offset
 	 * @param mixed $value
 	 */
-	public final function offsetSet($offset, $value) {
+	public final function offsetSet($offset, $value)
+	{
 		if (is_null($offset)) {
 			$this->data[] = $value;
 		} else {
@@ -278,7 +305,8 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * @param string $offset
 	 * @return mixed
 	 */
-	public final function offsetExists($offset) {
+	public final function offsetExists($offset)
+	{
 		return isset($this->data[$offset]);
 	}
 
@@ -286,7 +314,8 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * ArrayAccess implemetace
 	 * @param string $offset
 	 */
-	public final function offsetUnset($offset) {
+	public final function offsetUnset($offset)
+	{
 		unset($this->data[$offset]);
 	}
 
@@ -295,7 +324,8 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * @param string $offset
 	 * @return mixed
 	 */
-	public final function offsetGet($offset) {
+	public final function offsetGet($offset)
+	{
 		if (isset($this->data[$offset])) {
 			return $this->data[$offset];
 		} else {
@@ -307,7 +337,8 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Implementace IteratorAggregate
 	 * @return \ArrayIterator
 	 */
-	public function getIterator() {
+	public function getIterator()
+	{
 		return new ArrayIterator($this->data);
 	}
 
@@ -391,6 +422,28 @@ abstract class ObjectRelationMapper_ORM_Abstract
 
 		$this->columns[$dbName] = $col;
 		$this->aliases[$phpAlias] = $col;
+	}
+
+	/**
+	 * Prida childa podle propojovacich klicu
+	 * @param $ormName
+	 * @param $phpAlias
+	 * @param $localKey
+	 * @param $foreignKey
+	 * @throws Exception_ORM
+	 */
+	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey)
+	{
+		$className = 'ObjectRelationMapper_ColumnType_Child';
+		if(!class_exists($className) && !class_exists($ormName)){
+			throw new Exception_ORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
+		} else {
+			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, Array());
+
+			if(!$this->childs[$phpAlias] instanceof ObjectRelationMapper_ColumnType_Interface){
+				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper_ColumnType_Interface. Typ child nelze pouzit, dokud toto nebude opraveno');
+			}
+		}
 	}
 
 	/**
@@ -547,5 +600,13 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		} else {
 			$this->isLoaded = false;
 		}
+	}
+
+	/**
+	 * Nastavi ORM Pouze pro cteni
+	 */
+	public function setReadOnly()
+	{
+		$this->readOnly = true;
 	}
 }

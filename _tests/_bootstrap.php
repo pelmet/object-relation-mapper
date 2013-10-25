@@ -52,10 +52,45 @@ class ORMTest extends ObjectRelationMapper_ORM
 		$this->addColumn('qc_status', 'status', 'int', '1');
 		$this->addColumn('qc_command', 'command', 'string', '2000');
 
+		$this->addChild('ORMTestChild', 'logs', 'qc_id', 'qc_id');
+
 		$this->setConfigDbPrimaryKey	('qc_id');
 		$this->setConfigDbServer		('master');
 		$this->setConfigObject			(__CLASS__);
 		$this->setConfigDbTable			('d_queued_commands');
+	}
+}
+
+/**
+ * Class ORMTestChild
+ * @property int id
+ * @property string startTime
+ * @property string endTime
+ * @property int status
+ * @property string command
+ */
+class ORMTestChild extends ObjectRelationMapper_ORM
+{
+	protected function setORMStorages()
+	{
+		$this->configStorage 	= 'ObjectRelationMapper_ConfigStorage_Basic';
+
+		$connector = new ObjectRelationMapper_Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper_QueryBuilder_DB($connector);
+	}
+
+	function setUp()
+	{
+		$this->addColumn('qcl_id', 'id', 'int', '10');
+		$this->addColumn('qc_id', 'queuedCommandId', 'int', '12');
+		$this->addColumn('qcl_text', 'text', 'string', '2000');
+
+		$this->addChild('ORMTest', 'command', 'qc_id', 'qc_id');
+
+		$this->setConfigDbPrimaryKey	('qcl_id');
+		$this->setConfigDbServer		('master');
+		$this->setConfigObject			(__CLASS__);
+		$this->setConfigDbTable			('d_queued_commands_logs');
 	}
 }
 

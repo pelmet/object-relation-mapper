@@ -11,15 +11,17 @@ class ObjectRelationMapper_ConfigStorage_Basic extends ObjectRelationMapper_Conf
 	 * @param array $basicConfiguration
 	 * @param array $dbCols
 	 * @param array $phpAliases
+	 * @param array $childs
 	 */
-	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases)
+	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases, Array $childs)
 	{
 		self::$fullyConfigured[$orm] = TRUE;
 
 		self::$configurationStorage[$orm] = Array(
 			self::BASIC_CONFIG => $basicConfiguration,
 			self::DB_COLS => $dbCols,
-			self::PHP_ALIASES => $phpAliases
+			self::PHP_ALIASES => $phpAliases,
+			self::CHILDS => $childs
 		);
 
 		// ALL DB Fields

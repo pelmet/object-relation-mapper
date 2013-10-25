@@ -76,4 +76,19 @@ class SaveTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(NULL, $result['qc_time_end']);
     }
 
+	public function testReadOnly()
+	{
+		$testOrm = new ORMTest();
+		$testOrm->setReadOnly();
+		$testOrm->id = 6;
+		$testOrm->status = 10;
+		$testOrm->command = 'ls -l';
+		$testOrm->save(true);
+
+		$query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', $this->connection);
+		$result = mysql_fetch_assoc($query);
+
+		$this->assertEmpty($result);
+	}
+
 }
