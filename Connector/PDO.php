@@ -10,12 +10,12 @@ class ObjectRelationMapper_Connector_PDO implements ObjectRelationMapper_Connect
 
 	/**
 	 * @param null $db
-	 * @throws Exception
+	 * @throws Exception_QueryBuilder
 	 */
 	public function __construct($db = NULL)
 	{
 		if(!$db instanceof PDO){
-			throw new Exception('Db musi byt instance PDO');
+			throw new Exception_QueryBuilder('Db musi byt instance PDO');
 		}
 
 		if(!is_null($db)){
