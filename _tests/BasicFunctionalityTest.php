@@ -33,6 +33,26 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('123456', $testOrm->endTime);
 	}
 
+	/**
+	 * @expectedException Exception
+	 */
+	public function testSetterToBadColumn()
+	{
+		$testOrm = new ORMTest();
+
+		$testOrm->iblah = 5;
+	}
+
+	/**
+	 * @expectedException Exception
+	 */
+	public function testGetterToBadColumn()
+	{
+		$testOrm = new ORMTest();
+
+		$testOrm->iblah;
+	}
+
 	public function testCallMethod()
 	{
 		$testOrm = new ORMTest();

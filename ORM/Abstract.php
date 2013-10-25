@@ -151,6 +151,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	/**
 	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
 	 * @param $property
+	 * @throws Exception
 	 * @return mixed|null
 	 */
 	public function __get($property)
@@ -158,6 +159,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		if($property == 'primaryKey'){
 			return $this->getPrimaryKey();
 		} else {
+			if(!isset($this->aliases[$property])){
+				throw new Exception($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+			}
+
 			if(isset($this->data[$property])){
 				return $this->data[$property];
 			} else {
@@ -170,12 +175,17 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Nastavi hodnotu property
 	 * @param $property
 	 * @param $value
+	 * @throws Exception
 	 */
 	public function __set($property, $value)
 	{
 		if($property == 'primaryKey'){
 			$this->setPrimaryKey($value);
 		} else {
+			if(!isset($this->aliases[$property])){
+				throw new Exception($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+			}
+
 			$this->changedVariables[$property] = true;
 			$this->data[$property] = $value;
 		}

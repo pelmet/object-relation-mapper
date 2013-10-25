@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class ObjectRelationMapper_DBRow
+ * Class ObjectRelationMapper_ColumnType_Abstract
  * Definice Db Radku
  */
 abstract class ObjectRelationMapper_ColumnType_Abstract

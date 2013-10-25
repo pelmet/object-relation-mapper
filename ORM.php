@@ -62,6 +62,29 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	}
 
 	/**
+	 * Zvaliduje vsechny hodnoty | jednu hodnotu ORMka oproti definici jeho sloupce
+	 * @param null $property
+	 * @return bool
+	 */
+	public function validate($property = NULL)
+	{
+		$return = true;
+
+		if(!is_null($property)){
+			$return = $this->aliases[$property]->validate($this->{$property});
+		} else {
+			foreach($this as $property => $value){
+				if($this->aliases[$property]->validate($value) == false){
+					$return = false;
+					break;
+				}
+			}
+		}
+
+		return $return;
+	}
+
+	/**
 	 * Spocita, kolik zadanych radku odpovida nastavenym properties
 	 * @return int
 	 */
