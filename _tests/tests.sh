@@ -31,7 +31,7 @@ ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "GRANT ALL PRIVILEGES ON \`${TEST_DATABASE}\`
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "FLUSH PRIVILEGES;"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -u ormtestuser -ptestpass --database ${TEST_DATABASE} < ./database.sql
 
-${PHPUNIT_RUNNER} --bootstrap ./_bootstrap.php ./
+${PHPUNIT_RUNNER} --bootstrap ./_bootstrap.php ./ || exit 1
 
 echo -e "Smazani testovaci db a usera"
 ${MYSQL_DAEMON} ${MYSQL_OPTS} -Bse "DROP USER 'ormtestuser'@'localhost';"
