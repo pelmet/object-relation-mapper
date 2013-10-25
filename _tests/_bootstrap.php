@@ -40,8 +40,8 @@ class ORMTest extends ObjectRelationMapper_ORM
 	{
 		$this->configStorage 	= 'ObjectRelationMapper_ConfigStorage_Basic';
 
-		$connector 				= new ObjectRelationMapper_Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
-		$this->queryBuilder		= new ObjectRelationMapper_QueryBuilder_DB($connector);
+		$connector = new ObjectRelationMapper_Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper_QueryBuilder_DB($connector);
 	}
 
 	function setUp()

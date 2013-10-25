@@ -10,6 +10,12 @@ abstract class ObjectRelationMapper_QueryBuilder_Abstract
 
 	/**
 	 * @param ObjectRelationMapper_ORM $orm
+	 * @return Array
+	 */
+	abstract public function loadMultiple	(ObjectRelationMapper_ORM $orm);
+
+	/**
+	 * @param ObjectRelationMapper_ORM $orm
 	 * @return boolean
 	 */
 	abstract public function insert	(ObjectRelationMapper_ORM $orm);

@@ -8,5 +8,4 @@ interface ObjectRelationMapper_ORM_Interface
 	public function loadByPrimaryKey();
 	public function count();
 	public function loadMultiple(Array $loadData = Array());
-	public function saveMultiple($forceInsert = false);
 }

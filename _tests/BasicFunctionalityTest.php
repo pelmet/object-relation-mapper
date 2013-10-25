@@ -34,7 +34,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception
+	 * @expectedException Exception_ORM
 	 */
 	public function testSetterToBadColumn()
 	{
@@ -44,7 +44,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception
+	 * @expectedException Exception_ORM
 	 */
 	public function testGetterToBadColumn()
 	{
@@ -61,5 +61,30 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('master', $testOrm->getConfigDbServer());
 		$this->assertEquals('ORMTest', $testOrm->getConfigObject());
 		$this->assertEquals('d_queued_commands', $testOrm->getConfigDbTable());
+	}
+
+	/**
+	 * @expectedException Exception_ORM
+	 */
+	public function testDynamicNotDefinedFunction()
+	{
+		$testOrm = new ORMTest();
+
+		$testOrm->iblahIsChanged();
+	}
+
+	public function testPropertyHasChanged()
+	{
+		$testOrm = new ORMTest();
+
+		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
+
+		$testOrm->id = 5;
+
+		$this->assertEquals(true, $testOrm->primaryKeyIsChanged());
+
+		$testOrm->save();
+
+		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 	}
 }

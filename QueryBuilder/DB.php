@@ -178,4 +178,41 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 			return Array();
 		}
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function loadMultiple(ObjectRelationMapper_ORM $orm)
+	{
+		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
+		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
+
+		$columns = Array();
+		$params = Array();
+		foreach($orm as $propertyName => $propertyValue){
+			$dbColumn = $orm->getDbField($propertyName);
+			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$params[] = Array(':' . $dbColumn, $propertyValue);
+		}
+
+		if(!empty($columns)){
+			$query .= ' WHERE ' . implode(' AND ', $columns);
+		}
+
+		$ordering = $orm->getOrderingOrder();
+		if(!empty($ordering)){
+			// ORDER BY col1 ASC, col2 DESC
+			$query .= ' ORDER BY ' . $ordering . ' ';
+		}
+
+		$query .= ' LIMIT ' . $orm->getOrderingOffset() . ', ' . $orm->getOrderingLimit();
+
+		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+
+		if(isset($query)){
+			return $query;
+		} else {
+			return Array();
+		}
+	}
 }

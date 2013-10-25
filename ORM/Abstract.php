@@ -16,6 +16,8 @@
  * @method getOrderingOffset
  * @method setOrderingLimit
  * @method getOrderingLimit
+ * @method primaryKeyIsChanged
+ * @method (.*)IsChanged
  */
 abstract class ObjectRelationMapper_ORM_Abstract
 {
@@ -97,19 +99,18 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	abstract public function loadByPrimaryKey();
 	abstract public function count();
 	abstract public function loadMultiple(Array $loadData = Array());
-	abstract public function saveMultiple($forceInsert = false);
 	abstract protected function setORMStorages();
 
 	/**
 	 * Construct
 	 * @param int $primaryKey
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 */
 	public function __construct($primaryKey = NULL)
 	{
 		$this->setORMStorages();
 		if($this->configurationCheck && (!$this->checkQueryBuilder() || !$this->checkORMConfigStorage())){
-			throw new Exception('Config Storage musi byt instance ObjectRelationMapper_ConfigStorage_Interface. Query Builder musi byt instance
+			throw new Exception_ORM('Config Storage musi byt instance ObjectRelationMapper_ConfigStorage_Interface. Query Builder musi byt instance
 			ObjectRelationMapper_QueryBuilder_Abstract.');
 		}
 
@@ -151,7 +152,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	/**
 	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
 	 * @param $property
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 * @return mixed|null
 	 */
 	public function __get($property)
@@ -160,7 +161,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 			return $this->getPrimaryKey();
 		} else {
 			if(!isset($this->aliases[$property])){
-				throw new Exception($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			if(isset($this->data[$property])){
@@ -175,7 +176,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Nastavi hodnotu property
 	 * @param $property
 	 * @param $value
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 */
 	public function __set($property, $value)
 	{
@@ -183,7 +184,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 			$this->setPrimaryKey($value);
 		} else {
 			if(!isset($this->aliases[$property])){
-				throw new Exception($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			$this->changedVariables[$property] = true;
@@ -194,7 +195,8 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	/**
 	 * Obecny caller pro urctite typy metod
 	 * @param $function
-	 * @param $arguments
+	 * @param array $arguments
+	 * @throws Exception_ORM
 	 * @return mixed
 	 */
 	public function __call($function, Array $arguments)
@@ -207,15 +209,27 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		// setConfig
 		if(preg_match('/^setConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
 			$this->basicConfiguration[$matches[1]] = $arguments[0];
+			return true;
 		}
 
 		if(preg_match('/^setOrdering(.*)$/', $function, $matches)){
 			$this->additionalOrdering[$matches[1]] = $arguments[0];
+			return true;
 		}
 
 		if(preg_match('/^getOrdering(.*)$/', $function, $matches)){
 			return $this->additionalOrdering[$matches[1]];
 		}
+
+		if(preg_match('/^primaryKeyIsChanged$/', $function)){
+			return isset($this->changedVariables[$this->getAlias($this->getConfigDbPrimaryKey())]);
+		}
+
+		if(preg_match('/^(.*)IsChanged$/', $function, $matches) && isset($this->aliases[$matches[1]])){
+			return isset($this->changedVariables[$matches[1]]);
+		}
+
+		throw new Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
 	}
 
 	/**
@@ -360,18 +374,18 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * @param string $dbType
 	 * @param string $length
 	 * @param array $additionalParams
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 */
 	protected function addColumn($dbName, $phpAlias, $dbType = 'string', $length = '255', $additionalParams = Array())
 	{
 		$className = 'ObjectRelationMapper_ColumnType_' . ucfirst($dbType);
 		if(!class_exists($className)){
-			throw new Exception('Trida ' . $className . ' neexistuje. Typ '.$dbType. ' nelze pouzit, dokud nebude nadefinovana');
+			throw new Exception_ORM('Trida ' . $className . ' neexistuje. Typ '.$dbType. ' nelze pouzit, dokud nebude nadefinovana');
 		} else {
 			$col = new $className($dbName, $phpAlias, $dbType, $length, $additionalParams);
 
 			if(!$col instanceof ObjectRelationMapper_ColumnType_Interface){
-				throw new Exception('Trida ' . $className . ' neimplementuje ObjectRelationMapper_ColumnType_Interface. Typ '.$dbType. ' nelze pouzit, dokud toto nebude opraveno');
+				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper_ColumnType_Interface. Typ '.$dbType. ' nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 
@@ -387,11 +401,11 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		$configured = array_diff_key($this->requiredBasicConfiguration, $this->basicConfiguration);
 
 		if(!empty($configured)){
-			throw new Exception('Nejsou nastaveny properties '. implode(', ', array_keys($configured)) . ' nastavte prosim tyto hodnoty');
+			throw new Exception_ORM('Nejsou nastaveny properties '. implode(', ', array_keys($configured)) . ' nastavte prosim tyto hodnoty');
 		}
 
 		if(empty($this->columns) || empty($this->aliases)){
-			throw new Exception('Nejsou nastaveny aliases nebo columns, nastavte prosim tyto hodnoty');
+			throw new Exception_ORM('Nejsou nastaveny aliases nebo columns, nastavte prosim tyto hodnoty');
 		}
 	}
 
@@ -399,12 +413,12 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Nastavi order
 	 * @param $column
 	 * @param string $direction
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 */
 	public function setOrderingOrder($column, $direction = self::ORDERING_ASCENDING)
 	{
 		if(!isset($this->columns[$column]) && !isset($this->aliases[$column])){
-			throw new Exception('Sloupec nebo alias '. $column .' neexistuje.');
+			throw new Exception_ORM('Sloupec nebo alias '. $column .' neexistuje.');
 		}
 
 		if(isset($this->columns[$column])){
@@ -438,13 +452,13 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Vrati nazev policka dle aliasu v php
 	 * @param $fieldName
 	 * @param bool $includeTableName
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 * @return string
 	 */
 	public function getDbField($fieldName, $includeTableName = false)
 	{
 		if(!isset($this->aliases[$fieldName])){
-			throw new Exception('Alias pro column '.$fieldName . ' neexistuje');
+			throw new Exception_ORM('Alias pro column '.$fieldName . ' neexistuje');
 		}
 
 		if($includeTableName){
@@ -457,13 +471,13 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	/**
 	 * Vrati PHP Alias dle nazvu sloupecku v DB
 	 * @param $fieldName
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 * @return string
 	 */
 	public function getAlias($fieldName)
 	{
 		if(!isset($this->columns[$fieldName])){
-			throw new Exception('Db Field pro column '.$fieldName . ' neexistuje');
+			throw new Exception_ORM('Db Field pro column '.$fieldName . ' neexistuje');
 		}
 
 		return $this->columns[$fieldName]->alias;
@@ -520,7 +534,6 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	/**
 	 * Nahraje data do tridy z pole
 	 * @param array $loadData
-	 * @throws Exception
 	 */
 	protected function loadClassFromArray(Array $loadData)
 	{
@@ -528,8 +541,6 @@ abstract class ObjectRelationMapper_ORM_Abstract
 			foreach($loadData as $dbField => $actualValue){
 				if(isset($this->columns[$dbField])){
 					$this->{$this->getAlias($dbField)} = $actualValue;
-				} else {
-					throw new Exception('Column '.$dbField . ' neni nadefinovan a nemuze byt nastaven');
 				}
 			}
 			$this->isLoaded = true;

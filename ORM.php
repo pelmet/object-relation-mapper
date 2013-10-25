@@ -34,6 +34,8 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 			$this->loadClassFromArray($this->queryBuilder->load($this));
 		}
 
+		$this->changedVariables = Array();
+
 		if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
 			return false;
 		}
@@ -41,13 +43,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 
 	/**
 	 * Nahraje objekt z daneho storage
-	 * @throws Exception
+	 * @throws Exception_ORM
 	 * @return boolean|mixed
 	 */
 	public function loadByPrimaryKey()
 	{
 		if(!isset($this->primaryKey) || empty($this->primaryKey)){
-			throw new Exception('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+			throw new Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
 		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
@@ -55,6 +57,8 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		}
 
 		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
+
+		$this->changedVariables = Array();
 
 		if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
 			return false;
@@ -110,6 +114,8 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 			$this->update();
 		}
 
+		$this->changedVariables = Array();
+
 		if(method_exists($this, 'afterSave') && $this->afterSave() === false){
 			return false;
 		}
@@ -127,6 +133,8 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 
 		$this->queryBuilder->insert($this);
 
+		$this->changedVariables = Array();
+
 		if(method_exists($this, 'afterInsert') && $this->afterInsert() === false){
 			return false;
 		}
@@ -143,6 +151,8 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		}
 
 		$this->queryBuilder->update($this);
+
+		$this->changedVariables = Array();
 
 		if(method_exists($this, 'afterUpdate') && $this->afterUpdate() === false){
 			return false;
@@ -166,28 +176,39 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 			$this->deleteMark = true;
 		}
 
+		$this->changedVariables = Array();
+
 		if(method_exists($this, 'afterDelete') && $this->afterDelete() === false){
 			return false;
 		}
 	}
 
 	/**
-	 * Udela z ORMka kolekci
+	 * Vrati kolekci ze zadaneho dotazu
 	 * @param array $loadData
+	 * @return array
 	 */
 	public function loadMultiple(Array $loadData = Array())
 	{
+		if($this->getOrderingLimit() == 1){
+			$this->setOrderingLimit(9999999999);
+		}
 
+		if(empty($loadData)){
+			$collection = $this->queryBuilder->loadMultiple($this);
+		} else {
+			$collection = &$loadData;
+		}
+
+		$return = Array();
+		$object = $this->getConfigObject();
+
+		foreach($collection as $singleOrm){
+			$tempOrm = new $object();
+			$tempOrm->load($singleOrm);
+			$return[] = $tempOrm;
+		}
+
+		return $return;
 	}
-
-	/**
-	 * Udela z ORMka kolekci
-	 * @param bool $forceInsert
-	 */
-	public function saveMultiple($forceInsert = false)
-	{
-
-	}
-
-
 }
