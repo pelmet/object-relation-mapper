@@ -435,7 +435,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey)
 	{
 		$className = 'ObjectRelationMapper_ColumnType_Child';
-		if(!class_exists($className) && !class_exists($ormName)){
+		if(!class_exists($className) || !class_exists($ormName)){
 			throw new Exception_ORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
 		} else {
 			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, Array());
