@@ -627,4 +627,19 @@ abstract class ObjectRelationMapper_ORM_Abstract
 
 		return false;
 	}
+
+    /**
+     * Return orm properties
+     * @return Array
+     */
+    public function ormPropertyGenerator()
+    {
+        $returnArray = Array();
+
+        foreach($this->aliases as $value){
+            $returnArray[] = ' * @property '. $value->type . ' ' . $value->alias;
+        }
+
+        return $returnArray;
+    }
 }
