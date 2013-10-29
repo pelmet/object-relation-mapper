@@ -186,7 +186,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 
 			if(isset($this->data[$property])){
 				return $this->data[$property];
-			} elseif($this->childsData[$property]){
+			} elseif(isset($this->childsData[$property])){
 				return $this->childsData[$property];
 			} else {
 				return NULL;
@@ -608,5 +608,23 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	public function setReadOnly()
 	{
 		$this->readOnly = true;
+	}
+
+	/**
+	 * Rekne zda, existuje property
+	 * @param $property
+	 * @return bool
+	 */
+	public function propertyExists($property)
+	{
+		if(isset($this->aliases[$property])){
+			return true;
+		}
+
+		if(isset($this->childs[$property])){
+			return true;
+		}
+
+		return false;
 	}
 }

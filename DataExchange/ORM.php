@@ -8,7 +8,7 @@ class ObjectRelationMapper_DataExchange_ORM extends ObjectRelationMapper_DataExc
 	public function load($data)
 	{
 		foreach($data as $property => $value){
-			if(!isset($this->excluded[$property])){
+			if(!isset($this->excluded[$property]) && $this->orm->propertyExists($property)){
 				$this->orm->{$property} = $value;
 			}
 		}
