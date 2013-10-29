@@ -630,9 +630,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
 
     /**
      * Return orm properties
-     * @return Array
+     * @param null $glue
+     * @return Array|string
      */
-    public function ormPropertyGenerator()
+    public function ormPropertyGenerator($glue = NULL)
     {
         $returnArray = Array();
 
@@ -640,6 +641,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
             $returnArray[] = ' * @property '. $value->type . ' ' . $value->alias;
         }
 
-        return $returnArray;
+        if(!is_null($glue)){
+            return implode($glue, $returnArray);
+        } else {
+            return $returnArray;
+        }
     }
 }
