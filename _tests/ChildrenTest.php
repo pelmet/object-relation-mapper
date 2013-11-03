@@ -47,5 +47,17 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 		$this->assertNotEmpty($testOrm->children('logs'));
 	}
 
+    public function testChildProperty()
+    {
+        $testOrm = new ORMTest(5);
 
+        $this->assertEquals('ls -laf', $testOrm->cProperty('logs.text'));
+    }
+
+    public function testChildProperties()
+    {
+        $testOrm = new ORMTest(5);
+
+        $this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ''));
+    }
 }

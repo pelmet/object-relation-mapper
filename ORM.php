@@ -254,6 +254,68 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 			$this->$child = Array();
 			return Array();
 		}
-
 	}
+
+    /**
+     * Vrati danou property prvniho childa ve formatu child.property
+     * @example $orm->cProperty('user.name')
+     * @param $string
+     * @throws Exception_ORM
+     * @return string
+     */
+    public function cProperty($string)
+    {
+        if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
+            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property');
+        }
+
+        if(!isset($this->childs[$matches[1]])){
+            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
+        }
+
+        if(!isset($this->childsData[$matches[1]])){
+            $this->children($matches[1]);
+        }
+
+        if(isset($this->childsData[$matches[1]][0]->{$matches[2]})){
+            return $this->childsData[$matches[1]][0]->{$matches[2]};
+        } else {
+            return NULL;
+        }
+    }
+
+    /**
+     * Vrati danou property vsech childu ve formatu child.property
+     * @example $orm->cProperties('report.time')
+     * @param $string
+     * @param null $glue
+     * @throws Exception_ORM
+     * @return string
+     */
+    public function cProperties($string, $glue = NULL)
+    {
+        if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
+            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property');
+        }
+
+        if(!isset($this->childs[$matches[1]])){
+            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
+        }
+
+        if(!isset($this->childsData[$matches[1]])){
+            $this->children($matches[1]);
+        }
+
+        $return = Array();
+
+        foreach($this->childsData[$matches[1]] as $key => $child){
+            $return[$key] = $child->{$matches[2]};
+        }
+
+        if(!is_null($glue)){
+            return implode($glue, $return);
+        } else {
+            return $return;
+        }
+    }
 }
