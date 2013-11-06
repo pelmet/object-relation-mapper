@@ -22,13 +22,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 * @throws Exception
 	 * @return boolean|mixed
 	 */
-	public function load(Array $loadData = Array())
+	public function load($loadData = NULL)
 	{
 		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
 			return false;
 		}
 
-		if(!empty($loadData)){
+		if(!is_null($loadData)){
 			$this->loadClassFromArray($loadData);
 		} else {
 			$this->loadClassFromArray($this->queryBuilder->load($this));
@@ -192,13 +192,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 * @param array $loadData
 	 * @return array
 	 */
-	public function loadMultiple(Array $loadData = Array())
+	public function loadMultiple($loadData = NULL)
 	{
 		if($this->getOrderingLimit() == 1){
 			$this->setOrderingLimit(9999999999);
 		}
 
-		if(empty($loadData)){
+		if(is_null($loadData)){
 			$collection = $this->queryBuilder->loadMultiple($this);
 		} else {
 			$collection = &$loadData;

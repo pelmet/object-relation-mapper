@@ -114,10 +114,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	abstract protected function setUp();
 	abstract public function save($forceInsert = false);
 	abstract public function delete($deleteNow = false);
-	abstract public function load(Array $loadData = Array());
+	abstract public function load($loadData = NULL);
 	abstract public function loadByPrimaryKey();
 	abstract public function count();
-	abstract public function loadMultiple(Array $loadData = Array());
+	abstract public function loadMultiple($loadData = NULL);
 	abstract protected function setORMStorages();
 
 	/**
