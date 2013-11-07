@@ -540,9 +540,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Vrati vsechna DB POLE bud v poli nebo spojene pres glue
 	 * @param null $glue
 	 * @param bool $includeTableName
+	 * @param array $exclude
 	 * @return string|array
 	 */
-	public function getAllDbFields($glue = NULL, $includeTableName = false)
+	public function getAllDbFields($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
 		$s = &$this->configStorage;
 
@@ -550,6 +551,14 @@ abstract class ObjectRelationMapper_ORM_Abstract
 			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS_WITH_TABLE);
 		} else {
 			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS);
+		}
+
+		if(!empty($exclude)){
+			foreach($return as $key => &$column){
+				if(in_array($column, $exclude)){
+					unset($return[$key]);
+				}
+			}
 		}
 
 		if(!is_null($glue)){
