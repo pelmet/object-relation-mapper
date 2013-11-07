@@ -14,6 +14,7 @@ class ObjectRelationMapper_ColumnType_Int extends ObjectRelationMapper_ColumnTyp
 	 */
 	public function validate($value)
 	{
-		return ((is_numeric($value)) && (mb_strlen($value) <= $this->length));
+        $regexp = '/^\d{0,'.$this->length.'}$/';
+        return (is_numeric($value) && (boolean)preg_match($regexp,(string)$value));
 	}
 }

@@ -34,7 +34,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception_ORM
+	 * @expectedException ObjectRelationMapper_Exception_ORM
 	 */
 	public function testSetterToBadColumn()
 	{
@@ -44,7 +44,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception_ORM
+	 * @expectedException ObjectRelationMapper_Exception_ORM
 	 */
 	public function testGetterToBadColumn()
 	{
@@ -64,7 +64,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Exception_ORM
+	 * @expectedException ObjectRelationMapper_Exception_ORM
 	 */
 	public function testDynamicNotDefinedFunction()
 	{

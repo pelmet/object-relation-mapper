@@ -94,4 +94,35 @@ class ORMTestChild extends ObjectRelationMapper_ORM
 	}
 }
 
+/**
+ * Class ORMTestValidation
+ * @property int id
+ * @property string valString
+ * @property decimal valDecimal
+ * @property boolean valBoolean
+ */
+class ORMTestValidation extends ObjectRelationMapper_ORM
+{
+    protected function setORMStorages()
+    {
+        $this->configStorage 	= 'ObjectRelationMapper_ConfigStorage_Basic';
+
+        $connector = new ObjectRelationMapper_Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+        $this->queryBuilder = new ObjectRelationMapper_QueryBuilder_DB($connector);
+    }
+
+    function setUp()
+    {
+        $this->addColumn('qc_int', 'id', 'int', '10');
+        $this->addColumn('qc_string', 'valString', 'string', '10');
+        $this->addColumn('qc_decimal', 'valDecimal', 'decimal', '5,2');
+        $this->addColumn('qc_boolean', 'valBoolean', 'boolean', '1');
+
+        $this->setConfigDbPrimaryKey	('qc_int');
+        $this->setConfigDbServer		('master');
+        $this->setConfigObject			(__CLASS__);
+        $this->setConfigDbTable			('d_validate_types');
+    }
+}
+
 
