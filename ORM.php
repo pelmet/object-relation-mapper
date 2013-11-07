@@ -43,13 +43,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 
 	/**
 	 * Nahraje objekt z daneho storage
-	 * @throws Exception_ORM
+	 * @throws ObjectRelationMapper_Exception_ORM
 	 * @return boolean|mixed
 	 */
 	public function loadByPrimaryKey()
 	{
 		if(!isset($this->primaryKey) || empty($this->primaryKey)){
-			throw new Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+			throw new ObjectRelationMapper_Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
 		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
@@ -260,17 +260,17 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
      * Vrati danou property prvniho childa ve formatu child.property
      * @example $orm->cProperty('user.name')
      * @param $string
-     * @throws Exception_ORM
+     * @throws ObjectRelationMapper_Exception_ORM
      * @return string
      */
     public function cProperty($string)
     {
         if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
-            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property');
+            throw new ObjectRelationMapper_Exception_ORM('Vyber child property musi byt ve formatu child.property');
         }
 
         if(!isset($this->childs[$matches[1]])){
-            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
+            throw new ObjectRelationMapper_Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
         }
 
         if(!isset($this->childsData[$matches[1]])){
@@ -289,17 +289,17 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
      * @example $orm->cProperties('report.time')
      * @param $string
      * @param null $glue
-     * @throws Exception_ORM
+     * @throws ObjectRelationMapper_Exception_ORM
      * @return string
      */
     public function cProperties($string, $glue = NULL)
     {
         if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
-            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property');
+            throw new ObjectRelationMapper_Exception_ORM('Vyber child property musi byt ve formatu child.property');
         }
 
         if(!isset($this->childs[$matches[1]])){
-            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
+            throw new ObjectRelationMapper_Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
         }
 
         if(!isset($this->childsData[$matches[1]])){
