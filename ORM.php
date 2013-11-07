@@ -231,7 +231,7 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		$orm = new $orm();
 
 		if(!is_null($order)){
-			$orm->setOrderingOrder($order, (is_null($direction) ? ObjectRelationMapper_ORM_Abstract::ORDERING_ASCENDING : $order));
+			$orm->setOrderingOrder($order, (is_null($direction) ? ObjectRelationMapper_ORM_Abstract::ORDERING_ASCENDING : $direction));
 		}
 
 		if(!is_null($limit)){
