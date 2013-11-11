@@ -42,9 +42,10 @@ class ObjectRelationMapper_Search_Search
         }
 
         if(!empty($this->ordering)){
-            $query .= ' WHERE ' .implode($this->imploder, $this->search);
+            $query .= ' ORDER BY ' .implode($this->imploder, $this->search);
         }
 
+        $query .= ' LIMIT '.$this->offset .', '.$this->limit;
 
         return $this->orm->loadByQuery($query, $this->params);
     }
