@@ -14,6 +14,14 @@ abstract class ObjectRelationMapper_QueryBuilder_Abstract
 	 */
 	abstract public function loadMultiple	(ObjectRelationMapper_ORM $orm);
 
+    /**
+     * @param ObjectRelationMapper_ORM $orm
+     * @param $query
+     * @param $params
+     * @return Array
+     */
+    abstract public function loadByQuery	(ObjectRelationMapper_ORM $orm, $query, $params);
+
 	/**
 	 * @param ObjectRelationMapper_ORM $orm
 	 * @return boolean

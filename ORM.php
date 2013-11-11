@@ -216,6 +216,33 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		return $return;
 	}
 
+    /**
+     * Nahraje objekt pres zadanou query, vykona ji a vrati pole objektu, podle toho kolik toho query vratila
+     * @param $query
+     * @param $params
+     * @return array
+     * @throws ObjectRelationMapper_Exception_ORM
+     */
+    public function loadByQuery($query, $params)
+    {
+        if(empty($query)){
+            throw new ObjectRelationMapper_Exception_ORM('Nemohu loadovat pres prazdnou query.');
+        }
+
+        $collection = $this->queryBuilder->loadByQuery($this, $query, $params);
+
+        $return = Array();
+        $object = $this->getConfigObject();
+
+        foreach($collection as $singleOrm){
+            $tempOrm = new $object();
+            $tempOrm->load($singleOrm);
+            $return[] = $tempOrm;
+        }
+
+        return $return;
+    }
+
 	/**
 	 * Vrati naloadovaneho childa a ulozi ho k pozdejsimu pouziti
 	 * @param null $child

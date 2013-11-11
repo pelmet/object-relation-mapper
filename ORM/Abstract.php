@@ -587,9 +587,9 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		$s = &$this->configStorage;
 
 		if(!is_null($glue)){
-			return implode($glue, $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES));
+			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES));
 		}  else {
-			return  $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES);
+			return  $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES);
 		}
 	}
 

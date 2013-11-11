@@ -214,4 +214,15 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 			return Array();
 		}
 	}
+
+    public function loadByQuery(ObjectRelationMapper_ORM $orm, $query, $params)
+    {
+        $query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+
+        if(isset($query)){
+            return $query;
+        } else {
+            return Array();
+        }
+    }
 }
