@@ -18,6 +18,8 @@
  * @method getOrderingLimit
  * @method primaryKeyIsChanged
  * @method (.*)IsChanged
+ * @method getIdConfig
+ * @method getChildUserConfig
  */
 abstract class ObjectRelationMapper_ORM_Abstract
 {
@@ -249,6 +251,14 @@ abstract class ObjectRelationMapper_ORM_Abstract
 
 		if(preg_match('/^primaryKeyIsChanged$/', $function)){
 			return isset($this->changedVariables[$this->getAlias($this->getConfigDbPrimaryKey())]);
+		}
+
+		if(preg_match('/get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])){
+			return $this->aliases[$matches[1]];
+		}
+
+		if(preg_match('/getChild(.*)Config/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
+			return $this->childs[$matches[1]];
 		}
 
 		if(preg_match('/^(.*)IsChanged$/', $function, $matches) && isset($this->aliases[$matches[1]])){

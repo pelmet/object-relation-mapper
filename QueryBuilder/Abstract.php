@@ -24,6 +24,14 @@ abstract class ObjectRelationMapper_QueryBuilder_Abstract
 
 	/**
 	 * @param ObjectRelationMapper_ORM $orm
+	 * @param $query
+	 * @param $params
+	 * @return Array
+	 */
+	abstract public function countByQuery	(ObjectRelationMapper_ORM $orm, $query, $params);
+
+	/**
+	 * @param ObjectRelationMapper_ORM $orm
 	 * @return boolean
 	 */
 	abstract public function insert	(ObjectRelationMapper_ORM $orm);

@@ -1,77 +1,10 @@
 <?php
 
-class ObjectRelationMapper_Search_Search
+class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abstract
 {
     const ORDERING_DESCENDING = ObjectRelationMapper_ORM::ORDERING_DESCENDING;
     const ORDERING_ASCENDING = ObjectRelationMapper_ORM::ORDERING_ASCENDING;
 
-    protected $aliases;
-    /**
-     * @var ObjectRelationMapper_ORM
-     */
-    protected $orm;
-
-    protected $search = Array();
-    protected $params = Array();
-
-    protected $searchCount = 0;
-
-    protected $imploder = ' AND ';
-
-    protected $limit = 999999;
-    protected $offset = 0;
-
-    protected $ordering = Array();
-
-    public function __construct(ObjectRelationMapper_ORM $orm)
-    {
-        $this->orm = $orm;
-        $this->aliases = $orm->getAllAliases();
-    }
-
-	public function getCount()
-	{
-		$query = 'SELECT count('. $this->orm->getConfigDbPrimaryKey(). ') AS count FROM '.$this->orm->getConfigDbTable() . ' ';
-
-		if(!empty($this->search)){
-			$query .= ' WHERE ' .implode($this->imploder, $this->search);
-		}
-
-		return $this->orm->countByQuery($query, $this->params);
-	}
-
-    /**
-     * Vrati vsechny vysledky
-     * @return Array
-     */
-    public function getResults()
-    {
-        $query = 'SELECT '. $this->orm->getAllDbFields(', ', true). ' FROM '.$this->orm->getConfigDbTable() . ' ';
-
-        if(!empty($this->search)){
-            $query .= ' WHERE ' .implode($this->imploder, $this->search);
-        }
-
-        if(!empty($this->ordering)){
-            $query .= ' ORDER BY ' .implode($this->imploder, $this->search);
-        }
-
-        $query .= ' LIMIT '.$this->offset .', '.$this->limit;
-
-        return $this->orm->loadByQuery($query, $this->params);
-    }
-
-    /**
-     * Vrati, zda na ORM existuje Alias
-     * @param $property
-     * @throws ObjectRelationMapper_Exception_ORM
-     */
-    protected function aliasExists($property)
-    {
-        if(!in_array($property, $this->aliases)){
-            throw new ObjectRelationMapper_Exception_ORM('Alias '.$property.' neexistuje na ORM '. $this->orm->getConfigObject());
-        }
-    }
 
     /**
      * Hleda presnou schodu
@@ -82,11 +15,7 @@ class ObjectRelationMapper_Search_Search
     public function exact($property, $value)
     {
         $this->aliasExists($property);
-
-        $this->search[] = $this->orm->getDbField($property, true) . ' = :param' .$this->searchCount;
-        $this->params[] = Array(':param' .$this->searchCount, $value);
-
-        $this->searchCount++;
+        $this->search[] = $this->dbFieldName($property) . ' = ' . $this->addParameter($value);
         return $this;
     }
 
@@ -100,11 +29,7 @@ class ObjectRelationMapper_Search_Search
     public function from($property, $value, $equals = true)
     {
         $this->aliasExists($property);
-
-        $this->search[] = $this->orm->getDbField($property, true) . ' >'.($equals ? '=' : '').' :param' .$this->searchCount;
-        $this->params[] = Array(':param' .$this->searchCount, $value);
-
-        $this->searchCount++;
+        $this->search[] = $this->dbFieldName($property) . ' >'.($equals ? '=' : '').' ' . $this->addParameter($value);
         return $this;
     }
 
@@ -118,11 +43,7 @@ class ObjectRelationMapper_Search_Search
     public function to($property, $value, $equals = true)
     {
         $this->aliasExists($property);
-
-        $this->search[] = $this->orm->getDbField($property, true) . ' <'.($equals ? '=' : '').' :param' .$this->searchCount;
-        $this->params[] = Array(':param' .$this->searchCount, $value);
-
-        $this->searchCount++;
+        $this->search[] = $this->dbFieldName($property) . ' <'.($equals ? '=' : '').' ' . $this->addParameter($value);
         return $this;
     }
 
@@ -135,11 +56,7 @@ class ObjectRelationMapper_Search_Search
     public function like($property, $value)
     {
         $this->aliasExists($property);
-
-        $this->search[] = $this->orm->getDbField($property, true) . ' LIKE :param' .$this->searchCount;
-        $this->params[] = Array(':param' .$this->searchCount, $value);
-
-        $this->searchCount++;
+        $this->search[] = $this->dbFieldName($property) . ' LIKE ' . $this->addParameter($value);
         return $this;
     }
 
@@ -151,10 +68,7 @@ class ObjectRelationMapper_Search_Search
     public function null($property)
     {
         $this->aliasExists($property);
-
-        $this->search[] = $this->orm->getDbField($property, true) . ' IS NULL';
-
-        $this->searchCount++;
+        $this->search[] = $this->dbFieldName($property) . ' IS NULL';
         return $this;
     }
 
@@ -166,10 +80,7 @@ class ObjectRelationMapper_Search_Search
     public function notNull($property)
     {
         $this->aliasExists($property);
-
-        $this->search[] = $this->orm->getDbField($property) . ' IS NOT NULL';
-
-        $this->searchCount++;
+        $this->search[] = $this->dbFieldName($property) . ' IS NOT NULL';
         return $this;
     }
 
@@ -180,7 +91,6 @@ class ObjectRelationMapper_Search_Search
     public function useOr()
     {
         $this->imploder = ' OR ';
-
         return $this;
     }
 
@@ -193,7 +103,6 @@ class ObjectRelationMapper_Search_Search
     {
         $this->limit = $limit;
         return $this;
-
     }
 
     /**
@@ -205,7 +114,6 @@ class ObjectRelationMapper_Search_Search
     {
         $this->offset = $offset;
         return $this;
-
     }
 
     /**
@@ -216,7 +124,7 @@ class ObjectRelationMapper_Search_Search
      */
     public function addOrdering($ordering, $direction = self::ORDERING_ASCENDING)
     {
-        $this->ordering[] = $this->orm->getDbField($ordering) . ' ' . $direction;
+        $this->ordering[] = $this->dbFieldName($ordering) . ' ' . $direction;
         return $this;
     }
 }
