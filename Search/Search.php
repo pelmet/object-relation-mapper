@@ -29,6 +29,17 @@ class ObjectRelationMapper_Search_Search
         $this->aliases = $orm->getAllAliases();
     }
 
+	public function getCount()
+	{
+		$query = 'SELECT count('. $this->orm->getConfigDbPrimaryKey(). ') AS count FROM '.$this->orm->getConfigDbTable() . ' ';
+
+		if(!empty($this->search)){
+			$query .= ' WHERE ' .implode($this->imploder, $this->search);
+		}
+
+		return $this->orm->countByQuery($query, $this->params);
+	}
+
     /**
      * Vrati vsechny vysledky
      * @return Array

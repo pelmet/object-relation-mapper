@@ -244,6 +244,22 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
     }
 
 	/**
+	 * Nahraje count pres danou query
+	 * @param $query
+	 * @param $params
+	 * @return array
+	 * @throws ObjectRelationMapper_Exception_ORM
+	 */
+	public function countByQuery($query, $params)
+	{
+		if(empty($query)){
+			throw new ObjectRelationMapper_Exception_ORM('Nemohu loadovat pres prazdnou query.');
+		}
+
+		return $this->queryBuilder->countByQuery($this, $query, $params);
+	}
+
+	/**
 	 * Vrati naloadovaneho childa a ulozi ho k pozdejsimu pouziti
 	 * @param null $child
 	 * @param null $order

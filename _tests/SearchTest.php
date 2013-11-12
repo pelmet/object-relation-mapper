@@ -98,4 +98,24 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
         $this->assertEmpty($results);
     }
+
+	public function testCountNothing()
+	{
+		$search = new ObjectRelationMapper_Search_Search(new ORMTest());
+		$search->null('command');
+
+		$results = $search->getCount();
+
+		$this->assertEquals(0, $results);
+	}
+
+	public function testCount()
+	{
+		$search = new ObjectRelationMapper_Search_Search(new ORMTest());
+		$search->notNull('command');
+
+		$results = $search->getCount();
+
+		$this->assertEquals(1, $results);
+	}
 }
