@@ -2,7 +2,7 @@
 
 /**
  * Class ObjectRelationMapper_Generator_DbToOrm
- * @example new ObjectRelationMapper_Generator_DbToOrm(new ObjectRelationMapper_Connector_ESDB(), 'salary', 'master', 'ORM_Salary', 'ORM_Base', TEMP_DIR);
+ * @example new ObjectRelationMapper_Generator_DbToOrm(new ObjectRelationMapper_Connector_ESDB(), 'salary', 'master', 'ORM_Salary', 'ORM_Base', TEMP_DIR, 'sa_');
  */
 class ObjectRelationMapper_Generator_DbToOrm
 {
@@ -25,8 +25,9 @@ class ObjectRelationMapper_Generator_DbToOrm
 	 * @param string $ormName
 	 * @param string $extendingOrm
 	 * @param string $path
+	 * @param string $colPrefix
 	 */
-	public function __construct(ObjectRelationMapper_Connector_Interface $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path)
+	public function __construct(ObjectRelationMapper_Connector_Interface $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix)
 	{
 		$describe = $connector->query('DESCRIBE '.$dbTable, Array(), $serverAlias);
 
@@ -40,7 +41,7 @@ class ObjectRelationMapper_Generator_DbToOrm
 		$this->addOrmLine('/**');
 
 		foreach($this->columns as $columnName => $columnInfo){
-			$this->addOrmLine('* @property string '.$columnName);
+			$this->addOrmLine('* @property string '.$this->toCamelCase($columnName, $colPrefix));
 		}
 		$this->addOrmLine('**/');
 
@@ -55,7 +56,7 @@ class ObjectRelationMapper_Generator_DbToOrm
 				$this->firstCol = $columnName;
 				$first = true;
 			}
-			$this->addOrmLine('        $this->addColumn(\''.$columnName.'\', \''.$columnName.'\', \''.$columnInfo['type'].'\', \''.$columnInfo['length'].'\');');
+			$this->addOrmLine('        $this->addColumn(\''.$columnName.'\', \''.$this->toCamelCase($columnName, $colPrefix).'\', \''.$columnInfo['type'].'\', \''.$columnInfo['length'].'\');');
 		}
 
 		$this->addOrmLine('');
@@ -79,6 +80,22 @@ class ObjectRelationMapper_Generator_DbToOrm
 	{
 		if(isset($this->typeTrans[$column])){
 			return $this->typeTrans[$column];
+		} else {
+			return $column;
+		}
+	}
+
+	protected function toCamelCase($column, $tablePrefix)
+	{
+		$column = str_ireplace($tablePrefix, '', $column);
+
+		$e = explode('_', $column);
+
+		if(!empty($e)){
+			foreach($e as &$value){
+				$value = ucfirst($value);
+			}
+			return lcfirst(implode('', $e));
 		} else {
 			return $column;
 		}
