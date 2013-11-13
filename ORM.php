@@ -22,13 +22,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 * @throws Exception
 	 * @return boolean|mixed
 	 */
-	public function load(Array $loadData = Array())
+	public function load($loadData = NULL)
 	{
 		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
 			return false;
 		}
 
-		if(!empty($loadData)){
+		if(!is_null($loadData)){
 			$this->loadClassFromArray($loadData);
 		} else {
 			$this->loadClassFromArray($this->queryBuilder->load($this));
@@ -192,13 +192,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 * @param array $loadData
 	 * @return array
 	 */
-	public function loadMultiple(Array $loadData = Array())
+	public function loadMultiple($loadData = NULL)
 	{
 		if($this->getOrderingLimit() == 1){
 			$this->setOrderingLimit(9999999999);
 		}
 
-		if(empty($loadData)){
+		if(is_null($loadData)){
 			$collection = $this->queryBuilder->loadMultiple($this);
 		} else {
 			$collection = &$loadData;
@@ -216,6 +216,49 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		return $return;
 	}
 
+    /**
+     * Nahraje objekt pres zadanou query, vykona ji a vrati pole objektu, podle toho kolik toho query vratila
+     * @param $query
+     * @param $params
+     * @return array
+     * @throws ObjectRelationMapper_Exception_ORM
+     */
+    public function loadByQuery($query, $params)
+    {
+        if(empty($query)){
+            throw new ObjectRelationMapper_Exception_ORM('Nemohu loadovat pres prazdnou query.');
+        }
+
+        $collection = $this->queryBuilder->loadByQuery($this, $query, $params);
+
+        $return = Array();
+        $object = $this->getConfigObject();
+
+        foreach($collection as $singleOrm){
+            $tempOrm = new $object();
+            $tempOrm->load($singleOrm);
+            $return[] = $tempOrm;
+        }
+
+        return $return;
+    }
+
+	/**
+	 * Nahraje count pres danou query
+	 * @param $query
+	 * @param $params
+	 * @return array
+	 * @throws ObjectRelationMapper_Exception_ORM
+	 */
+	public function countByQuery($query, $params)
+	{
+		if(empty($query)){
+			throw new ObjectRelationMapper_Exception_ORM('Nemohu loadovat pres prazdnou query.');
+		}
+
+		return $this->queryBuilder->countByQuery($this, $query, $params);
+	}
+
 	/**
 	 * Vrati naloadovaneho childa a ulozi ho k pozdejsimu pouziti
 	 * @param null $child
@@ -231,7 +274,7 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		$orm = new $orm();
 
 		if(!is_null($order)){
-			$orm->setOrderingOrder($order, (is_null($direction) ? ObjectRelationMapper_ORM_Abstract::ORDERING_ASCENDING : $order));
+			$orm->setOrderingOrder($order, (is_null($direction) ? ObjectRelationMapper_ORM_Abstract::ORDERING_ASCENDING : $direction));
 		}
 
 		if(!is_null($limit)){

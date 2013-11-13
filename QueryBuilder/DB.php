@@ -182,6 +182,20 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
+	public function countByQuery(ObjectRelationMapper_ORM $orm, $query, $params)
+	{
+		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+
+		if(isset($query[0]['count'])){
+			return $query[0]['count'];
+		} else {
+			return Array();
+		}
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function loadMultiple(ObjectRelationMapper_ORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
@@ -214,4 +228,15 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 			return Array();
 		}
 	}
+
+    public function loadByQuery(ObjectRelationMapper_ORM $orm, $query, $params)
+    {
+        $query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+
+        if(isset($query)){
+            return $query;
+        } else {
+            return Array();
+        }
+    }
 }

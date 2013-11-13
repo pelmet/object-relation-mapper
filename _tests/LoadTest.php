@@ -131,4 +131,24 @@ class LoadTest extends PHPUnit_Framework_TestCase
 			$this->assertInstanceOf('Exception', $e);
 		}
 	}
+
+    public function testLoadWithEmptyArray()
+    {
+        $testData =  Array ();
+
+        $testOrm = new ORMTest();
+        $testOrm->load($testData);
+
+        $this->assertEquals(false, $testOrm->isLoaded());
+    }
+
+    public function testLoadMultipleWithEmptyArray()
+    {
+        $testData =  Array ();
+
+        $testOrm = new ORMTest();
+        $testOrm->loadMultiple($testData);
+
+        $this->assertEquals(false, $testOrm->isLoaded());
+    }
 }

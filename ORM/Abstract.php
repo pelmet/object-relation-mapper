@@ -18,6 +18,8 @@
  * @method getOrderingLimit
  * @method primaryKeyIsChanged
  * @method (.*)IsChanged
+ * @method getIdConfig
+ * @method getChildUserConfig
  */
 abstract class ObjectRelationMapper_ORM_Abstract
 {
@@ -114,10 +116,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	abstract protected function setUp();
 	abstract public function save($forceInsert = false);
 	abstract public function delete($deleteNow = false);
-	abstract public function load(Array $loadData = Array());
+	abstract public function load($loadData = NULL);
 	abstract public function loadByPrimaryKey();
 	abstract public function count();
-	abstract public function loadMultiple(Array $loadData = Array());
+	abstract public function loadMultiple($loadData = NULL);
 	abstract protected function setORMStorages();
 
 	/**
@@ -249,6 +251,14 @@ abstract class ObjectRelationMapper_ORM_Abstract
 
 		if(preg_match('/^primaryKeyIsChanged$/', $function)){
 			return isset($this->changedVariables[$this->getAlias($this->getConfigDbPrimaryKey())]);
+		}
+
+		if(preg_match('/get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])){
+			return $this->aliases[$matches[1]];
+		}
+
+		if(preg_match('/getChild(.*)Config/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
+			return $this->childs[lcfirst($matches[1])];
 		}
 
 		if(preg_match('/^(.*)IsChanged$/', $function, $matches) && isset($this->aliases[$matches[1]])){
@@ -540,9 +550,10 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	 * Vrati vsechna DB POLE bud v poli nebo spojene pres glue
 	 * @param null $glue
 	 * @param bool $includeTableName
+	 * @param array $exclude
 	 * @return string|array
 	 */
-	public function getAllDbFields($glue = NULL, $includeTableName = false)
+	public function getAllDbFields($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
 		$s = &$this->configStorage;
 
@@ -550,6 +561,14 @@ abstract class ObjectRelationMapper_ORM_Abstract
 			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS_WITH_TABLE);
 		} else {
 			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS);
+		}
+
+		if(!empty($exclude)){
+			foreach($return as $key => &$column){
+				if(in_array($column, $exclude)){
+					unset($return[$key]);
+				}
+			}
 		}
 
 		if(!is_null($glue)){
@@ -578,9 +597,9 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		$s = &$this->configStorage;
 
 		if(!is_null($glue)){
-			return implode($glue, $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES));
+			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES));
 		}  else {
-			return  $s::getSpecificConfiguration($this->setConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES);
+			return  $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES);
 		}
 	}
 
