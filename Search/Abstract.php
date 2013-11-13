@@ -49,12 +49,26 @@ abstract class ObjectRelationMapper_Search_Abstract
 	protected function dbFieldName($field)
 	{
 		if(preg_match('/(.*)\.(.*)/', $field, $matches)){
-			$column = $this->orm->{'getChild'.ucfirst($matches[1]).'Config'}();
-			echo $column;
+			$child = $this->orm->{'getChild'.ucfirst($matches[1]).'Config'}();
+            $orm = new $child->ormName();
+            $this->joinTables[] = ' LEFT JOIN '.$orm->getConfigDbTable().' ON '.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
+            return $this->getOrmDbColumn($orm, $matches[2]);
 		} else {
-			return $this->orm->getDbField($field, true);
+            $this->aliasExists($field);
+            return $this->getOrmDbColumn($this->orm, $field);
 		}
 	}
+
+    /**
+     * Vrati column z childa
+     * @param ObjectRelationMapper_ORM $orm
+     * @param $alias
+     * @return string
+     */
+    protected function getOrmDbColumn(ObjectRelationMapper_ORM $orm, $alias)
+    {
+        return $orm->getDbField($alias, true);
+    }
 
 	/**
 	 * Vrati, zda na ORM existuje Alias
@@ -103,6 +117,10 @@ abstract class ObjectRelationMapper_Search_Abstract
 	{
 		$query = 'SELECT count('. $this->orm->getConfigDbPrimaryKey(). ') AS count FROM '.$this->orm->getConfigDbTable() . ' ';
 
+        if(!empty($this->joinTables)){
+            $query .= ' ' . implode(' ', $this->joinTables);
+        }
+
 		if(!empty($this->search)){
 			$query .= ' WHERE ' .implode($this->imploder, $this->search);
 		}
@@ -127,12 +145,16 @@ abstract class ObjectRelationMapper_Search_Abstract
 	{
 		$query = 'SELECT '. $this->orm->getAllDbFields(', ', true). ' FROM '.$this->orm->getConfigDbTable() . ' ';
 
+        if(!empty($this->joinTables)){
+            $query .= ' ' . implode(' ', $this->joinTables);
+        }
+
 		if(!empty($this->search)){
 			$query .= ' WHERE ' .implode($this->imploder, $this->search);
 		}
 
 		if(!empty($this->ordering)){
-			$query .= ' ORDER BY ' .implode($this->imploder, $this->search);
+			$query .= ' ORDER BY ' .implode($this->imploder, $this->ordering);
 		}
 
 		$query .= ' LIMIT '.$this->offset .', '.$this->limit;

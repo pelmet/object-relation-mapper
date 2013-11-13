@@ -14,7 +14,6 @@ class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abs
      */
     public function exact($property, $value)
     {
-        $this->aliasExists($property);
         $this->search[] = $this->dbFieldName($property) . ' = ' . $this->addParameter($value);
         return $this;
     }
@@ -28,7 +27,6 @@ class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abs
      */
     public function from($property, $value, $equals = true)
     {
-        $this->aliasExists($property);
         $this->search[] = $this->dbFieldName($property) . ' >'.($equals ? '=' : '').' ' . $this->addParameter($value);
         return $this;
     }
@@ -42,7 +40,6 @@ class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abs
      */
     public function to($property, $value, $equals = true)
     {
-        $this->aliasExists($property);
         $this->search[] = $this->dbFieldName($property) . ' <'.($equals ? '=' : '').' ' . $this->addParameter($value);
         return $this;
     }
@@ -55,7 +52,6 @@ class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abs
      */
     public function like($property, $value)
     {
-        $this->aliasExists($property);
         $this->search[] = $this->dbFieldName($property) . ' LIKE ' . $this->addParameter($value);
         return $this;
     }
@@ -67,7 +63,6 @@ class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abs
      */
     public function null($property)
     {
-        $this->aliasExists($property);
         $this->search[] = $this->dbFieldName($property) . ' IS NULL';
         return $this;
     }
@@ -79,7 +74,6 @@ class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abs
      */
     public function notNull($property)
     {
-        $this->aliasExists($property);
         $this->search[] = $this->dbFieldName($property) . ' IS NOT NULL';
         return $this;
     }

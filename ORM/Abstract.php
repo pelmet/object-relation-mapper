@@ -258,7 +258,7 @@ abstract class ObjectRelationMapper_ORM_Abstract
 		}
 
 		if(preg_match('/getChild(.*)Config/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
-			return $this->childs[$matches[1]];
+			return $this->childs[lcfirst($matches[1])];
 		}
 
 		if(preg_match('/^(.*)IsChanged$/', $function, $matches) && isset($this->aliases[$matches[1]])){
