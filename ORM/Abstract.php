@@ -647,4 +647,18 @@ abstract class ObjectRelationMapper_ORM_Abstract
             return $returnArray;
         }
     }
+
+    /**
+     * Vrati string informaci o objektu
+     */
+    public function __toString()
+    {
+        ob_start();
+        echo get_class($this).":\n";
+        foreach($this->getIterator() as $key => $value){
+            echo '   "'.$key.'" = ';
+            var_dump($value);
+        }
+        return ob_get_clean();
+    }
 }
