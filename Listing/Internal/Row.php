@@ -20,9 +20,9 @@ class ObjectRelationMapper_Listing_Internal_Row extends ObjectRelationMapper_ORM
 
 	/**
 	 * Nastavi source
-	 * @param ObjectRelationMapper_ORM $source
+	 * @param ObjectRelationMapper_Listing_Connector_RowInterface $source
 	 */
-	public function setSource(ObjectRelationMapper_ORM $source)
+	public function setSource(ObjectRelationMapper_Listing_Connector_RowInterface $source)
 	{
 		$this->sourceData = $source;
 	}

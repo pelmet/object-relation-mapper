@@ -19,7 +19,7 @@ class ObjectRelationMapper_Listing_Column_Currency extends ObjectRelationMapper_
 	/**
 	 * @inheritdoc
 	 */
-	protected function getValue(ObjectRelationMapper_ORM $source)
+	protected function getValue(ObjectRelationMapper_Listing_Connector_RowInterface $source)
 	{
 		$value = parent::getValue($source);
 

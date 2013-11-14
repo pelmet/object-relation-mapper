@@ -20,8 +20,8 @@ class ObjectRelationMapper_Listing_Connector_Search extends ObjectRelationMaper_
 
 	protected function parseData()
 	{
-		$this->translatedData = $this->rawData;
+		foreach($this->rawData as $orm){
+			$this->translatedData[] = new ObjectRelationMapper_Listing_Connector_Search_Row($orm);
+		}
 	}
-
-
 }

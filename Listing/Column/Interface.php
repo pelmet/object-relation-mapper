@@ -3,5 +3,5 @@
 
 interface ObjectRelationMapper_Listing_Column_Interface
 {
-	public function translate(ObjectRelationMapper_ORM $source);
+	public function translate(ObjectRelationMapper_Listing_Connector_RowInterface $source);
 }

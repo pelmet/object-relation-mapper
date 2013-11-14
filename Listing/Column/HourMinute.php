@@ -15,7 +15,7 @@ class ObjectRelationMapper_Listing_Column_HourMinute extends ObjectRelationMappe
 	/**
 	 * @inheritdoc
 	 */
-	protected function getValue(ObjectRelationMapper_ORM $source)
+	protected function getValue(ObjectRelationMapper_Listing_Connector_RowInterface $source)
 	{
 		$minutes = parent::getValue($source);
 

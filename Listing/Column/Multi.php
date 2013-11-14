@@ -31,7 +31,7 @@ class ObjectRelationMapper_Listing_Column_Multi extends ObjectRelationMapper_Lis
 	 * @internal param null $override
 	 * @return string
 	 */
-	protected function getValue(ObjectRelationMapper_ORM $source)
+	protected function getValue(ObjectRelationMapper_Listing_Connector_RowInterface $source)
 	{
 		$result = Array();
 
