@@ -21,7 +21,7 @@
  * @method getIdConfig
  * @method getChildUserConfig
  */
-abstract class ObjectRelationMapper_ORM_Abstract
+abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_ORM_Iterator
 {
 	const BASE_CONFIG_DB_SERVER = 'DbServer';
 	const BASE_CONFIG_DB_TABLE 	= 'DbTable';
@@ -118,7 +118,6 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	abstract public function delete($deleteNow = false);
 	abstract public function load($loadData = NULL);
 	abstract public function loadByPrimaryKey();
-	abstract public function count();
 	abstract public function loadMultiple($loadData = NULL);
 	abstract protected function setORMStorages();
 
@@ -297,62 +296,12 @@ abstract class ObjectRelationMapper_ORM_Abstract
 	}
 
 	/**
-	 * ArrayAccess implemetace
-	 * @param string $offset
-	 * @param mixed $value
+	 * @inheritdoc
 	 */
-	public final function offsetSet($offset, $value)
+	protected function getIterableName()
 	{
-		if (is_null($offset)) {
-			$this->data[] = $value;
-		} else {
-			$this->data[$offset] = $value;
-		}
+		return 'data';
 	}
-
-	/**
-	 * ArrayAccess implemetace
-	 * @param string $offset
-	 * @return mixed
-	 */
-	public final function offsetExists($offset)
-	{
-		return isset($this->data[$offset]);
-	}
-
-	/**
-	 * ArrayAccess implemetace
-	 * @param string $offset
-	 */
-	public final function offsetUnset($offset)
-	{
-		unset($this->data[$offset]);
-	}
-
-	/**
-	 * ArrayAccess implemetace
-	 * @param string $offset
-	 * @return mixed
-	 */
-	public final function offsetGet($offset)
-	{
-		if (isset($this->data[$offset])) {
-			return $this->data[$offset];
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Implementace IteratorAggregate
-	 * @return \ArrayIterator
-	 */
-	public function getIterator()
-	{
-		return new ArrayIterator($this->data);
-	}
-
-
 
 	/**
 	 * Zkontroluje ORM Storage

@@ -10,7 +10,7 @@
 	<? foreach($this->tableData as $row): ?>
 	<tr <?//= $row->getRowStyle() ?>>
 		<?php foreach($row as $col): ?>
-			<td <?//= $col->getCellStyle() ?>> <?= $col ?> </td>
+			<td <?= $col->getCellStyle($row->getSource()) ?>><?= $col->translate($row->getSource()) ?></td>
 		<?php endforeach; ?>
 	</tr>
 	<?php endforeach; ?>

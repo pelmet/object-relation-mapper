@@ -78,10 +78,16 @@ class ObjectRelationMapper_Listing_Table
 			throw new Exception('Cant create table from empty dataset');
 		}
 
+		if(empty($this->headers) || empty($this->columns)){
+			throw new Exception('You need to define at least one column');
+		}
+
 		foreach($this->dataSource as $source){
-			$rowData = Array();
+			$rowData = new ObjectRelationMapper_Listing_Internal_Row();
+			$rowData->setSource($source);
 			foreach($this->columns as $column){
-				$rowData[] = $column->translate($source);
+				$col = clone $column;
+				$rowData->addColumn($col);
 			}
 			$this->tableData[] = $rowData;
 		}

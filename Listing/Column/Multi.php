@@ -28,6 +28,7 @@ class ObjectRelationMapper_Listing_Column_Multi extends ObjectRelationMapper_Lis
 	/**
 	 * Translate hodnoty v sloupci
 	 * @param ObjectRelationMapper_ORM $source
+	 * @internal param null $override
 	 * @return string
 	 */
 	protected function getValue(ObjectRelationMapper_ORM $source)

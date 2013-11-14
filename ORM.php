@@ -5,7 +5,7 @@
  *
  * @property mixed primaryKey
  */
-abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstract implements ArrayAccess, IteratorAggregate, ObjectRelationMapper_ORM_Interface
+abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstract implements ObjectRelationMapper_ORM_Interface
 {
 	/**
 	 * Da se prepsat na cokoliv jineho v extendovane tride
@@ -300,16 +300,17 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	}
 
     /**
-     * Vrati danou property prvniho childa ve formatu child.property
+     * Vrati danou property prvniho childa ve formatu child.property[, ["$param1", "$paramx"]]
      * @example $orm->cProperty('user.name')
+     * @example $orm->cProperty('user.getAllRights, [", ", "//", "adsfdsaf"]')
      * @param $string
      * @throws ObjectRelationMapper_Exception_ORM
      * @return string
      */
     public function cProperty($string)
     {
-        if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
-            throw new ObjectRelationMapper_Exception_ORM('Vyber child property musi byt ve formatu child.property');
+        if(!preg_match('/^(.*)\.(.*?)(\,(.*))?$/', $string, $matches)){
+            throw new ObjectRelationMapper_Exception_ORM('Vyber child property musi byt ve formatu child.property[, ["$param1", "$paramx"]]');
         }
 
         if(!isset($this->childs[$matches[1]])){
@@ -322,6 +323,14 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 
         if(isset($this->childsData[$matches[1]][0]->{$matches[2]})){
             return $this->childsData[$matches[1]][0]->{$matches[2]};
+        } elseif(method_exists($this->childsData[$matches[1]][0], $matches[2])) {
+	        if(isset($matches[3]) && isset($matches[4])){
+		        preg_match_all('/([\'"])(.*?)([\'"])/i', $matches[4], $params);
+		        return call_user_func_array(Array($this->childsData[$matches[1]][0], $matches[2]), $params[2]);
+	        } else {
+		        return $this->childsData[$matches[1]][0]->{$matches[2]}();
+	        }
+
         } else {
             return NULL;
         }

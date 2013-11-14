@@ -1,93 +1,46 @@
 <?php
 
-class ObjectRelationMapper_Listing_Internal_Row implements ArrayAccess, IteratorAggregate, Countable
+class ObjectRelationMapper_Listing_Internal_Row extends ObjectRelationMapper_ORM_Iterator
 {
+	protected $columns = Array();
 
 	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Retrieve an external iterator
-	 * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-	 * @return Traversable An instance of an object implementing <b>Iterator</b> or
-	 * <b>Traversable</b>
+	 * @var ObjectRelationMapper_ORM
 	 */
-	public function getIterator()
+	protected $sourceData = NULL;
+
+	/**
+	 * Prida column s ORMkem do stacku
+	 * @param ObjectRelationMapper_Listing_Column_Interface $column
+	 */
+	public function addColumn(ObjectRelationMapper_Listing_Column_Interface $column)
 	{
-		// TODO: Implement getIterator() method.
+		$this->columns[] = $column;
 	}
 
 	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Whether a offset exists
-	 * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-	 * @param mixed $offset <p>
-	 * An offset to check for.
-	 * </p>
-	 * @return boolean true on success or false on failure.
-	 * </p>
-	 * <p>
-	 * The return value will be casted to boolean if non-boolean was returned.
+	 * Nastavi source
+	 * @param ObjectRelationMapper_ORM $source
 	 */
-	public function offsetExists($offset)
+	public function setSource(ObjectRelationMapper_ORM $source)
 	{
-		// TODO: Implement offsetExists() method.
+		$this->sourceData = $source;
 	}
 
 	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Offset to retrieve
-	 * @link http://php.net/manual/en/arrayaccess.offsetget.php
-	 * @param mixed $offset <p>
-	 * The offset to retrieve.
-	 * </p>
-	 * @return mixed Can return all value types.
+	 * Vrati source
+	 * @return ObjectRelationMapper_ORM
 	 */
-	public function offsetGet($offset)
+	public function getSource()
 	{
-		// TODO: Implement offsetGet() method.
+		return $this->sourceData;
 	}
 
 	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Offset to set
-	 * @link http://php.net/manual/en/arrayaccess.offsetset.php
-	 * @param mixed $offset <p>
-	 * The offset to assign the value to.
-	 * </p>
-	 * @param mixed $value <p>
-	 * The value to set.
-	 * </p>
-	 * @return void
+	 * @inheritdoc
 	 */
-	public function offsetSet($offset, $value)
+	protected function getIterableName()
 	{
-		// TODO: Implement offsetSet() method.
-	}
-
-	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Offset to unset
-	 * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-	 * @param mixed $offset <p>
-	 * The offset to unset.
-	 * </p>
-	 * @return void
-	 */
-	public function offsetUnset($offset)
-	{
-		// TODO: Implement offsetUnset() method.
-	}
-
-	/**
-	 * (PHP 5 &gt;= 5.1.0)<br/>
-	 * Count elements of an object
-	 * @link http://php.net/manual/en/countable.count.php
-	 * @return int The custom count as an integer.
-	 * </p>
-	 * <p>
-	 * The return value is cast to an integer.
-	 */
-	public function count()
-	{
-		// TODO: Implement count() method.
+		return 'columns';
 	}
 }
