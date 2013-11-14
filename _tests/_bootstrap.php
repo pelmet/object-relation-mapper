@@ -5,26 +5,18 @@ define('DB_USER', 'ormtestuser');
 define('DB_PASS', 'testpass');
 define('DB_DB'  , 'orm_test_db');
 
-$abstract = Array();
-$findFiles = exec('(cd .. && find ./ -path ./_tests -prune -o -type f -name \*.php | grep -v _tests | grep Abstract)', $abstract);
+function autoload($className)
+{
+	$className = str_replace('ObjectRelationMapper_', '', $className);
+	$className = str_replace('_', '/', $className);
 
-foreach($abstract as $includeFile){
-	require_once(realpath(__DIR__ . '/../' . substr($includeFile, 1)));
+	if(is_file(__DIR__.'/../' . '/' . $className . '.php')){
+		require_once (__DIR__.'/../' . '/' . $className . '.php');
+	}
+
 }
 
-$interface = Array();
-$findFiles = exec('(cd .. && find ./ -path ./_tests -prune -o -type f -name \*.php | grep -v _tests | grep Interface)', $interface);
-
-foreach($interface as $includeFile){
-	require_once(realpath(__DIR__ . '/../' . substr($includeFile, 1)));
-}
-
-$return = Array();
-$findFiles = exec('(cd .. && find ./ -path ./_tests -prune -o -type f -name \*.php | grep -v _tests)', $return);
-
-foreach($return as $includeFile){
-	require_once(realpath(__DIR__ . '/../' . substr($includeFile, 1)));
-}
+spl_autoload_register('autoload');
 
 /**
  * Class ORMTest

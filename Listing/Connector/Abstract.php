@@ -1,6 +1,6 @@
 <?php
 
-abstract class ObjectRelationMaper_Listing_Connector_Abstract extends ObjectRelationMapper_ORM_Iterator
+abstract class ObjectRelationMapper_Listing_Connector_Abstract extends ObjectRelationMapper_ORM_Iterator
 {
 	protected $translatedData = Array();
 

@@ -1,6 +1,6 @@
 <?php
 
-class ObjectRelationMapper_Listing_Connector_Search extends ObjectRelationMaper_Listing_Connector_Abstract implements ObjectRelationMapper_Listing_Connector_Interface
+class ObjectRelationMapper_Listing_Connector_Search extends ObjectRelationMapper_Listing_Connector_Abstract implements ObjectRelationMapper_Listing_Connector_Interface
 {
 	/**
 	 * @var ObjectRelationMapper_Search_Search
