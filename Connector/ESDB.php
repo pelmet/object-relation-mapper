@@ -1,7 +1,8 @@
 <?php
 
+namespace ObjectRelationMapper;
 
-class ObjectRelationMapper_Connector_ESDB implements ObjectRelationMapper_Connector_Interface
+class Connector_ESDB implements Connector_Interface
 {
 	protected $db;
 
@@ -10,7 +11,7 @@ class ObjectRelationMapper_Connector_ESDB implements ObjectRelationMapper_Connec
 		if(!is_null($db)){
 			$this->db = $db;
 		} else {
-			$this->db = Factory::Db();
+			$this->db = \Factory::Db();
 		}
 	}
 
@@ -19,7 +20,7 @@ class ObjectRelationMapper_Connector_ESDB implements ObjectRelationMapper_Connec
 	 */
 	public function query($query, $parameters, $server)
 	{
-		return $this->db->query($query)->par($parameters)->s($server)->fetch(Db::FETCH_ASSOC)->ex();
+		return $this->db->query($query)->par($parameters)->s($server)->fetch(\Db::FETCH_ASSOC)->ex();
 	}
 
 	/**

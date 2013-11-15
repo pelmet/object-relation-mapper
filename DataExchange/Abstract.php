@@ -1,16 +1,18 @@
 <?php
 
-abstract class ObjectRelationMapper_DataExchange_Abstract
+namespace ObjectRelationMapper;
+
+abstract class DataExchange_Abstract
 {
 	/**
-	 * @var ObjectRelationMapper_ORM
+	 * @var ORM
 	 **/
 	protected $orm;
 
 	/**
 	 * @inheritdoc
 	 */
-	public function __construct(ObjectRelationMapper_ORM $orm)
+	public function __construct(ORM $orm)
 	{
 		$this->orm = $orm;
 	}

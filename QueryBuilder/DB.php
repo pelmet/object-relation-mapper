@@ -1,9 +1,11 @@
 <?php
 
-class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBuilder_Abstract
+namespace ObjectRelationMapper;
+
+class QueryBuilder_DB extends QueryBuilder_Abstract
 {
 	/**
-	 * @var ObjectRelationMapper_Connector_ESDB
+	 * @var Connector_ESDB
 	 */
 	protected $connector;
 
@@ -12,14 +14,14 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		if(!is_null($connector)){
 			$this->connector = $connector;
 		} else {
-			$this->connector = new ObjectRelationMapper_Connector_ESDB();
+			$this->connector = new Connector_ESDB();
 		}
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function load(ObjectRelationMapper_ORM $orm)
+	public function load(ORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
@@ -56,7 +58,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function loadByPrimaryKey(ObjectRelationMapper_ORM $orm)
+	public function loadByPrimaryKey(ORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		// SELECT columns FROM table WHERE
@@ -86,7 +88,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function insert(ObjectRelationMapper_ORM $orm)
+	public function insert(ORM $orm)
 	{
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . ' SET ';
 
@@ -112,7 +114,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function update(ObjectRelationMapper_ORM $orm, $oldPrimaryKey = NULL)
+	public function update(ORM $orm, $oldPrimaryKey = NULL)
 	{
 		$query = 'UPDATE ' . $orm->getConfigDbTable() . ' SET ';
 
@@ -141,7 +143,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function delete(ObjectRelationMapper_ORM $orm)
+	public function delete(ORM $orm)
 	{
 		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
 
@@ -153,7 +155,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function count(ObjectRelationMapper_ORM $orm)
+	public function count(ORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT count(' . $orm->getConfigDbPrimaryKey() . ') as count FROM ' . $orm->getConfigDbTable();
@@ -182,7 +184,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function countByQuery(ObjectRelationMapper_ORM $orm, $query, $params)
+	public function countByQuery(ORM $orm, $query, $params)
 	{
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
@@ -196,7 +198,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 	/**
 	 * @inheritdoc
 	 */
-	public function loadMultiple(ObjectRelationMapper_ORM $orm)
+	public function loadMultiple(ORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
@@ -229,7 +231,7 @@ class ObjectRelationMapper_QueryBuilder_DB extends ObjectRelationMapper_QueryBui
 		}
 	}
 
-    public function loadByQuery(ObjectRelationMapper_ORM $orm, $query, $params)
+    public function loadByQuery(ORM $orm, $query, $params)
     {
         $query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 

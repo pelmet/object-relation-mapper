@@ -1,19 +1,21 @@
 <?php
 
+namespace ObjectRelationMapper;
+
 /**
  * Class ObjectRelationMapper
  *
  * @property mixed primaryKey
  */
-abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstract implements ObjectRelationMapper_ORM_Interface
+abstract class ORM extends ORM_Abstract implements ORM_Interface
 {
 	/**
 	 * Da se prepsat na cokoliv jineho v extendovane tride
 	 */
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ObjectRelationMapper_ConfigStorage_Basic';
-		$this->queryBuilder		= new ObjectRelationMapper_QueryBuilder_DB();
+		$this->configStorage 	= 'ConfigStorage_Basic';
+		$this->queryBuilder		= new QueryBuilder_DB();
 	}
 
 	/**
@@ -43,13 +45,13 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 
 	/**
 	 * Nahraje objekt z daneho storage
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 * @return boolean|mixed
 	 */
 	public function loadByPrimaryKey()
 	{
 		if(!isset($this->primaryKey) || empty($this->primaryKey)){
-			throw new ObjectRelationMapper_Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+			throw new Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
 		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
@@ -221,12 +223,12 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
      * @param $query
      * @param $params
      * @return array
-     * @throws ObjectRelationMapper_Exception_ORM
+     * @throws Exception_ORM
      */
     public function loadByQuery($query, $params)
     {
         if(empty($query)){
-            throw new ObjectRelationMapper_Exception_ORM('Nemohu loadovat pres prazdnou query.');
+            throw new Exception_ORM('Nemohu loadovat pres prazdnou query.');
         }
 
         $collection = $this->queryBuilder->loadByQuery($this, $query, $params);
@@ -248,12 +250,12 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 	 * @param $query
 	 * @param $params
 	 * @return array
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	public function countByQuery($query, $params)
 	{
 		if(empty($query)){
-			throw new ObjectRelationMapper_Exception_ORM('Nemohu loadovat pres prazdnou query.');
+			throw new Exception_ORM('Nemohu loadovat pres prazdnou query.');
 		}
 
 		return $this->queryBuilder->countByQuery($this, $query, $params);
@@ -274,7 +276,7 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 		$orm = new $orm();
 
 		if(!is_null($order)){
-			$orm->setOrderingOrder($order, (is_null($direction) ? ObjectRelationMapper_ORM_Abstract::ORDERING_ASCENDING : $direction));
+			$orm->setOrderingOrder($order, (is_null($direction) ? ORM_Abstract::ORDERING_ASCENDING : $direction));
 		}
 
 		if(!is_null($limit)){
@@ -304,17 +306,17 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
      * @example $orm->cProperty('user.name')
      * @example $orm->cProperty('user.getAllRights, [", ", "//", "adsfdsaf"]')
      * @param $string
-     * @throws ObjectRelationMapper_Exception_ORM
+     * @throws Exception_ORM
      * @return string
      */
     public function cProperty($string)
     {
         if(!preg_match('/^(.*)\.(.*?)(\,(.*))?$/', $string, $matches)){
-            throw new ObjectRelationMapper_Exception_ORM('Vyber child property musi byt ve formatu child.property[, ["$param1", "$paramx"]]');
+            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property[, ["$param1", "$paramx"]]');
         }
 
         if(!isset($this->childs[$matches[1]])){
-            throw new ObjectRelationMapper_Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
+            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
         }
 
         if(!isset($this->childsData[$matches[1]])){
@@ -341,17 +343,17 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
      * @example $orm->cProperties('report.time')
      * @param $string
      * @param null $glue
-     * @throws ObjectRelationMapper_Exception_ORM
+     * @throws Exception_ORM
      * @return string
      */
     public function cProperties($string, $glue = NULL)
     {
         if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
-            throw new ObjectRelationMapper_Exception_ORM('Vyber child property musi byt ve formatu child.property');
+            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property');
         }
 
         if(!isset($this->childs[$matches[1]])){
-            throw new ObjectRelationMapper_Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
+            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
         }
 
         if(!isset($this->childsData[$matches[1]])){

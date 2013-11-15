@@ -6,8 +6,8 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	{
 		$testOrm = new ORMTest();
 
-		$this->assertInstanceOf('ObjectRelationMapper_ORM_Interface', $testOrm);
-		$this->assertInstanceOf('ObjectRelationMapper_ORM_Abstract', $testOrm);
+		$this->assertInstanceOf('ObjectRelationMapper\ORM_Interface', $testOrm);
+		$this->assertInstanceOf('ObjectRelationMapper\ORM_Abstract', $testOrm);
 	}
 
 	public function testSetPrimaryKey()
@@ -34,7 +34,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper_Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception_ORM
 	 */
 	public function testSetterToBadColumn()
 	{
@@ -44,7 +44,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper_Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception_ORM
 	 */
 	public function testGetterToBadColumn()
 	{
@@ -64,7 +64,7 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper_Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception_ORM
 	 */
 	public function testDynamicNotDefinedFunction()
 	{

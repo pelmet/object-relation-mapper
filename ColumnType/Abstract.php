@@ -1,10 +1,12 @@
 <?php
 
+namespace ObjectRelationMapper;
+
 /**
- * Class ObjectRelationMapper_ColumnType_Abstract
+ * Class ColumnType_Abstract
  * Definice Db Radku
  */
-abstract class ObjectRelationMapper_ColumnType_Abstract
+abstract class ColumnType_Abstract
 {
 	protected $col;
 	protected $alias;

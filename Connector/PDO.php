@@ -1,7 +1,9 @@
 <?php
 
+namespace ObjectRelationMapper;
 
-class ObjectRelationMapper_Connector_PDO implements ObjectRelationMapper_Connector_Interface
+
+class Connector_PDO implements Connector_Interface
 {
 	/**
 	 * @var PDO
@@ -14,7 +16,7 @@ class ObjectRelationMapper_Connector_PDO implements ObjectRelationMapper_Connect
 	 */
 	public function __construct($db = NULL)
 	{
-		if(!$db instanceof PDO){
+		if(!$db instanceof \PDO){
 			throw new Exception_QueryBuilder('Db musi byt instance PDO');
 		}
 
@@ -36,7 +38,7 @@ class ObjectRelationMapper_Connector_PDO implements ObjectRelationMapper_Connect
 
 		$query->execute();
 
-		return $query->fetchAll(PDO::FETCH_ASSOC);
+		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
 	/**

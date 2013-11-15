@@ -1,6 +1,8 @@
 <?php
 
-abstract class ObjectRelationMapper_ORM_Iterator implements ArrayAccess, IteratorAggregate, Countable
+namespace ObjectRelationMapper;
+
+abstract class ORM_Iterator implements \ArrayAccess, \IteratorAggregate, \Countable
 {
 	/**
 	 * Iterovatelena Promenna
@@ -23,7 +25,7 @@ abstract class ObjectRelationMapper_ORM_Iterator implements ArrayAccess, Iterato
 	 */
 	public function getIterator()
 	{
-		return new ArrayIterator($this->{$this->getIterableName()});
+		return new \ArrayIterator($this->{$this->getIterableName()});
 	}
 
 	/**

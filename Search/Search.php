@@ -1,9 +1,11 @@
 <?php
 
-class ObjectRelationMapper_Search_Search extends ObjectRelationMapper_Search_Abstract
+namespace ObjectRelationMapper;
+
+class Search_Search extends Search_Abstract
 {
-    const ORDERING_DESCENDING = ObjectRelationMapper_ORM::ORDERING_DESCENDING;
-    const ORDERING_ASCENDING = ObjectRelationMapper_ORM::ORDERING_ASCENDING;
+    const ORDERING_DESCENDING = ORM::ORDERING_DESCENDING;
+    const ORDERING_ASCENDING = ORM::ORDERING_ASCENDING;
 
 
     /**

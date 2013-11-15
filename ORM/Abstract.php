@@ -1,6 +1,9 @@
 <?php
+
+namespace ObjectRelationMapper;
+
 /**
- * Class ObjectRelationMapper_ORM_Abstract
+ * Class ORM_Abstract
  *
  * Obsluzne a pomocne funkce jsou rozdelene zde pro lepsi prehlednost
  *
@@ -21,7 +24,7 @@
  * @method getIdConfig
  * @method getChildUserConfig
  */
-abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_ORM_Iterator
+abstract class ORM_Abstract extends ORM_Iterator
 {
 	const BASE_CONFIG_DB_SERVER = 'DbServer';
 	const BASE_CONFIG_DB_TABLE 	= 'DbTable';
@@ -79,12 +82,12 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	protected $configurationCheck = true;
 
 	/**
-	 * @var ObjectRelationMapper_ConfigStorage_Interface
+	 * @var ConfigStorage_Interface
 	 */
 	protected $configStorage;
 
 	/**
-	 * @var ObjectRelationMapper_QueryBuilder_DB
+	 * @var QueryBuilder_DB
 	 */
 	protected $queryBuilder;
 
@@ -124,14 +127,14 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	/**
 	 * Construct
 	 * @param int $primaryKey
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	public function __construct($primaryKey = NULL)
 	{
 		$this->setORMStorages();
 		if($this->configurationCheck && (!$this->checkQueryBuilder() || !$this->checkORMConfigStorage())){
-			throw new ObjectRelationMapper_Exception_ORM('Config Storage musi byt instance ObjectRelationMapper_ConfigStorage_Interface. Query Builder musi byt instance
-			ObjectRelationMapper_QueryBuilder_Abstract.');
+			throw new Exception_ORM('Config Storage musi byt instance ConfigStorage_Interface. Query Builder musi byt instance
+			QueryBuilder_Abstract.');
 		}
 
 		$storage = &$this->configStorage;
@@ -173,7 +176,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	/**
 	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
 	 * @param $property
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 * @return mixed|null
 	 */
 	public function __get($property)
@@ -182,7 +185,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 			return $this->getPrimaryKey();
 		} else {
 			if(!isset($this->aliases[$property]) && !isset($this->childs[$property])){
-				throw new ObjectRelationMapper_Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			if(isset($this->data[$property])){
@@ -199,7 +202,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 * Nastavi hodnotu property
 	 * @param $property
 	 * @param $value
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	public function __set($property, $value)
 	{
@@ -207,7 +210,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 			$this->setPrimaryKey($value);
 		} else {
 			if(!isset($this->aliases[$property]) && !isset($this->childs[$property])){
-				throw new ObjectRelationMapper_Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			if(isset($this->aliases[$property])){
@@ -223,7 +226,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 * Obecny caller pro urctite typy metod
 	 * @param $function
 	 * @param array $arguments
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 * @return mixed
 	 */
 	public function __call($function, Array $arguments)
@@ -264,7 +267,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 			return isset($this->changedVariables[$matches[1]]);
 		}
 
-		throw new ObjectRelationMapper_Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
+		throw new Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
 	}
 
 	/**
@@ -310,7 +313,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	private function checkORMConfigStorage()
 	{
 		$cs = new $this->configStorage();
-		if($cs instanceof ObjectRelationMapper_ConfigStorage_Interface){
+		if($cs instanceof ConfigStorage_Interface){
 			return true;
 		} else {
 			return false;
@@ -323,7 +326,7 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 */
 	private function checkQueryBuilder()
 	{
-		if($this->queryBuilder instanceof ObjectRelationMapper_QueryBuilder_Abstract){
+		if($this->queryBuilder instanceof QueryBuilder_Abstract){
 			return true;
 		} else {
 			return false;
@@ -364,18 +367,18 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 * @param string $dbType
 	 * @param string $length
 	 * @param array $additionalParams
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	protected function addColumn($dbName, $phpAlias, $dbType = 'string', $length = '255', $additionalParams = Array())
 	{
-		$className = 'ObjectRelationMapper_ColumnType_' . ucfirst($dbType);
+		$className = 'ObjectRelationMapper\ColumnType_' . ucfirst($dbType);
 		if(!class_exists($className)){
-			throw new ObjectRelationMapper_Exception_ORM('Trida ' . $className . ' neexistuje. Typ '.$dbType. ' nelze pouzit, dokud nebude nadefinovana');
+			throw new Exception_ORM('Trida ' . $className . ' neexistuje. Typ '.$dbType. ' nelze pouzit, dokud nebude nadefinovana');
 		} else {
 			$col = new $className($dbName, $phpAlias, $dbType, $length, $additionalParams);
 
-			if(!$col instanceof ObjectRelationMapper_ColumnType_Interface){
-				throw new ObjectRelationMapper_Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper_ColumnType_Interface. Typ '.$dbType. ' nelze pouzit, dokud toto nebude opraveno');
+			if(!$col instanceof ColumnType_Interface){
+				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\ColumnType_Interface. Typ '.$dbType. ' nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 
@@ -389,18 +392,18 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 * @param $phpAlias
 	 * @param $localKey
 	 * @param $foreignKey
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey)
 	{
-		$className = 'ObjectRelationMapper_ColumnType_Child';
+		$className = 'ObjectRelationMapper\ColumnType_Child';
 		if(!class_exists($className) || !class_exists($ormName)){
-			throw new ObjectRelationMapper_Exception_ORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
+			throw new Exception_ORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
 		} else {
 			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, Array());
 
-			if(!$this->childs[$phpAlias] instanceof ObjectRelationMapper_ColumnType_Interface){
-				throw new ObjectRelationMapper_Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper_ColumnType_Interface. Typ child nelze pouzit, dokud toto nebude opraveno');
+			if(!$this->childs[$phpAlias] instanceof ColumnType_Interface){
+				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\ColumnType_Interface. Typ child nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 	}
@@ -413,11 +416,11 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 		$configured = array_diff_key($this->requiredBasicConfiguration, $this->basicConfiguration);
 
 		if(!empty($configured)){
-			throw new ObjectRelationMapper_Exception_ORM('Nejsou nastaveny properties '. implode(', ', array_keys($configured)) . ' nastavte prosim tyto hodnoty');
+			throw new Exception_ORM('Nejsou nastaveny properties '. implode(', ', array_keys($configured)) . ' nastavte prosim tyto hodnoty');
 		}
 
 		if(empty($this->columns) || empty($this->aliases)){
-			throw new ObjectRelationMapper_Exception_ORM('Nejsou nastaveny aliases nebo columns, nastavte prosim tyto hodnoty');
+			throw new Exception_ORM('Nejsou nastaveny aliases nebo columns, nastavte prosim tyto hodnoty');
 		}
 	}
 
@@ -425,12 +428,12 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 * Nastavi order
 	 * @param $column
 	 * @param string $direction
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	public function setOrderingOrder($column, $direction = self::ORDERING_ASCENDING)
 	{
 		if(!isset($this->columns[$column]) && !isset($this->aliases[$column])){
-			throw new ObjectRelationMapper_Exception_ORM('Sloupec nebo alias '. $column .' neexistuje.');
+			throw new Exception_ORM('Sloupec nebo alias '. $column .' neexistuje.');
 		}
 
 		if(isset($this->columns[$column])){
@@ -464,13 +467,13 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	 * Vrati nazev policka dle aliasu v php
 	 * @param $fieldName
 	 * @param bool $includeTableName
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 * @return string
 	 */
 	public function getDbField($fieldName, $includeTableName = false)
 	{
 		if(!isset($this->aliases[$fieldName])){
-			throw new ObjectRelationMapper_Exception_ORM('Alias pro column '.$fieldName . ' neexistuje');
+			throw new Exception_ORM('Alias pro column '.$fieldName . ' neexistuje');
 		}
 
 		if($includeTableName){
@@ -483,13 +486,13 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 	/**
 	 * Vrati PHP Alias dle nazvu sloupecku v DB
 	 * @param $fieldName
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 * @return string
 	 */
 	public function getAlias($fieldName)
 	{
 		if(!isset($this->columns[$fieldName])){
-			throw new ObjectRelationMapper_Exception_ORM('Db Field pro column '.$fieldName . ' neexistuje');
+			throw new Exception_ORM('Db Field pro column '.$fieldName . ' neexistuje');
 		}
 
 		return $this->columns[$fieldName]->alias;
@@ -507,9 +510,9 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 		$s = &$this->configStorage;
 
 		if($includeTableName){
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS_WITH_TABLE);
+			$return = $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_DB_FIELDS_WITH_TABLE);
 		} else {
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_DB_FIELDS);
+			$return = $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_DB_FIELDS);
 		}
 
 		if(!empty($exclude)){
@@ -546,9 +549,9 @@ abstract class ObjectRelationMapper_ORM_Abstract extends ObjectRelationMapper_OR
 		$s = &$this->configStorage;
 
 		if(!is_null($glue)){
-			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES));
+			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_ALIASES));
 		}  else {
-			return  $s::getSpecificConfiguration($this->getConfigObject(), ObjectRelationMapper_ConfigStorage_Abstract::ALL_ALIASES);
+			return  $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_ALIASES);
 		}
 	}
 

@@ -1,6 +1,8 @@
 <?php
 
-class ObjectRelationMapper_DataExchange_Array extends ObjectRelationMapper_DataExchange_Abstract implements ObjectRelationMapper_DataExchange_Interface
+namespace ObjectRelationMapper;
+
+class DataExchange_Array extends DataExchange_Abstract implements DataExchange_Interface
 {
 
 	/**

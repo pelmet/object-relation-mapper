@@ -1,6 +1,8 @@
 <?php
 
-class ObjectRelationMapper_ColumnType_Child extends ObjectRelationMapper_ColumnType_Abstract implements ObjectRelationMapper_ColumnType_Interface
+namespace ObjectRelationMapper;
+
+class ColumnType_Child extends ColumnType_Abstract implements ColumnType_Interface
 {
 	protected $ormName;
 	protected $alias;

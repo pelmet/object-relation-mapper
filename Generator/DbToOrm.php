@@ -1,10 +1,12 @@
 <?php
 
+namespace ObjectRelationMapper;
+
 /**
- * Class ObjectRelationMapper_Generator_DbToOrm
- * @example new ObjectRelationMapper_Generator_DbToOrm(new ObjectRelationMapper_Connector_ESDB(), 'salary', 'master', 'ORM_Salary', 'ORM_Base', TEMP_DIR, 'sa_');
+ * Class Generator_DbToOrm
+ * @example new Generator_DbToOrm(new Connector_ESDB(), 'salary', 'master', 'ORM_Salary', 'ORM_Base', TEMP_DIR, 'sa_');
  */
-class ObjectRelationMapper_Generator_DbToOrm
+class Generator_DbToOrm
 {
 	protected $columns;
 	protected $firstCol;
@@ -19,7 +21,7 @@ class ObjectRelationMapper_Generator_DbToOrm
 
 	/**
 	 * Generator ORMka
-	 * @param ObjectRelationMapper_Connector_Interface $connector
+	 * @param Connector_Interface $connector
 	 * @param string $dbTable
 	 * @param string $serverAlias
 	 * @param string $ormName
@@ -27,7 +29,7 @@ class ObjectRelationMapper_Generator_DbToOrm
 	 * @param string $path
 	 * @param string $colPrefix
 	 */
-	public function __construct(ObjectRelationMapper_Connector_Interface $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix)
+	public function __construct(Connector_Interface $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix)
 	{
 		$describe = $connector->query('DESCRIBE '.$dbTable, Array(), $serverAlias);
 

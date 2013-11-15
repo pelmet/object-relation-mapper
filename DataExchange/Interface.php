@@ -1,12 +1,14 @@
 <?php
 
-interface ObjectRelationMapper_DataExchange_Interface
+namespace ObjectRelationMapper;
+
+interface DataExchange_Interface
 {
 	/**
 	 * Zakladni Construct
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 */
-	public function __construct(ObjectRelationMapper_ORM $orm);
+	public function __construct(ORM $orm);
 
 	/**
 	 * Naplni ormko daty

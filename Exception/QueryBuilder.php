@@ -1,6 +1,8 @@
 <?php
 
-class Exception_QueryBuilder extends Exception
+namespace ObjectRelationMapper;
+
+class Exception_QueryBuilder extends \Exception
 {
 
 }

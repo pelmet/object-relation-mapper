@@ -1,6 +1,8 @@
 <?php
 
-class ObjectRelationMapper_Exception_ORM extends Exception
+namespace ObjectRelationMapper;
+
+class Exception_ORM extends \Exception
 {
 
 }

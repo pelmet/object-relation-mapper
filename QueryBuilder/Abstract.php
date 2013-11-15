@@ -1,56 +1,58 @@
 <?php
 
-abstract class ObjectRelationMapper_QueryBuilder_Abstract
+namespace ObjectRelationMapper;
+
+abstract class QueryBuilder_Abstract
 {
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @return Array
 	 */
-	abstract public function load	(ObjectRelationMapper_ORM $orm);
+	abstract public function load	(ORM $orm);
 
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @return Array
 	 */
-	abstract public function loadMultiple	(ObjectRelationMapper_ORM $orm);
+	abstract public function loadMultiple	(ORM $orm);
 
     /**
-     * @param ObjectRelationMapper_ORM $orm
+     * @param ORM $orm
      * @param $query
      * @param $params
      * @return Array
      */
-    abstract public function loadByQuery	(ObjectRelationMapper_ORM $orm, $query, $params);
+    abstract public function loadByQuery	(ORM $orm, $query, $params);
 
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @param $query
 	 * @param $params
 	 * @return Array
 	 */
-	abstract public function countByQuery	(ObjectRelationMapper_ORM $orm, $query, $params);
+	abstract public function countByQuery	(ORM $orm, $query, $params);
 
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @return boolean
 	 */
-	abstract public function insert	(ObjectRelationMapper_ORM $orm);
+	abstract public function insert	(ORM $orm);
 
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @return boolean
 	 */
-	abstract public function update	(ObjectRelationMapper_ORM $orm);
+	abstract public function update	(ORM $orm);
 
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @return boolean
 	 */
-	abstract public function delete	(ObjectRelationMapper_ORM $orm);
+	abstract public function delete	(ORM $orm);
 
 	/**
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 * @return int
 	 */
-	abstract public function count	(ObjectRelationMapper_ORM $orm);
+	abstract public function count	(ORM $orm);
 }

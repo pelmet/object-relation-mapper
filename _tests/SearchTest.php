@@ -26,7 +26,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchExact()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
         $search->exact('status', 5);
 
         $results = $search->getResults();
@@ -37,7 +37,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchEmpty()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
 
         $results = $search->getResults();
 
@@ -47,7 +47,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchFrom()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
         $search->from('startTime', 11);
 
         $results = $search->getResults();
@@ -58,7 +58,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchTo()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
         $search->to('startTime', 123456, true);
 
         $results = $search->getResults();
@@ -69,7 +69,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchLike()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
         $search->to('command', 'ls%');
 
         $results = $search->getResults();
@@ -80,7 +80,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchNotNull()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
         $search->notNull('command');
 
         $results = $search->getResults();
@@ -91,7 +91,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
     public function testSearchNull()
     {
-        $search = new ObjectRelationMapper_Search_Search(new ORMTest());
+        $search = new ObjectRelationMapper\Search_Search(new ORMTest());
         $search->null('command');
 
         $results = $search->getResults();
@@ -101,7 +101,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
 	public function testCountNothing()
 	{
-		$search = new ObjectRelationMapper_Search_Search(new ORMTest());
+		$search = new ObjectRelationMapper\Search_Search(new ORMTest());
 		$search->null('command');
 
 		$results = $search->getCount();
@@ -111,7 +111,7 @@ class SearchTest extends PHPUnit_Framework_TestCase
 
 	public function testCount()
 	{
-		$search = new ObjectRelationMapper_Search_Search(new ORMTest());
+		$search = new ObjectRelationMapper\Search_Search(new ORMTest());
 		$search->notNull('command');
 
 		$results = $search->getCount();

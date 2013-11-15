@@ -1,10 +1,12 @@
 <?php
 
-abstract class ObjectRelationMapper_Search_Abstract
+namespace ObjectRelationMapper;
+
+abstract class Search_Abstract
 {
 
 	/**
-	 * @var ObjectRelationMapper_ORM
+	 * @var ORM
 	 */
 	protected $orm;
 	protected $search = Array();
@@ -21,9 +23,9 @@ abstract class ObjectRelationMapper_Search_Abstract
 
 	/**
 	 * Standardni construct
-	 * @param ObjectRelationMapper_ORM $orm
+	 * @param ORM $orm
 	 */
-	public function __construct(ObjectRelationMapper_ORM $orm)
+	public function __construct(ORM $orm)
 	{
 		$this->orm = $orm;
 		$this->aliases = $orm->getAllAliases();
@@ -61,11 +63,11 @@ abstract class ObjectRelationMapper_Search_Abstract
 
     /**
      * Vrati column z childa
-     * @param ObjectRelationMapper_ORM $orm
+     * @param ORM $orm
      * @param $alias
      * @return string
      */
-    protected function getOrmDbColumn(ObjectRelationMapper_ORM $orm, $alias)
+    protected function getOrmDbColumn(ORM $orm, $alias)
     {
         return $orm->getDbField($alias, true);
     }
@@ -73,12 +75,12 @@ abstract class ObjectRelationMapper_Search_Abstract
 	/**
 	 * Vrati, zda na ORM existuje Alias
 	 * @param $property
-	 * @throws ObjectRelationMapper_Exception_ORM
+	 * @throws Exception_ORM
 	 */
 	protected function aliasExists($property)
 	{
 		if(!in_array($property, $this->aliases)){
-			throw new ObjectRelationMapper_Exception_ORM('Alias '.$property.' neexistuje na ORM '. $this->orm->getConfigObject());
+			throw new Exception_ORM('Alias '.$property.' neexistuje na ORM '. $this->orm->getConfigObject());
 		}
 	}
 
