@@ -323,7 +323,7 @@ abstract class ObjectRelationMapper_ORM extends ObjectRelationMapper_ORM_Abstrac
 
         if(isset($this->childsData[$matches[1]][0]->{$matches[2]})){
             return $this->childsData[$matches[1]][0]->{$matches[2]};
-        } elseif(method_exists($this->childsData[$matches[1]][0], $matches[2])) {
+        } elseif(isset($this->childsData[$matches[1]][0]) && method_exists($this->childsData[$matches[1]][0], $matches[2])) {
 	        if(isset($matches[3]) && isset($matches[4])){
 		        preg_match_all('/([\'"])(.*?)([\'"])/i', $matches[4], $params);
 		        return call_user_func_array(Array($this->childsData[$matches[1]][0], $matches[2]), $params[2]);
