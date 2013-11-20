@@ -136,6 +136,17 @@ class Search_Search extends Search_Abstract
 	}
 
 	/**
+	 * Prida childa bez dalsich parametru
+	 * @param $childName
+	 * @return $this
+	 */
+	public function child($childName)
+	{
+		$this->addChild($childName);
+		return $this;
+	}
+
+	/**
 	 * Prida mysql funkci k property a vybere ji pak
 	 * @param $property
 	 * @param $function

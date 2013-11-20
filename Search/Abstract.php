@@ -50,6 +50,21 @@ abstract class Search_Abstract
 	}
 
 	/**
+	 * Prida childa, kdyz nechceme vyhledavat podle parametru
+	 * @param $childName
+	 */
+	protected function addChild($childName)
+	{
+		$child = $this->orm->{'getChild'.ucfirst($childName).'Config'}();
+		$orm = new $child->ormName();
+		$this->additionalOrms[$childName] = $child;
+		$this->joinTables[$orm->getConfigDbTable()] = ' LEFT JOIN '. $orm->getConfigDbTable().' ON '.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
+		$this->selectCols[$orm->getConfigDbTable()] = $orm->getAllDbFields(NULL, true);
+
+		return $orm;
+	}
+
+	/**
 	 * Prida DbField
 	 * @param $field
 	 * @return string
@@ -57,12 +72,7 @@ abstract class Search_Abstract
 	protected function dbFieldName($field)
 	{
 		if(preg_match('/(.*)\.(.*)/', $field, $matches)){
-			$child = $this->orm->{'getChild'.ucfirst($matches[1]).'Config'}();
-            $orm = new $child->ormName();
-			$this->additionalOrms[$matches[1]] = $child;
-            $this->joinTables[$orm->getConfigDbTable()] = ' LEFT JOIN '. $orm->getConfigDbTable().' ON '.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
-			$this->selectCols[$orm->getConfigDbTable()] = $orm->getAllDbFields(NULL, true);
-            return $this->getOrmDbColumn($orm, $matches[2]);
+            return $this->getOrmDbColumn($this->addChild($matches[1]), $matches[2]);
 		} else {
             $this->aliasExists($field);
             return $this->getOrmDbColumn($this->orm, $field);
@@ -160,21 +170,21 @@ abstract class Search_Abstract
 	{
 		$return = Array();
 
-		foreach($this->getResults() as $key => $orm){
+		foreach($this->getResults() as $orm){
 			$return[$orm->primaryKey] = $orm;
 		}
 
 		foreach($this->additionalOrms as $child => $load){
 			$childs = Array();
 			foreach($this->fillDifferentORM(new $load->ormName()) as $orm){
-				$childs[$orm->{$orm->getAlias($load->foreignKey)}][] = $orm;
+				$childs[$orm->{$orm->getAlias($load->foreignKey)}][$orm->primaryKey] = $orm;
 			}
 
 			foreach($childs as $id => $value){
 				$return[$id]->$child = $value;
 			}
 		}
-		dump($return);
+
 		return $return;
 	}
 
