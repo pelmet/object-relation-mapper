@@ -87,7 +87,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	protected $configStorage;
 
 	/**
-	 * @var QueryBuilder_DB
+	 * @var QueryBuilder_Abstract
 	 */
 	protected $queryBuilder;
 
@@ -123,6 +123,24 @@ abstract class ORM_Abstract extends ORM_Iterator
 	abstract public function loadByPrimaryKey();
 	abstract public function loadMultiple($loadData = NULL);
 	abstract protected function setORMStorages();
+
+	/**
+	 * Vrati Storage
+	 * @return ConfigStorage_Interface
+	 */
+	public function getStorage()
+	{
+		return $this->configStorage;
+	}
+
+	/**
+	 * Vrati QueryBuilder
+	 * @return QueryBuilder_Abstract
+	 */
+	public function getQueryBuilder()
+	{
+		return $this->queryBuilder;
+	}
 
 	/**
 	 * Construct

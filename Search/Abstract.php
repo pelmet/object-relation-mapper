@@ -12,6 +12,7 @@ abstract class Search_Abstract
 	protected $search = Array();
 	protected $params = Array();
 	protected $joinTables = Array();
+	protected $selectCols = Array();
 	protected $aliases = Array();
 	protected $searchCount = 0;
 	protected $query;
@@ -20,6 +21,10 @@ abstract class Search_Abstract
 	protected $offset = 0;
 	protected $imploder = ' AND ';
 	protected $ordering = Array();
+	protected $results = Array();
+	protected $group = Array();
+	protected $functionColumn = Array();
+	protected $additionalOrms = Array();
 
 	/**
 	 * Standardni construct
@@ -29,6 +34,7 @@ abstract class Search_Abstract
 	{
 		$this->orm = $orm;
 		$this->aliases = $orm->getAllAliases();
+		$this->selectCols[$orm->getConfigDbTable()] = $orm->getAllDbFields(NULL, true);
 	}
 
 	/**
@@ -53,7 +59,9 @@ abstract class Search_Abstract
 		if(preg_match('/(.*)\.(.*)/', $field, $matches)){
 			$child = $this->orm->{'getChild'.ucfirst($matches[1]).'Config'}();
             $orm = new $child->ormName();
-            $this->joinTables[] = ' LEFT JOIN '.$orm->getConfigDbTable().' ON '.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
+			$this->additionalOrms[$matches[1]] = $child;
+            $this->joinTables[$orm->getConfigDbTable()] = ' LEFT JOIN '. $orm->getConfigDbTable().' ON '.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
+			$this->selectCols[$orm->getConfigDbTable()] = $orm->getAllDbFields(NULL, true);
             return $this->getOrmDbColumn($orm, $matches[2]);
 		} else {
             $this->aliasExists($field);
@@ -136,7 +144,56 @@ abstract class Search_Abstract
 	 */
 	public function getResults()
 	{
-		return $this->orm->loadByQuery($this->composeLoadQuery(), $this->params);
+		if(empty($this->results)){
+			$queryBuilder = $this->orm->getQueryBuilder();
+			$this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params);
+		}
+
+		return $this->orm->loadMultiple($this->results);
+	}
+
+	/**
+	 * Vrati vysledky s childama podle master ORM
+	 * @return Array
+	 */
+	public function getResultsWithChildsLoaded()
+	{
+		$return = Array();
+
+		foreach($this->getResults() as $key => $orm){
+			$return[$orm->primaryKey] = $orm;
+		}
+
+		foreach($this->additionalOrms as $child => $load){
+			$childs = Array();
+			foreach($this->fillDifferentORM(new $load->ormName()) as $orm){
+				$childs[$orm->{$orm->getAlias($load->foreignKey)}][] = $orm;
+			}
+
+			foreach($childs as $id => $value){
+				$return[$id]->$child = $value;
+			}
+		}
+		dump($return);
+		return $return;
+	}
+
+	/**
+	 * Naplni jine ORM daty z vyhledavani
+	 * @param ORM $orm
+	 * @return array
+	 */
+	public function fillDifferentORM(ORM $orm)
+	{
+		return $orm->loadMultiple($this->results);
+	}
+
+	/**
+	 * Vyresetuje knihovnu, aby provedla dalsi vyhledavani
+	 */
+	public function resetSearch()
+	{
+		$this->results = Array();
 	}
 
 	/**
@@ -145,22 +202,39 @@ abstract class Search_Abstract
 	 */
 	protected function composeLoadQuery()
 	{
-		$query = 'SELECT '. $this->orm->getAllDbFields(', ', true). ' FROM '.$this->orm->getConfigDbTable() . ' ';
-
-        if(!empty($this->joinTables)){
-            $query .= ' ' . implode(' ', $this->joinTables);
-        }
+		$query = 'SELECT '. $this->getSelectCols() . ' FROM '.$this->orm->getConfigDbTable() . ' ';
+        $query .= ' ' . implode(' ', $this->joinTables);
 
 		if(!empty($this->search)){
 			$query .= ' WHERE ' .implode($this->imploder, $this->search);
 		}
 
+		if(!empty($this->group)){
+			$query .= ' GROUP BY ' .implode(', ', $this->group);
+		}
+
 		if(!empty($this->ordering)){
-			$query .= ' ORDER BY ' .implode($this->imploder, $this->ordering);
+			$query .= ' ORDER BY ' .implode(', ', $this->ordering);
 		}
 
 		$query .= ' LIMIT '.$this->offset .', '.$this->limit;
 
 		return $query;
+	}
+
+	protected function getSelectCols()
+	{
+		$return = Array();
+
+		foreach($this->selectCols as $cols){
+			foreach($cols as $key => &$col){
+				if(isset($this->functionColumn[$col])){
+					$col = $this->functionColumn[$col];
+				}
+			}
+			$return[] = implode(', ', $cols);
+		}
+
+		return implode(', ', $return);
 	}
 }

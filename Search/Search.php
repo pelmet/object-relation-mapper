@@ -123,4 +123,26 @@ class Search_Search extends Search_Abstract
         $this->ordering[] = $this->dbFieldName($ordering) . ' ' . $direction;
         return $this;
     }
+
+	/**
+	 * Prida column pro group by
+	 * @param $property
+	 * @return $this
+	 */
+	public function groupBy($property)
+	{
+		$this->group[] = $this->dbFieldName($property);
+		return $this;
+	}
+
+	/**
+	 * Prida mysql funkci k property a vybere ji pak
+	 * @param $property
+	 * @param $function
+	 * @notyetimplemented
+	 */
+	/*public function selectFunctionColumn($property, $function)
+	{
+		$this->functionColumn[$this->dbFieldName($property)] = $function . '(' . $this->dbFieldName($property) . ') AS ' .$this->dbFieldName($property) ;
+	}*/
 }
