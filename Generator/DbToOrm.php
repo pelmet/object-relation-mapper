@@ -43,7 +43,7 @@ class Generator_DbToOrm
 		$this->addOrmLine('/**');
 
 		foreach($this->columns as $columnName => $columnInfo){
-			$this->addOrmLine('* @property string '.$this->toCamelCase($columnName, $colPrefix));
+			$this->addOrmLine('* @property '.$columnInfo['type'].' '.$this->toCamelCase($columnName, $colPrefix));
 		}
 		$this->addOrmLine('**/');
 
