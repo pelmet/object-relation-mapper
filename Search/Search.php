@@ -8,6 +8,18 @@ class Search_Search extends Search_Abstract
     const ORDERING_ASCENDING = ORM::ORDERING_ASCENDING;
 
 
+	/**
+	 * Hleda presnou neshodu
+	 * @param $property
+	 * @param $value
+	 * @return $this
+	 */
+	public function notExact($property, $value)
+	{
+		$this->search[] = $this->dbFieldName($property) . ' != ' . $this->addParameter($value);
+		return $this;
+	}
+
     /**
      * Hleda presnou schodu
      * @param $property
