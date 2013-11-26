@@ -106,6 +106,11 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 */
 	protected $deleteMark = false;
 
+	/**
+	 * @var null
+	 */
+	protected $changedPrimaryKey = NULL;
+
 	protected $additionalOrdering = Array(
 		'Order' => Array(),
 		'Offset' => 0,
@@ -191,6 +196,11 @@ abstract class ORM_Abstract extends ORM_Iterator
 		}
 	}
 
+	protected function isAliasPrimaryKey($alias)
+	{
+		return $this->getDbField($alias) == $this->getConfigDbPrimaryKey();
+	}
+
 	/**
 	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
 	 * @param $property
@@ -233,6 +243,9 @@ abstract class ORM_Abstract extends ORM_Iterator
 
 			if(isset($this->aliases[$property])){
 				$this->changedVariables[$property] = true;
+				if($this->isAliasPrimaryKey($property) && is_null($this->changedPrimaryKey)){
+					$this->changedPrimaryKey = $this->primaryKey;
+				}
 				$this->data[$property] = $value;
 			} elseif(isset($this->childs[$property])){
 				$this->childsData[$property] = $value;

@@ -91,4 +91,31 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$this->assertEmpty($result);
 	}
 
+	public function testUpdateChangedPrimaryKey()
+	{
+		$insert = 'INSERT INTO d_queued_commands SET
+					qc_id = 5,
+					qc_time_start = 123456,
+					qc_time_end = 12345678,
+					qc_status = 5,
+					qc_command = "ls -laf"';
+
+		mysql_query($insert, $this->connection);
+
+		$testOrm = new ORMTest(5);
+		$testOrm->status = 10;
+		$testOrm->command = 'ls -l';
+		$testOrm->id = 15;
+		$testOrm->save();
+
+		$query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', $this->connection);
+		$result = mysql_fetch_assoc($query);
+
+		$this->assertEquals('ls -l', $result['qc_command']);
+		$this->assertEquals('10', $result['qc_status']);
+		$this->assertEquals('123456', $result['qc_time_start']);
+		$this->assertEquals('12345678', $result['qc_time_end']);
+		$this->assertEquals('15', $result['qc_id']);
+	}
+
 }

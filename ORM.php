@@ -156,7 +156,7 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 			return false;
 		}
 
-		$this->queryBuilder->update($this);
+		$this->queryBuilder->update($this, $this->changedPrimaryKey);
 
 		$this->changedVariables = Array();
 

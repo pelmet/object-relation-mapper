@@ -40,9 +40,10 @@ abstract class QueryBuilder_Abstract
 
 	/**
 	 * @param ORM $orm
+	 * @param null $oldPrimaryKey
 	 * @return boolean
 	 */
-	abstract public function update	(ORM $orm);
+	abstract public function update	(ORM $orm, $oldPrimaryKey = NULL);
 
 	/**
 	 * @param ORM $orm

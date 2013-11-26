@@ -122,16 +122,26 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$params = Array();
 		foreach($orm as $propertyName => $propertyValue){
 			$dbColumn = $orm->getDbField($propertyName);
-			if($dbColumn != $orm->getConfigDbPrimaryKey()){
+			if(!is_null($oldPrimaryKey) && $orm->primaryKey != $oldPrimaryKey){
 				$columns[] = $dbColumn . ' = :' . $dbColumn;
 				$params[] = Array(':' . $dbColumn, $propertyValue);
+			} else {
+				if($dbColumn != $orm->getConfigDbPrimaryKey()){
+					$columns[] = $dbColumn . ' = :' . $dbColumn;
+					$params[] = Array(':' . $dbColumn, $propertyValue);
+				}
 			}
 		}
 
 		$query .= implode(', ', $columns);
 
-		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :' . $orm->getConfigDbPrimaryKey();
-		$params[] = Array(':' . $orm->getConfigDbPrimaryKey(), $orm->primaryKey);
+		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :primaryKey';
+
+		if(!is_null($oldPrimaryKey) && $orm->primaryKey != $oldPrimaryKey){
+			$params[] = Array(':primaryKey', $oldPrimaryKey);
+		} else {
+			$params[] = Array(':primaryKey', $orm->primaryKey);
+		}
 
 		if(!empty($columns)){
 			return $this->connector->exec($query, $params, $orm->getConfigDbServer());
