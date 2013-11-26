@@ -35,6 +35,28 @@ class SearchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(5, $results[0]->id);
     }
 
+	public function testSearchNotExact()
+	{
+		$insert = 'INSERT INTO d_queued_commands SET
+					qc_id = 6,
+					qc_time_start = 111,
+					qc_time_end = 12345678,
+					qc_status = 5,
+					qc_command = "ls -laf"';
+
+		$this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
+		mysql_select_db(DB_DB, $this->connection);
+		mysql_query($insert, $this->connection);
+
+		$search = new ObjectRelationMapper\Search_Search(new ORMTest());
+		$search->notExact('startTime', 123456);
+
+		$results = $search->getResults();
+
+		$this->assertNotEmpty($results);
+		$this->assertEquals(6, $results[0]->id);
+	}
+
     public function testSearchEmpty()
     {
         $search = new ObjectRelationMapper\Search_Search(new ORMTest());

@@ -163,6 +163,29 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	}
 
 	/**
+	 * Vytvoří SQL delete příkaz podle nastavených hodnot ORM
+	 * @param ORM $orm
+	 * @return bool
+	 */
+	public function deleteByOrm(ORM $orm)
+	{
+		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
+
+		$columns = Array();
+		$params = Array();
+		foreach($orm as $propertyName => $propertyValue){
+			$dbColumn = $orm->getDbField($propertyName);
+			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$params[] = Array(':' . $dbColumn, $propertyValue);
+		}
+
+		if(!empty($columns)){
+			$query .= ' WHERE ' . implode(' AND ', $columns);
+		}
+		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function count(ORM $orm)

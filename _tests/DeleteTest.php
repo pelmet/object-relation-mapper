@@ -55,4 +55,24 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
         $this->assertEmpty($result);
     }
+
+	public function testDeleteByOrm()
+	{
+		$testOrm = new ORMTest();
+		$testOrm->startTime = 123456;
+		$testOrm->endTime = 12345678;
+		$testOrm->load();
+		$this->assertTrue($testOrm->isLoaded());
+
+		$testOrm = new ORMTest();
+		$testOrm->startTime = 123456;
+		$testOrm->endTime = 12345678;
+		$testOrm->getQueryBuilder()->deleteByOrm($testOrm);
+
+		$testOrm = new ORMTest();
+		$testOrm->startTime = 123456;
+		$testOrm->endTime = 12345678;
+		$testOrm->load();
+		$this->assertFalse($testOrm->isLoaded());
+	}
 }
