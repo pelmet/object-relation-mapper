@@ -182,6 +182,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		if(!empty($columns)){
 			$query .= ' WHERE ' . implode(' AND ', $columns);
 		}
+
 		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 	}
 

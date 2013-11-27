@@ -53,6 +53,12 @@ abstract class QueryBuilder_Abstract
 
 	/**
 	 * @param ORM $orm
+	 * @return boolean
+	 */
+	abstract public function deleteByOrm	(ORM $orm);
+
+	/**
+	 * @param ORM $orm
 	 * @return int
 	 */
 	abstract public function count	(ORM $orm);

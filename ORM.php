@@ -190,6 +190,14 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 	}
 
 	/**
+	 * Ihned smaze vsechna ormka podle definice z databaze
+	 */
+	public function deleteMultiple()
+	{
+		return $this->queryBuilder->deleteByOrm($this);
+	}
+
+	/**
 	 * Vrati kolekci ze zadaneho dotazu
 	 * @param array $loadData
 	 * @return array
