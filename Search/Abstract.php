@@ -52,16 +52,30 @@ abstract class Search_Abstract
 	/**
 	 * Prida childa, kdyz nechceme vyhledavat podle parametru
 	 * @param $childName
+	 * @param string $joinType
+	 * @param array $additionalCols
+	 * @param string $matching
+	 * @return ORM
 	 */
-	protected function addChild($childName)
+	protected function addChild($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
 	{
-		$child = $this->orm->{'getChild'.ucfirst($childName).'Config'}();
-		$orm = new $child->ormName();
-		$this->additionalOrms[$childName] = $child;
-		$this->joinTables[$orm->getConfigDbTable()] = ' LEFT JOIN '. $orm->getConfigDbTable().' ON '.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
-		$this->selectCols[$orm->getConfigDbTable()] = $orm->getAllDbFields(NULL, true);
+		if(!isset($this->additionalOrms[$childName])){
+			$child = $this->orm->{'getChild'.ucfirst($childName).'Config'}();
+			$orm = new $child->ormName();
+			$this->additionalOrms[$childName] = $orm;
 
-		return $orm;
+			$join = ' '.$joinType.' JOIN '. $orm->getConfigDbTable().' ON
+					'.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
+
+			foreach($additionalCols as $col => $value){
+				$join .= ' AND ' . $orm->getDbField($col, true). ' '.$matching.' '.$this->addParameter($value) .' ';
+			}
+
+			$this->joinTables[$childName] = $join;
+			$this->selectCols[$childName] = $orm->getAllDbFields(NULL, true);
+		}
+
+		return new $this->additionalOrms[$childName];
 	}
 
 	/**

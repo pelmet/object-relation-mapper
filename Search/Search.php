@@ -159,13 +159,22 @@ class Search_Search extends Search_Abstract
 	}
 
 	/**
-	 * Prida mysql funkci k property a vybere ji pak
+	 * Vybere vsechny zaznamy ke kterym neexistuje child se zadanymi parametry nebo dany child obecne
+	 * @param $child
 	 * @param $property
-	 * @param $function
-	 * @notyetimplemented
+	 * @param null $value
+	 * @param string $matching
+	 * @return $this
 	 */
-	/*public function selectFunctionColumn($property, $function)
+	public function notExist($child, $property, $value = NULL, $matching = '=')
 	{
-		$this->functionColumn[$this->dbFieldName($property)] = $function . '(' . $this->dbFieldName($property) . ') AS ' .$this->dbFieldName($property) ;
-	}*/
+		if(!is_null($value)){
+			$this->addChild($child, 'LEFT OUTER', Array($property => $value), $matching);
+		} else {
+			$this->addChild($child, 'LEFT OUTER');
+		}
+
+		$this->search[] = $this->dbFieldName($child . '.' .$property) . ' IS NULL';
+		return $this;
+	}
 }
