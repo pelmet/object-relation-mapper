@@ -184,14 +184,17 @@ abstract class Search_Abstract
 	{
 		$return = Array();
 
+
 		foreach($this->getResults() as $orm){
 			$return[$orm->primaryKey] = $orm;
 		}
 
 		foreach($this->additionalOrms as $child => $load){
 			$childs = Array();
-			foreach($this->fillDifferentORM(new $load->ormName()) as $orm){
-				$childs[$orm->{$orm->getAlias($load->foreignKey)}][$orm->primaryKey] = $orm;
+			$childConfig = $this->orm->{'getChild'.ucfirst($child).'Config'}();
+
+			foreach($this->fillDifferentORM(new $childConfig->ormName()) as $orm){
+				$childs[$orm->{$orm->getAlias($childConfig->foreignKey)}][$orm->primaryKey] = $orm;
 			}
 
 			foreach($childs as $id => $value){
