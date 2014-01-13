@@ -561,6 +561,41 @@ abstract class ORM_Abstract extends ORM_Iterator
 		}
 	}
 
+	public function getAllDbFieldsCustomNames($glue = NULL, $includeTableName = false, Array $exclude = Array(), $tableNamePrefix = null, $columnAliasPrefix = null)
+	{
+		$s = &$this->configStorage;
+
+		$tableName = $this->getConfigDbTable();
+
+		$fields = $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_DB_FIELDS);
+		foreach($fields as &$column){
+			if ($columnAliasPrefix) {
+				$column .= ' AS ' . $columnAliasPrefix . $column;
+			}
+			if($includeTableName){
+				if ($tableNamePrefix) {
+					$column = $tableNamePrefix . '.' . $column;
+				} else {
+					$column = $tableName . '.' . $column;
+				}
+			}
+		}
+
+		if(!empty($exclude)){
+			foreach($fields as $key => &$column){
+				if(in_array($column, $exclude)){
+					unset($fields[$key]);
+				}
+			}
+		}
+
+		if(!is_null($glue)){
+			return implode($glue, $fields);
+		}  else {
+			return $fields;
+		}
+	}
+
 	/**
 	 * Odpovi, zda je ORM naloadovane
 	 * @return bool
