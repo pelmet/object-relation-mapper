@@ -136,6 +136,11 @@ class Search_Search extends Search_Abstract
         return $this;
     }
 
+	public function addRandomOrdering()
+	{
+		$this->ordering[] = ' RAND() ';
+	}
+
 	/**
 	 * Prida column pro group by
 	 * @param $property
