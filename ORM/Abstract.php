@@ -180,7 +180,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs);
 		}
 
-		if(!is_null($primaryKey)){
+		if(!empty($primaryKey)){
 			$this->setPrimaryKey($primaryKey);
 			$this->loadByPrimaryKey();
 		}
