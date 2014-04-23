@@ -298,6 +298,18 @@ abstract class ORM_Abstract extends ORM_Iterator
 			return isset($this->changedVariables[$matches[1]]);
 		}
 
+		if(preg_match('/^getFirst(.*)$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
+			if(!isset($this->childsData[lcfirst($matches[1])])){
+				$this->children(lcfirst($matches[1]));
+			}
+
+			if(isset($this->childsData[lcfirst($matches[1])][0])){
+				return $this->childsData[lcfirst($matches[1])][0];
+			} else {
+				return NULL;
+			}
+		}
+
 		throw new Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
 	}
 
