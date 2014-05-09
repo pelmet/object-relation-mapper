@@ -264,4 +264,10 @@ abstract class Search_Abstract
 
 		return implode(', ', $return);
 	}
+
+	public function addPager(\Listing\Pager_IPager $pager)
+	{
+		$this->offset = $pager->getOffset();
+		$this->limit = $pager->getLimit();
+	}
 }
