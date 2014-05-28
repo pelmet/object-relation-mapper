@@ -87,4 +87,23 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 	}
+
+	public function testFieldNameAsCallFunction()
+	{
+		$testOrm = new ORMTest();
+
+		$this->assertEquals('qc_id', $testOrm->id());
+		$this->assertEquals('qc_time_end', $testOrm->endTime());
+		$this->assertEquals('qc_status', $testOrm->status());
+		$this->assertEquals('qc_command', $testOrm->command());
+	}
+
+	/**
+	 * @expectedException ObjectRelationMapper\Exception_ORM
+	 */
+	public function testDynamicFieldNameAsCallFunctionNotDefined()
+	{
+		$testOrm = new ORMTest();
+		$testOrm->iblahfield();
+	}
 }
