@@ -98,6 +98,16 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('qc_command', $testOrm->command());
 	}
 
+	public function testFieldNameWithTableAsCallFunction()
+	{
+		$testOrm = new ORMTest();
+
+		$this->assertEquals('d_queued_commands.qc_id', $testOrm->idFull());
+		$this->assertEquals('d_queued_commands.qc_time_end', $testOrm->endTimeFull());
+		$this->assertEquals('d_queued_commands.qc_status', $testOrm->statusFull());
+		$this->assertEquals('d_queued_commands.qc_command', $testOrm->commandFull());
+	}
+
 	/**
 	 * @expectedException ObjectRelationMapper\Exception_ORM
 	 */
