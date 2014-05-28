@@ -310,6 +310,14 @@ abstract class ORM_Abstract extends ORM_Iterator
 			}
 		}
 
+		if(preg_match('/^(.*)$/i', $function , $matches) && isset($this->aliases[$matches[1]])){
+			return $this->getDbField($matches[1]);
+		}
+
+		if(preg_match('/^(.*)Full$/i', $function , $matches) && isset($this->aliases[$matches[1]])){
+			return $this->getDbField($matches[1], true);
+		}
+
 		throw new Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
 	}
 
