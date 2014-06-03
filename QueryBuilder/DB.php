@@ -9,6 +9,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	 */
 	protected $connector;
 
+	protected $changeValueForPDO = array();
+
 	public function __construct($connector = NULL)
 	{
 		if(!is_null($connector)){
@@ -30,6 +32,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$params = Array();
 		foreach($orm as $propertyName => $propertyValue){
 			$dbColumn = $orm->getDbField($propertyName);
+			$propertyValue = $orm->getSenitazedValue($propertyName);
+
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -96,6 +100,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$params = Array();
 		foreach($orm as $propertyName => $propertyValue){
 			$dbColumn = $orm->getDbField($propertyName);
+			$propertyValue = $orm->getSenitazedValue($propertyName);
+
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -127,6 +133,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 				$params[] = Array(':' . $dbColumn, $propertyValue);
 			} else {
 				if($dbColumn != $orm->getConfigDbPrimaryKey()){
+					$propertyValue = $orm->getSenitazedValue($propertyName);
+					
 					$columns[] = $dbColumn . ' = :' . $dbColumn;
 					$params[] = Array(':' . $dbColumn, $propertyValue);
 				}
@@ -175,6 +183,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$params = Array();
 		foreach($orm as $propertyName => $propertyValue){
 			$dbColumn = $orm->getDbField($propertyName);
+			$propertyValue = $orm->getSenitazedValue($propertyName);
+
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -198,6 +208,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$params = Array();
 		foreach($orm as $propertyName => $propertyValue){
 			$dbColumn = $orm->getDbField($propertyName);
+			$propertyValue = $orm->getSenitazedValue($propertyName);
+
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -241,6 +253,8 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$params = Array();
 		foreach($orm as $propertyName => $propertyValue){
 			$dbColumn = $orm->getDbField($propertyName);
+			$propertyValue = $orm->getSenitazedValue($propertyName);
+
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}

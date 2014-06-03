@@ -180,7 +180,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs);
 		}
 
-		if(!is_null($primaryKey)){
+		if(!empty($primaryKey)){
 			$this->setPrimaryKey($primaryKey);
 			$this->loadByPrimaryKey();
 		}
@@ -287,7 +287,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 		}
 
 		if(preg_match('/get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])){
-			return $this->aliases[$matches[1]];
+			return $this->aliases[lcfirst($matches[1])];
 		}
 
 		if(preg_match('/getChild(.*)Config/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){

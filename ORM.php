@@ -380,4 +380,15 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
             return $return;
         }
     }
+
+	/**
+	 * upravuje hodnotu podle typu sloupce pro ulozeni pres PDO
+	 * @param $propertyName
+	 * @return mixed
+	 */
+	public function getSenitazedValue($propertyName)
+	{
+		/** @var ColumnType_Abstract $m */
+		return $this->aliases[$propertyName]->getSanitezedPDOValue($this->$propertyName);
+	}
 }
