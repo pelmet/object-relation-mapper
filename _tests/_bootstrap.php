@@ -44,6 +44,9 @@ class ORMTest extends ObjectRelationMapper\ORM
 		$this->addColumn('qc_status', 'status', 'int', '1');
 		$this->addColumn('qc_command', 'command', 'string', '2000');
 
+		$this->addDataAlias('statusStart', function ($orm) { return $orm->status . $orm->startTime; } );
+		$this->addDataAlias('startEndTime', 'startTime, endTime', ' ');
+
 		$this->addChild('ORMTestChild', 'logs', 'qc_id', 'qc_id');
 
 		$this->setConfigDbPrimaryKey	('qc_id');

@@ -68,6 +68,10 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 */
 	protected $data = Array();
 
+	/**
+	 * @var Array
+	 */
+	protected $dataAliases = Array();
 
 	/**
 	 * Promenne, s kterymy se nejak hybalo
@@ -170,6 +174,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			$this->columns = $configuration[$storage::DB_COLS];
 			$this->aliases = $configuration[$storage::PHP_ALIASES];
 			$this->childs = $configuration[$storage::CHILDS];
+			$this->dataAliases = $configuration[$storage::DATA_ALIASES];
 		} else {
 			$this->setUp();
 
@@ -177,7 +182,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 				$this->isConfigurationOk();
 			}
 
-			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs);
+			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs, $this->dataAliases);
 		}
 
 		if(!is_null($primaryKey)){
@@ -212,7 +217,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 		if($property == 'primaryKey'){
 			return $this->getPrimaryKey();
 		} else {
-			if(!isset($this->aliases[$property]) && !isset($this->childs[$property])){
+			if(!isset($this->aliases[$property]) && !isset($this->childs[$property]) && !isset($this->dataAliases[$property])){
 				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
@@ -220,6 +225,16 @@ abstract class ORM_Abstract extends ORM_Iterator
 				return $this->data[$property];
 			} elseif(isset($this->childsData[$property])){
 				return $this->childsData[$property];
+			} elseif(isset($this->dataAliases[$property])){
+				if($this->dataAliases[$property] instanceof \Closure){
+					return call_user_func($this->dataAliases[$property], $this);
+				} else {
+					$return = Array();
+					foreach($this->dataAliases[$property]['data'] as $prop){
+						$return[] = $this->{trim($prop)};
+					}
+					return implode($this->dataAliases[$property]['delimiter'], $return);
+				}
 			} else {
 				return NULL;
 			}
@@ -456,6 +471,25 @@ abstract class ORM_Abstract extends ORM_Iterator
 			if(!$this->childs[$phpAlias] instanceof ColumnType_Interface){
 				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\ColumnType_Interface. Typ child nelze pouzit, dokud toto nebude opraveno');
 			}
+		}
+	}
+
+	/**
+	 * Prida datovy alias pouze pro cteni, pokud jsou aliases ve stringu tak je potreba pouzit jako oddelovac ,
+	 * @param string $name
+	 * @param \Closure|String $aliases
+	 * @param string $delimiter
+	 * @throws Exception_ORM
+	 */
+	protected function addDataAlias($name, $aliases, $delimiter = ' ')
+	{
+		if($aliases instanceof \Closure){
+			$this->dataAliases[$name] = $aliases;
+		} else {
+			if(empty(explode(',', $aliases))){
+				throw new Exception_ORM('Chybi seznam sloupecku pro vypis');
+			}
+			$this->dataAliases[$name] = Array('data' => array_filter(explode(',', $aliases)), 'delimiter' => $delimiter);
 		}
 	}
 

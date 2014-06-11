@@ -116,4 +116,28 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 		$testOrm = new ORMTest();
 		$testOrm->iblahfield();
 	}
+
+	public function testDataAliasClosure()
+	{
+		$testOrm = new ORMTest();
+
+		$testOrm->status = 5;
+		$testOrm->command = 'ls -la';
+		$testOrm->endTime = '123456';
+		$testOrm->startTime = '987';
+
+		$this->assertEquals('5987', $testOrm->statusStart);
+	}
+
+	public function testDataAliasDelimiterString()
+	{
+		$testOrm = new ORMTest();
+
+		$testOrm->status = 5;
+		$testOrm->command = 'ls -la';
+		$testOrm->endTime = '123456';
+		$testOrm->startTime = '987';
+
+		$this->assertEquals('987 123456', $testOrm->startEndTime);
+	}
 }

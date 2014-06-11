@@ -14,8 +14,9 @@ class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorag
 	 * @param array $dbCols
 	 * @param array $phpAliases
 	 * @param array $childs
+	 * @param array $dataAliases
 	 */
-	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases, Array $childs)
+	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases, Array $childs, Array $dataAliases)
 	{
 		self::$fullyConfigured[$orm] = TRUE;
 
@@ -23,7 +24,8 @@ class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorag
 			self::BASIC_CONFIG => $basicConfiguration,
 			self::DB_COLS => $dbCols,
 			self::PHP_ALIASES => $phpAliases,
-			self::CHILDS => $childs
+			self::CHILDS => $childs,
+			self::DATA_ALIASES => $dataAliases
 		);
 
 		// ALL DB Fields
