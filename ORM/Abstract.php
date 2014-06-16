@@ -7,10 +7,6 @@ namespace ObjectRelationMapper;
  *
  * Obsluzne a pomocne funkce jsou rozdelene zde pro lepsi prehlednost
  *
- * @method getConfigDbTable
- * @method getConfigDbServer
- * @method getConfigObject
- * @method getConfigDbPrimaryKey
  * @method setConfigDbTable
  * @method setConfigDbServer
  * @method setConfigObject
@@ -241,6 +237,11 @@ abstract class ORM_Abstract extends ORM_Iterator
 		}
 	}
 
+	public function __wakeup()
+	{
+		$this->__construct();
+	}
+
 	/**
 	 * Nastavi hodnotu property
 	 * @param $property
@@ -269,6 +270,27 @@ abstract class ORM_Abstract extends ORM_Iterator
 	}
 
 	/**
+	 * Vrati konfiguraci nastaeni primarniho klice
+	 * @return mixed
+	 */
+	public function getConfigDbPrimaryKey()
+	{
+		return $this->basicConfiguration['DbPrimaryKey'];
+	}
+	public function getConfigDbTable()
+	{
+		return $this->basicConfiguration['DbTable'];
+	}
+	public function getConfigDbServer()
+	{
+		return $this->basicConfiguration['DbServer'];
+	}
+	public function getConfigObject()
+	{
+		return $this->basicConfiguration['Object'];
+	}
+
+	/**
 	 * Obecny caller pro urctite typy metod
 	 * @param $function
 	 * @param array $arguments
@@ -277,60 +299,58 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 */
 	public function __call($function, Array $arguments)
 	{
-		// getConfig
-		if(preg_match('/^getConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
-			return $this->basicConfiguration[$matches[1]];
-		}
+		if(preg_match('/^get(.*)$/', $function, $matches)){
+			if(preg_match('/^getOrdering(.*)$/', $function, $matches)){
+				return $this->additionalOrdering[$matches[1]];
+			}
+			if(preg_match('/^get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])){
+				return $this->aliases[$matches[1]];
+			}
 
-		// setConfig
-		if(preg_match('/^setConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
-			$this->basicConfiguration[$matches[1]] = $arguments[0];
-			return true;
-		}
+			if(preg_match('/^getChild(.*)Config$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
+				return $this->childs[lcfirst($matches[1])];
+			}
+			if(preg_match('/^getOrdering(.*)$/', $function, $matches)){
+				return $this->additionalOrdering[$matches[1]];
+			}
+			if(preg_match('/^getFirst(.*)$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
+				if(!isset($this->childsData[lcfirst($matches[1])])){
+					$this->children(lcfirst($matches[1]));
+				}
 
-		if(preg_match('/^setOrdering(.*)$/', $function, $matches)){
-			$this->additionalOrdering[$matches[1]] = $arguments[0];
-			return true;
-		}
+				if(isset($this->childsData[lcfirst($matches[1])][0])){
+					return $this->childsData[lcfirst($matches[1])][0];
+				} else {
+					return NULL;
+				}
+			}
+		} elseif(preg_match('/^set(.*)$/', $function, $matches)){
+			// setConfig
+			if(preg_match('/^setConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])){
+				$this->basicConfiguration[$matches[1]] = $arguments[0];
+				return true;
+			}
 
-		if(preg_match('/^getOrdering(.*)$/', $function, $matches)){
-			return $this->additionalOrdering[$matches[1]];
+			if(preg_match('/^setOrdering(.*)$/', $function, $matches)){
+				$this->additionalOrdering[$matches[1]] = $arguments[0];
+				return true;
+			}
 		}
 
 		if(preg_match('/^primaryKeyIsChanged$/', $function)){
 			return isset($this->changedVariables[$this->getAlias($this->getConfigDbPrimaryKey())]);
 		}
 
-		if(preg_match('/get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])){
-			return $this->aliases[$matches[1]];
-		}
-
-		if(preg_match('/getChild(.*)Config/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
-			return $this->childs[lcfirst($matches[1])];
-		}
-
 		if(preg_match('/^(.*)IsChanged$/', $function, $matches) && isset($this->aliases[$matches[1]])){
 			return isset($this->changedVariables[$matches[1]]);
 		}
 
-		if(preg_match('/^getFirst(.*)$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])){
-			if(!isset($this->childsData[lcfirst($matches[1])])){
-				$this->children(lcfirst($matches[1]));
-			}
-
-			if(isset($this->childsData[lcfirst($matches[1])][0])){
-				return $this->childsData[lcfirst($matches[1])][0];
-			} else {
-				return NULL;
-			}
+		if(preg_match('/^(.*)Full$/i', $function , $matches) && isset($this->aliases[$matches[1]])){
+			return $this->getDbField($matches[1], true);
 		}
 
 		if(preg_match('/^(.*)$/i', $function , $matches) && isset($this->aliases[$matches[1]])){
 			return $this->getDbField($matches[1]);
-		}
-
-		if(preg_match('/^(.*)Full$/i', $function , $matches) && isset($this->aliases[$matches[1]])){
-			return $this->getDbField($matches[1], true);
 		}
 
 		throw new Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
