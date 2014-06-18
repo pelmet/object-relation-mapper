@@ -265,7 +265,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		}
 	}
 
-	public function insertMultiple(ORM $orm, Array $orms)
+	public function insertMultiple(ORM $orm, Array $data)
 	{
 		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . '  ';
@@ -274,7 +274,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$i = 0;
 		$values = Array();
 		$params = Array();
-		foreach( $orms as $singleOrm ){
+		foreach( $data as $singleOrm ){
 			$cols = Array();
 			foreach($columns as $column){
 				$cols[] = ':' . $i . $column;
