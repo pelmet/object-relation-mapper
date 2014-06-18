@@ -265,6 +265,31 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		}
 	}
 
+	public function insertMultiple(ORM $orm, Array $orms)
+	{
+		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
+		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . '  ';
+		$query .= '(' . implode(',', $columns) . ')';
+
+		$i = 0;
+		$values = Array();
+		$params = Array();
+		foreach( $orms as $singleOrm ){
+			$cols = Array();
+			foreach($columns as $column){
+				$cols[] = ':' . $i . $column;
+				$params[] = Array(':' . $i . $column, $singleOrm->{$orm->getAlias($column)});
+			}
+
+			$values[] = '(' . implode(',', $cols) .')';
+			$i++;
+		}
+
+		$query .= ' VALUES '. implode(', ', $values );
+		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
+	}
+
+
     public function loadByQuery(ORM $orm, $query, $params)
     {
         $query = $this->connector->query($query, $params, $orm->getConfigDbServer());

@@ -62,4 +62,10 @@ abstract class QueryBuilder_Abstract
 	 * @return int
 	 */
 	abstract public function count	(ORM $orm);
+
+	/**
+	 * @param ORM $orm
+	 * @return int
+	 */
+	abstract public function insertMultiple	(ORM $orm, Array $orms);
 }
