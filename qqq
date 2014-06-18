@@ -1,0 +1,69 @@
+diff --git a/ORM.php b/ORM.php
+index f627bea..d4929d2 100755
+--- a/ORM.php
++++ b/ORM.php
+@@ -228,25 +228,17 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
+ 
+ 	/**
+ 	 * Vlozi najednou vice orm v jednom dotazu (vhodne pro importy, neloaduje ormka zpet)
+-	 * @param array $orms
++	 * @param array $loadData
+ 	 * @return mixed
+ 	 * @throws Exception_ORM
+ 	 */
+-	public function insertMultiple(Array $orms)
++	public function insertMultiple(Array $loadData)
+ 	{
+-		if(empty($orms)){
+-			throw new Exception_ORM('Cant insert empty dataset');
+-		}
+-
+-		foreach($orms as $insertOrm){
+-			if(!$insertOrm instanceof $this){
+-				throw new Exception_ORM('Cant dataset must be ORM of same class');
+-			}
++		if(empty($loadData)){
++			return false;
+ 		}
+ 
+-		$insert = $this->queryBuilder->insertMultiple($this, $orms);
+-
+-		return $insert;
++		return $this->queryBuilder->insertMultiple($this, $loadData);
+ 	}
+ 
+     /**
+diff --git a/QueryBuilder/Abstract.php b/QueryBuilder/Abstract.php
+index 11c33a5..07b0f21 100755
+--- a/QueryBuilder/Abstract.php
++++ b/QueryBuilder/Abstract.php
+@@ -67,5 +67,5 @@ abstract class QueryBuilder_Abstract
+ 	 * @param ORM $orm
+ 	 * @return int
+ 	 */
+-	abstract public function insertMultiple	(ORM $orm, Array $orms);
++	abstract public function insertMultiple	(ORM $orm, Array $data);
+ }
+\ No newline at end of file
+diff --git a/QueryBuilder/DB.php b/QueryBuilder/DB.php
+index c45015f..0375ae3 100755
+--- a/QueryBuilder/DB.php
++++ b/QueryBuilder/DB.php
+@@ -265,7 +265,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
+ 		}
+ 	}
+ 
+-	public function insertMultiple(ORM $orm, Array $orms)
++	public function insertMultiple(ORM $orm, Array $data)
+ 	{
+ 		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
+ 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . '  ';
+@@ -274,7 +274,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
+ 		$i = 0;
+ 		$values = Array();
+ 		$params = Array();
+-		foreach( $orms as $singleOrm ){
++		foreach( $data as $singleOrm ){
+ 			$cols = Array();
+ 			foreach($columns as $column){
+ 				$cols[] = ':' . $i . $column;

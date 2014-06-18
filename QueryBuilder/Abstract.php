@@ -67,5 +67,5 @@ abstract class QueryBuilder_Abstract
 	 * @param ORM $orm
 	 * @return int
 	 */
-	abstract public function insertMultiple	(ORM $orm, Array $orms);
+	abstract public function insertMultiple	(ORM $orm, Array $data);
 }

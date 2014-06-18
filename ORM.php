@@ -228,25 +228,17 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 
 	/**
 	 * Vlozi najednou vice orm v jednom dotazu (vhodne pro importy, neloaduje ormka zpet)
-	 * @param array $orms
+	 * @param array $loadData
 	 * @return mixed
 	 * @throws Exception_ORM
 	 */
-	public function insertMultiple(Array $orms)
+	public function insertMultiple(Array $loadData)
 	{
-		if(empty($orms)){
-			throw new Exception_ORM('Cant insert empty dataset');
+		if(empty($loadData)){
+			return false;
 		}
 
-		foreach($orms as $insertOrm){
-			if(!$insertOrm instanceof $this){
-				throw new Exception_ORM('Cant dataset must be ORM of same class');
-			}
-		}
-
-		$insert = $this->queryBuilder->insertMultiple($this, $orms);
-
-		return $insert;
+		return $this->queryBuilder->insertMultiple($this, $loadData);
 	}
 
     /**
