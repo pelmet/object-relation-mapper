@@ -265,6 +265,9 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function insertMultiple(ORM $orm, Array $data)
 	{
 		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
@@ -289,7 +292,9 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 	}
 
-
+	/**
+	 * @inheritdoc
+	 */
     public function loadByQuery(ORM $orm, $query, $params)
     {
         $query = $this->connector->query($query, $params, $orm->getConfigDbServer());
