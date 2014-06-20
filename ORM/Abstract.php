@@ -237,6 +237,11 @@ abstract class ORM_Abstract extends ORM_Iterator
 		}
 	}
 
+	public function __sleep()
+	{
+		return array('data', 'childsData');
+	}
+
 	public function __wakeup()
 	{
 		$this->__construct();
