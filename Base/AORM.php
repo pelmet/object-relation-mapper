@@ -1,6 +1,6 @@
 <?php
 
-namespace ObjectRelationMapper\ObjectRelationMapper;
+namespace ObjectRelationMapper\Base;
 use ObjectRelationMapper\ColumnType\IColumn;
 use ObjectRelationMapper\ConfigStorage\AStorage;
 use ObjectRelationMapper\ConfigStorage\IStorage;
@@ -175,6 +175,7 @@ abstract class AORM extends Iterator
 			$this->dataAliases = $configuration[$storage::DATA_ALIASES];
 		} else {
 			$this->setUp();
+            $this->translateConfig();
 
 			if($this->configurationCheck){
 				$this->isConfigurationOk();
@@ -198,6 +199,8 @@ abstract class AORM extends Iterator
 			$this->delete(true);
 		}
 	}
+
+    protected function translateConfig()  {   }
 
 	protected function isAliasPrimaryKey($alias)
 	{

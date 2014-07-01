@@ -3,7 +3,7 @@
 namespace ObjectRelationMapper\QueryBuilder;
 
 use ObjectRelationMapper\Connector\ESDB;
-use ObjectRelationMapper\ObjectRelationMapper\AORM;
+use ObjectRelationMapper\Base\AORM;
 
 class DB extends ABuilder
 {

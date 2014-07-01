@@ -1,6 +1,6 @@
 <?php
 
-namespace ObjectRelationMapper\ObjectRelationMapper;
+namespace ObjectRelationMapper\Base;
 
 abstract class Iterator implements \ArrayAccess, \IteratorAggregate, \Countable
 {

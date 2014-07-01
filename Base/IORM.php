@@ -1,6 +1,6 @@
 <?php
 
-namespace ObjectRelationMapper\ObjectRelationMapper;
+namespace ObjectRelationMapper\Base;
 
 interface IORM
 {

@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper\QueryBuilder;
 
-use ObjectRelationMapper\ObjectRelationMapper\AORM;
+use ObjectRelationMapper\Base\AORM;
 
 abstract class ABuilder
 {

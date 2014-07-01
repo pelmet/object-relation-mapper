@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper\Search;
 
-use ObjectRelationMapper\ObjectRelationMapper\AORM;
+use ObjectRelationMapper\Base\AORM;
 
 abstract class ASearch
 {

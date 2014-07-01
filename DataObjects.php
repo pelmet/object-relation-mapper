@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper;
 
-abstract class DataObjects extends ObjectRelationMapper\AORM
+abstract class DataObjects extends Common
 {
     protected $config;
 
@@ -50,7 +50,7 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      * Vrati vsechny data objektu
      * @return array
      */
-    public final function getData()
+    public function getData()
     {
         return $this->data + $this->childsData;
     }
@@ -59,7 +59,6 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      * Nastavi childa, use with caution!
      * @param string $childName
      * @param mixed $childValue
-     * @throws Exception
      */
     public function setChild($childName, $childValue)
     {
@@ -91,7 +90,7 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      * Vrati pole aliasu
      * @return array
      */
-    public function &getConfigAliases()
+    public function getConfigAliases()
     {
         return $this->getAllAliases();
     }
@@ -100,7 +99,7 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      * Vrati pole db fieldu
      * @return array
      */
-    public function &getConfigDbFields()
+    public function getConfigDbFields()
     {
         return $this->getAllDbFields();
     }
@@ -110,7 +109,21 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      */
     public function save()
     {
+        if(method_exists($this, 'beforeSave') && $this->beforeSave() === false){
+            return false;
+        }
 
+        if(empty($this->primaryKey)){
+            $this->insert();
+        } else {
+            $this->update();
+        }
+
+        $this->changedVariables = Array();
+
+        if(method_exists($this, 'afterSave') && $this->afterSave() === false){
+            return false;
+        }
     }
 
     /**
@@ -123,7 +136,21 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      */
     public function load($forceReload = false, $loadArray = NULL, $additionalParams = NULL)
     {
+        if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
+            return false;
+        }
 
+        if(!is_null($loadArray)){
+            $this->loadClassFromArray($loadArray);
+        } else {
+            $this->loadClassFromArray($this->queryBuilder->load($this));
+        }
+
+        $this->changedVariables = Array();
+
+        if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
+            return false;
+        }
     }
 
     /**
@@ -135,7 +162,10 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      */
     public function loadChild($childName, $loadArray)
     {
-
+        $orm = $this->childs[$childName]->ormName;
+        $orm = new $orm();
+        $this->{$childName} = $orm->loadMultiple($loadArray);
+        return true;
     }
 
     /**
@@ -144,7 +174,21 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      */
     public function delete($forceDelete = false)
     {
+        if(method_exists($this, 'beforeDelete') && $this->beforeDelete() === false){
+            return false;
+        }
 
+        if($forceDelete == true){
+            $this->queryBuilder->delete($this);
+        } else {
+            $this->deleteMark = true;
+        }
+
+        $this->changedVariables = Array();
+
+        if(method_exists($this, 'afterDelete') && $this->afterDelete() === false){
+            return false;
+        }
     }
 
     /**
@@ -160,38 +204,32 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
      */
     public function children($child = false, $order = false, $direction = false, $forceReload = false, $limit = false, $offset = false)
     {
-        $childName = strtolower($child);
-        if (isset($this->objectData[$childName]) && !$forceReload) {
-            return $this->objectData[$childName];
+        $orm = $this->childs[$child]->ormName;
+        $orm = new $orm();
+
+        if($order !== false){
+            $orm->setOrderingOrder($order, (($direction === false) ? Base\AORM::ORDERING_ASCENDING : $direction));
         }
 
-        if (isset($order) && $order != false) {
-            $addParams['order'] = $order;
+        if($limit !== false){
+            $orm->setOrderingLimit($limit);
         }
 
-        if (isset($direction) && $direction != false) {
-            $addParams['smer'] = $direction;
+        if($offset !== false){
+            $orm->setOrderingOffset($offset);
         }
 
-        if (isset($limit) && $limit != false) {
-            $addParams['limit'] = $limit;
-        }
+        $localKey = $this->getAlias($this->childs[$child]->localKey);
+        $foreignKey = $orm->getAlias($this->childs[$child]->foreignKey);
 
-        if (isset($offset) && $offset != false) {
-            $addParams['offset'] = $offset;
-        }
-
-        if (!isset($addParams) && empty($addParams)) {
-            $addParams = false;
-        }
-
-        if ($child === false) { // chceme vybrat vsechny childNodes a vsechny objekty chceme vratit zpet
-            foreach ($this->configChildren as $childName => $childConfig) {
-                $this->objectData[$childName] = $this->get(true, $childName, $forceReload, $addParams);
-            }
-        } else { // chceme vybrat jenom urciteho childa podle jmena
-            $this->objectData[$childName] = $this->get(true, $childName, $forceReload, $addParams);
-            return $this->objectData[$childName];
+        if(!empty($this->{$localKey})){
+            $orm->{$foreignKey} = $this->{$localKey};
+            $collection = $orm->loadMultiple();
+            $this->$child = $collection;
+            return $collection;
+        } else {
+            $this->$child = Array();
+            return Array();
         }
     }
 
@@ -219,7 +257,7 @@ abstract class DataObjects extends ObjectRelationMapper\AORM
         } else if ($varToMerge instanceof \Abstract_Form) {
             return $this->merge($varToMerge->getData());
         }
-        
+
         return false;
 
     }

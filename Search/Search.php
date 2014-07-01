@@ -4,8 +4,8 @@ namespace ObjectRelationMapper\Search;
 
 class Search extends ASearch
 {
-    const ORDERING_DESCENDING = \ObjectRelationMapper\ObjectRelationMapper\AORM::ORDERING_DESCENDING;
-    const ORDERING_ASCENDING = \ObjectRelationMapper\ObjectRelationMapper\AORM::ORDERING_ASCENDING;
+    const ORDERING_DESCENDING = \ObjectRelationMapper\Base\AORM::ORDERING_DESCENDING;
+    const ORDERING_ASCENDING = \ObjectRelationMapper\Base\AORM::ORDERING_ASCENDING;
 
 
 	/**

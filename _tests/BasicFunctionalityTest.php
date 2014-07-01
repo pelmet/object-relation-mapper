@@ -6,8 +6,8 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	{
 		$testOrm = new ORMTest();
 
-		$this->assertInstanceOf('ObjectRelationMapper\ObjectRelationMapper\IORM', $testOrm);
-		$this->assertInstanceOf('ObjectRelationMapper\ObjectRelationMapper\AORM', $testOrm);
+		$this->assertInstanceOf('ObjectRelationMapper\Base\IORM', $testOrm);
+		$this->assertInstanceOf('ObjectRelationMapper\Base\AORM', $testOrm);
 	}
 
 	public function testSetPrimaryKey()
