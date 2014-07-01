@@ -14,7 +14,7 @@ abstract class ORM extends ObjectRelationMapper\AORM implements ObjectRelationMa
 	 */
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ConfigStorage_Basic';
+		$this->configStorage 	= 'ConfigStorage\Basic';
 		$this->queryBuilder		= new QueryBuilder\DB();
 	}
 

@@ -127,11 +127,8 @@ abstract class AORM extends Iterator
 	 * @return mixed
 	 */
 	abstract protected function setUp();
-	abstract public function save($forceInsert = false);
 	abstract public function delete($deleteNow = false);
-	abstract public function load($loadData = NULL);
 	abstract public function loadByPrimaryKey();
-	abstract public function loadMultiple($loadData = NULL);
 	abstract protected function setORMStorages();
 
 	/**
