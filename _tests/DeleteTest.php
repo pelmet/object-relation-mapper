@@ -13,15 +13,15 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-        $this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-        mysql_select_db(DB_DB, $this->connection);
-        mysql_query($insert, $this->connection);
+        $this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+        mysqli_select_db($this->connection, DB_DB);
+        mysqli_query($this->connection, $insert);
     }
 
     public function tearDown()
     {
         $delete = 'TRUNCATE TABLE d_queued_commands';
-        mysql_query($delete, $this->connection);
+        mysqli_query($this->connection, $delete);
     }
 
     public function testDeleteNotNow()
@@ -29,8 +29,8 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $testOrm = new ORMTest(5);
         $testOrm->delete();
 
-        $query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_id = 5', $this->connection);
-        $result = mysql_fetch_assoc($query);
+        $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_id = 5');
+        $result = mysqli_fetch_assoc($query);
 
         $this->assertEquals('ls -laf', $result['qc_command']);
         $this->assertEquals('5', $result['qc_status']);
@@ -39,8 +39,8 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
         $testOrm = NULL;
 
-        $query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_id = 5', $this->connection);
-        $result = mysql_fetch_assoc($query);
+        $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_id = 5');
+        $result = mysqli_fetch_assoc($query);
 
         $this->assertEmpty($result);
     }
@@ -50,8 +50,8 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $testOrm = new ORMTest(5);
         $testOrm->delete(true);
 
-        $query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_id = 5', $this->connection);
-        $result = mysql_fetch_assoc($query);
+        $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_id = 5');
+        $result = mysqli_fetch_assoc($query);
 
         $this->assertEmpty($result);
     }

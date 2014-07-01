@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ConfigStorage;
 
-class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorage_Interface
+class Basic extends AStorage implements IStorage
 {
 	protected static $fullyConfigured = Array();
 	protected static $configurationStorage = Array();

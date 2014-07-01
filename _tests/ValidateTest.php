@@ -6,15 +6,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-		mysql_select_db(DB_DB, $this->connection);
+		$this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+		mysqli_select_db($this->connection, DB_DB);
 		$this->tearDown();
 	}
 
 	public function tearDown()
 	{
 		$delete = 'TRUNCATE TABLE d_queued_commands; TRUNCATE TABLE d_validate_types;';
-		mysql_query($delete, $this->connection);
+		mysqli_query($this->connection, $delete);
 	}
 
 	public function testValidateFalse()

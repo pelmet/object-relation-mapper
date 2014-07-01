@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Exception;
 
-class Exception_ColumnType extends \Exception
+class ColumnType extends \Exception
 {
 
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ConfigStorage;
 
-interface ConfigStorage_Interface
+interface IStorage
 {
 	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbRows, Array $phpAliases, Array $childs, Array $dataAliases);
 	public static function &getConfiguration($orm);

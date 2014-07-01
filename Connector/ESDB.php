@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Connector;
 
-class Connector_ESDB implements Connector_Interface
+class ESDB implements IConnector
 {
 	protected $db;
 

@@ -7,7 +7,7 @@ namespace ObjectRelationMapper;
  *
  * @property mixed primaryKey
  */
-abstract class ORM extends ORM_Abstract implements ORM_Interface
+abstract class ORM extends ObjectRelationMapper\AORM implements ObjectRelationMapper\IORM
 {
 	/**
 	 * Da se prepsat na cokoliv jineho v extendovane tride
@@ -15,13 +15,12 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 	protected function setORMStorages()
 	{
 		$this->configStorage 	= 'ConfigStorage_Basic';
-		$this->queryBuilder		= new QueryBuilder_DB();
+		$this->queryBuilder		= new QueryBuilder\DB();
 	}
 
 	/**
 	 * Nahraje objekt z daneho storage
 	 * @param Array $loadData
-	 * @throws Exception
 	 * @return boolean|mixed
 	 */
 	public function load($loadData = NULL)
@@ -45,13 +44,13 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 
 	/**
 	 * Nahraje objekt z daneho storage
-	 * @throws Exception_ORM
+	 * @throws Exception\ORM
 	 * @return boolean|mixed
 	 */
 	public function loadByPrimaryKey()
 	{
 		if(!isset($this->primaryKey) || empty($this->primaryKey)){
-			throw new Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
 		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){

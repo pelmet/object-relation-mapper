@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\DataExchange;
 
-class DataExchange_Array extends DataExchange_Abstract implements DataExchange_Interface
+class Arr extends AExchange implements IExchange
 {
 
 	/**

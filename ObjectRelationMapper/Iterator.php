@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ObjectRelationMapper;
 
-abstract class ORM_Iterator implements \ArrayAccess, \IteratorAggregate, \Countable
+abstract class Iterator implements \ArrayAccess, \IteratorAggregate, \Countable
 {
 	/**
 	 * Iterovatelena Promenna

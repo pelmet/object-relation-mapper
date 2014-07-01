@@ -13,15 +13,15 @@ class LoadTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		$this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-		mysql_select_db(DB_DB, $this->connection);
-		mysql_query($insert, $this->connection);
+		$this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+		mysqli_select_db($this->connection, DB_DB);
+		mysqli_query($this->connection, $insert);
 	}
 
 	public function tearDown()
 	{
 		$delete = 'TRUNCATE TABLE d_queued_commands';
-		mysql_query($delete, $this->connection);
+		mysqli_query($this->connection, $delete);
 	}
 
 	public function testLoadByData()
@@ -67,7 +67,7 @@ class LoadTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+        mysqli_query($this->connection, $insert);
 
 		$testOrm = new ORMTest();
 		$testOrm->status = 5;
@@ -89,12 +89,12 @@ class LoadTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+        mysqli_query($this->connection, $insert);
 
-		$query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 5', $this->connection);
+		$query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 5');
 
 		$result = Array();
-		while($row = mysql_fetch_assoc($query)){
+		while($row = mysqli_fetch_assoc($query)){
 			$result[] = $row;
 		}
 

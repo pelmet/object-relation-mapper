@@ -1,11 +1,14 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\QueryBuilder;
 
-class QueryBuilder_DB extends QueryBuilder_Abstract
+use ObjectRelationMapper\Connector\ESDB;
+use ObjectRelationMapper\ObjectRelationMapper\AORM;
+
+class DB extends ABuilder
 {
 	/**
-	 * @var Connector_ESDB
+	 * @var ESDB
 	 */
 	protected $connector;
 
@@ -14,14 +17,14 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		if(!is_null($connector)){
 			$this->connector = $connector;
 		} else {
-			$this->connector = new Connector_ESDB();
+			$this->connector = new ESDB();
 		}
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function load(ORM $orm)
+	public function load(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
@@ -58,7 +61,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function loadByPrimaryKey(ORM $orm)
+	public function loadByPrimaryKey(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		// SELECT columns FROM table WHERE
@@ -88,7 +91,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function insert(ORM $orm)
+	public function insert(AORM $orm)
 	{
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . ' SET ';
 
@@ -114,7 +117,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function update(ORM $orm, $oldPrimaryKey = NULL)
+	public function update(AORM $orm, $oldPrimaryKey = NULL)
 	{
 		$query = 'UPDATE ' . $orm->getConfigDbTable() . ' SET ';
 
@@ -153,7 +156,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function delete(ORM $orm)
+	public function delete(AORM $orm)
 	{
 		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
 
@@ -164,10 +167,10 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 
 	/**
 	 * Vytvoří SQL delete příkaz podle nastavených hodnot ORM
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 * @return bool
 	 */
-	public function deleteByOrm(ORM $orm)
+	public function deleteByOrm(AORM $orm)
 	{
 		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
 
@@ -189,7 +192,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function count(ORM $orm)
+	public function count(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT count(' . $orm->getConfigDbPrimaryKey() . ') as count FROM ' . $orm->getConfigDbTable();
@@ -218,7 +221,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function countByQuery(ORM $orm, $query, $params)
+	public function countByQuery(AORM $orm, $query, $params)
 	{
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
@@ -232,7 +235,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function loadMultiple(ORM $orm)
+	public function loadMultiple(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
@@ -268,7 +271,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function insertMultiple(ORM $orm, Array $data)
+	public function insertMultiple(AORM $orm, Array $data)
 	{
 		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . '  ';
@@ -295,7 +298,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-    public function loadByQuery(ORM $orm, $query, $params)
+    public function loadByQuery(AORM $orm, $query, $params)
     {
         $query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 

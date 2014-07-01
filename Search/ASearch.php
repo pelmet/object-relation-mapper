@@ -1,8 +1,10 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Search;
 
-abstract class Search_Abstract
+use ObjectRelationMapper\ObjectRelationMapper\AORM;
+
+abstract class ASearch
 {
 
 	/**
@@ -28,9 +30,9 @@ abstract class Search_Abstract
 
 	/**
 	 * Standardni construct
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 */
-	public function __construct(ORM $orm)
+	public function __construct(AORM $orm)
 	{
 		$this->orm = $orm;
 		$this->aliases = $orm->getAllAliases();
@@ -95,11 +97,11 @@ abstract class Search_Abstract
 
     /**
      * Vrati column z childa
-     * @param ORM $orm
+     * @param AORM $orm
      * @param $alias
      * @return string
      */
-    protected function getOrmDbColumn(ORM $orm, $alias)
+    protected function getOrmDbColumn(AORM $orm, $alias)
     {
         return $orm->getDbField($alias, true);
     }
@@ -107,12 +109,12 @@ abstract class Search_Abstract
 	/**
 	 * Vrati, zda na ORM existuje Alias
 	 * @param $property
-	 * @throws Exception_ORM
+	 * @throws \ObjectRelationMapper\Exception\ORM
 	 */
 	protected function aliasExists($property)
 	{
 		if(!in_array($property, $this->aliases)){
-			throw new Exception_ORM('Alias '.$property.' neexistuje na ORM '. $this->orm->getConfigObject());
+			throw new \ObjectRelationMapper\Exception\ORM('Alias '.$property.' neexistuje na ORM '. $this->orm->getConfigObject());
 		}
 	}
 
@@ -207,10 +209,10 @@ abstract class Search_Abstract
 
 	/**
 	 * Naplni jine ORM daty z vyhledavani
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 * @return array
 	 */
-	public function fillDifferentORM(ORM $orm)
+	public function fillDifferentORM(AORM $orm)
 	{
 		return $orm->loadMultiple($this->results);
 	}

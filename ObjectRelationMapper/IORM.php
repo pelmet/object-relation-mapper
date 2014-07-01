@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ObjectRelationMapper;
 
-interface ORM_Interface
+interface IORM
 {
 	public function save($forceInsert = false);
 	public function delete($deleteNow = false);

@@ -6,8 +6,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-        mysql_select_db(DB_DB, $this->connection);
+        $this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+        mysqli_select_db($this->connection, DB_DB);
 
         $this->tearDown();
     }
@@ -15,7 +15,7 @@ class SaveTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $delete = 'TRUNCATE TABLE d_queued_commands';
-        mysql_query($delete, $this->connection);
+        mysqli_query($this->connection, $delete);
     }
 
     public function testInsert()
@@ -25,8 +25,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
         $testOrm->command = 'ls -l';
         $testOrm->save();
 
-        $query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 5 AND qc_command = "ls -l"', $this->connection);
-        $result = mysql_fetch_assoc($query);
+        $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 5 AND qc_command = "ls -l"');
+        $result = mysqli_fetch_assoc($query);
 
         $this->assertEquals('ls -l', $result['qc_command']);
         $this->assertEquals('5', $result['qc_status']);
@@ -43,15 +43,15 @@ class SaveTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-        mysql_query($insert, $this->connection);
+        mysqli_query($this->connection, $insert);
 
         $testOrm = new ORMTest(5);
         $testOrm->status = 10;
         $testOrm->command = 'ls -l';
         $testOrm->save();
 
-        $query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', $this->connection);
-        $result = mysql_fetch_assoc($query);
+        $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"');
+        $result = mysqli_fetch_assoc($query);
 
         $this->assertEquals('ls -l', $result['qc_command']);
         $this->assertEquals('10', $result['qc_status']);
@@ -67,8 +67,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
         $testOrm->command = 'ls -l';
         $testOrm->save(true);
 
-        $query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', $this->connection);
-        $result = mysql_fetch_assoc($query);
+        $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"');
+        $result = mysqli_fetch_assoc($query);
 
         $this->assertEquals('ls -l', $result['qc_command']);
         $this->assertEquals('10', $result['qc_status']);
@@ -85,8 +85,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$testOrm->command = 'ls -l';
 		$testOrm->save(true);
 
-		$query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', $this->connection);
-		$result = mysql_fetch_assoc($query);
+		$query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"');
+		$result = mysqli_fetch_assoc($query);
 
 		$this->assertEmpty($result);
 	}
@@ -100,7 +100,7 @@ class SaveTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+		mysqli_query($this->connection, $insert);
 
 		$testOrm = new ORMTest(5);
 		$testOrm->status = 10;
@@ -108,8 +108,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$testOrm->id = 15;
 		$testOrm->save();
 
-		$query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', $this->connection);
-		$result = mysql_fetch_assoc($query);
+		$query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"');
+		$result = mysqli_fetch_assoc($query);
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('10', $result['qc_status']);

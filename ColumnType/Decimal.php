@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ColumnType;
 
-class ColumnType_Decimal extends ColumnType_Abstract implements ColumnType_Interface
+class Decimal extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{

@@ -6,8 +6,8 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-		mysql_select_db(DB_DB, $this->connection);
+		$this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+		mysqli_select_db($this->connection, DB_DB);
 
 		$insert = 'INSERT INTO d_queued_commands SET
 					qc_id = 5,
@@ -16,23 +16,23 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+		mysqli_query( $this->connection, $insert);
 
 		$insert = 'INSERT INTO d_queued_commands_logs SET
 					qc_id = 5,
 					qcl_id = 2,
 					qcl_text = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+		mysqli_query( $this->connection, $insert);
 	}
 
 	public function tearDown()
 	{
 		$delete = 'TRUNCATE TABLE d_queued_commands';
-		mysql_query($delete, $this->connection);
+		mysqli_query( $this->connection, $delete);
 
 		$delete = 'TRUNCATE TABLE d_queued_commands_logs';
-		mysql_query($delete, $this->connection);
+		mysqli_query( $this->connection, $delete);
 	}
 
 	public function testChildNoLink()

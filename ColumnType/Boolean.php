@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ColumnType;
 
-class ColumnType_Boolean extends ColumnType_Abstract implements ColumnType_Interface
+class Boolean extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{

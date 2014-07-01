@@ -24,7 +24,7 @@ class DataExchangeTest extends PHPUnit_Framework_TestCase
 
 		$testOrm = new ORMTest();
 
-		$merge = new ObjectRelationMapper\DataExchange_Array($testOrm);
+		$merge = new ObjectRelationMapper\DataExchange\Arr($testOrm);
 		$merge->addExclude('id');
 		$merge->load($mergeArray);
 
@@ -39,7 +39,7 @@ class DataExchangeTest extends PHPUnit_Framework_TestCase
 		$testOrm->endTime = '123456';
 		$testOrm->startTime = '123';
 
-		$merge = new ObjectRelationMapper\DataExchange_Array($testOrm);
+		$merge = new ObjectRelationMapper\DataExchange\Arr($testOrm);
 		$array = $merge->export();
 
 		$this->assertEquals('iblah', $array['command']);

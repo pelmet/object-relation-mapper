@@ -1,11 +1,12 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Generator;
+use ObjectRelationMapper\Connector\IConnector;
 
 /**
  * Class Generator_OldToNew
  */
-class Generator_OldToNew
+class OldToNew
 {
 	protected $columns;
 	protected $firstCol;
@@ -26,7 +27,7 @@ class Generator_OldToNew
 	/**
 	 * Generator ORMka
 	 */
-	public function __construct($oldPath, $newPath, Connector_Interface $connector)
+	public function __construct($oldPath, $newPath, IConnector $connector)
 	{
 		$this->readDir($oldPath);
 

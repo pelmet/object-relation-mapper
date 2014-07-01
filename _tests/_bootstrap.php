@@ -7,7 +7,7 @@ define('DB_DB'  , 'orm_test_db');
 
 function autoload($className)
 {
-	$className = str_replace('ObjectRelationMapper', '', $className);
+	$className = preg_replace('/^ObjectRelationMapper/', '', $className);
     $className = str_replace('\\', '/', $className);
 	$className = str_replace('_', '/', $className);
 
@@ -30,10 +30,10 @@ class ORMTest extends ObjectRelationMapper\ORM
 {
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ObjectRelationMapper\ConfigStorage_Basic';
+		$this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
 
-		$connector = new ObjectRelationMapper\Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
-		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder_DB($connector);
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
 	function setUp()
@@ -68,10 +68,10 @@ class ORMTestChild extends ObjectRelationMapper\ORM
 {
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ObjectRelationMapper\ConfigStorage_Basic';
+		$this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
 
-		$connector = new ObjectRelationMapper\Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
-		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder_DB($connector);
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
 	function setUp()
@@ -100,10 +100,10 @@ class ORMTestValidation extends ObjectRelationMapper\ORM
 {
     protected function setORMStorages()
     {
-        $this->configStorage 	= 'ObjectRelationMapper\ConfigStorage_Basic';
+        $this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
 
-        $connector = new ObjectRelationMapper\Connector_PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
-        $this->queryBuilder = new ObjectRelationMapper\QueryBuilder_DB($connector);
+        $connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+        $this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
     }
 
     function setUp()

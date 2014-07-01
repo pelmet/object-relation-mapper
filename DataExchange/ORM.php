@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\DataExchange;
 
-class DataExchange_ORM extends DataExchange_Abstract implements DataExchange_Interface
+class ORM extends AExchange implements IExchange
 {
 	/**
 	 * @inheritdoc

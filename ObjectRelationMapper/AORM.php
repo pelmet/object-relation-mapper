@@ -1,6 +1,11 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ObjectRelationMapper;
+use ObjectRelationMapper\ColumnType\IColumn;
+use ObjectRelationMapper\ConfigStorage\AStorage;
+use ObjectRelationMapper\ConfigStorage\IStorage;
+use ObjectRelationMapper\Exception\ORM as EORM;
+use ObjectRelationMapper\QueryBuilder\ABuilder;
 
 /**
  * Class ORM_Abstract
@@ -20,7 +25,7 @@ namespace ObjectRelationMapper;
  * @method getIdConfig
  * @method getChildUserConfig
  */
-abstract class ORM_Abstract extends ORM_Iterator
+abstract class AORM extends Iterator
 {
 	const BASE_CONFIG_DB_SERVER = 'DbServer';
 	const BASE_CONFIG_DB_TABLE 	= 'DbTable';
@@ -82,12 +87,12 @@ abstract class ORM_Abstract extends ORM_Iterator
 	protected $configurationCheck = true;
 
 	/**
-	 * @var ConfigStorage_Interface
+	 * @var IStorage
 	 */
 	protected $configStorage;
 
 	/**
-	 * @var QueryBuilder_Abstract
+	 * @var ABuilder
 	 */
 	protected $queryBuilder;
 
@@ -131,7 +136,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 
 	/**
 	 * Vrati Storage
-	 * @return ConfigStorage_Interface
+	 * @return IStorage
 	 */
 	public function getStorage()
 	{
@@ -140,7 +145,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 
 	/**
 	 * Vrati QueryBuilder
-	 * @return QueryBuilder_Abstract
+	 * @return ABuilder
 	 */
 	public function getQueryBuilder()
 	{
@@ -150,14 +155,14 @@ abstract class ORM_Abstract extends ORM_Iterator
 	/**
 	 * Construct
 	 * @param int $primaryKey
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 */
 	public function __construct($primaryKey = NULL)
 	{
 		$this->setORMStorages();
 		if($this->configurationCheck && (!$this->checkQueryBuilder() || !$this->checkORMConfigStorage())){
-			throw new Exception_ORM('Config Storage musi byt instance ConfigStorage_Interface. Query Builder musi byt instance
-			QueryBuilder_Abstract.');
+			throw new EORM('Config Storage musi byt instance \ObjectRelationMapper\ConfigStorage\IStorage. Query Builder musi byt instance
+			\ObjectRelationMapper\QueryBuilder\ABuilder.');
 		}
 
 		$storage = &$this->configStorage;
@@ -205,7 +210,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	/**
 	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
 	 * @param $property
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 * @return mixed|null
 	 */
 	public function __get($property)
@@ -214,7 +219,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			return $this->getPrimaryKey();
 		} else {
 			if(!isset($this->aliases[$property]) && !isset($this->childs[$property]) && !isset($this->dataAliases[$property])){
-				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+				throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			if(isset($this->data[$property])){
@@ -251,7 +256,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * Nastavi hodnotu property
 	 * @param $property
 	 * @param $value
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 */
 	public function __set($property, $value)
 	{
@@ -259,7 +264,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			$this->setPrimaryKey($value);
 		} else {
 			if(!isset($this->aliases[$property]) && !isset($this->childs[$property])){
-				throw new Exception_ORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+				throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
 
 			if(isset($this->aliases[$property])){
@@ -299,7 +304,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * Obecny caller pro urctite typy metod
 	 * @param $function
 	 * @param array $arguments
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 * @return mixed
 	 */
 	public function __call($function, Array $arguments)
@@ -358,7 +363,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			return $this->getDbField($matches[1]);
 		}
 
-		throw new Exception_ORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
+		throw new EORM('Dynamicka funkce s nazvem ' . $function .' nemuze byt spustena, neni totiz definovana.');
 	}
 
 	/**
@@ -404,7 +409,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	private function checkORMConfigStorage()
 	{
 		$cs = new $this->configStorage();
-		if($cs instanceof ConfigStorage_Interface){
+		if($cs instanceof IStorage){
 			return true;
 		} else {
 			return false;
@@ -417,7 +422,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 */
 	private function checkQueryBuilder()
 	{
-		if($this->queryBuilder instanceof QueryBuilder_Abstract){
+		if($this->queryBuilder instanceof ABuilder){
 			return true;
 		} else {
 			return false;
@@ -458,18 +463,18 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * @param string $dbType
 	 * @param string $length
 	 * @param array $additionalParams
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 */
 	protected function addColumn($dbName, $phpAlias, $dbType = 'string', $length = '255', $additionalParams = Array())
 	{
-		$className = 'ObjectRelationMapper\ColumnType_' . ucfirst($dbType);
+		$className = 'ObjectRelationMapper\ColumnType\\' . ucfirst($dbType);
 		if(!class_exists($className)){
-			throw new Exception_ORM('Trida ' . $className . ' neexistuje. Typ '.$dbType. ' nelze pouzit, dokud nebude nadefinovana');
+			throw new EORM('Trida ' . $className . ' neexistuje. Typ '.$dbType. ' nelze pouzit, dokud nebude nadefinovana');
 		} else {
 			$col = new $className($dbName, $phpAlias, $dbType, $length, $additionalParams);
 
-			if(!$col instanceof ColumnType_Interface){
-				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\ColumnType_Interface. Typ '.$dbType. ' nelze pouzit, dokud toto nebude opraveno');
+			if(!$col instanceof IColumn){
+				throw new EORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\\ObjectRelationMapper\ColumnType\IColumn. Typ '.$dbType. ' nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 
@@ -483,18 +488,18 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * @param $phpAlias
 	 * @param $localKey
 	 * @param $foreignKey
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 */
 	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey)
 	{
-		$className = 'ObjectRelationMapper\ColumnType_Child';
+		$className = 'ObjectRelationMapper\ColumnType\Child';
 		if(!class_exists($className) || !class_exists($ormName)){
-			throw new Exception_ORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
+			throw new EORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
 		} else {
 			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, Array());
 
-			if(!$this->childs[$phpAlias] instanceof ColumnType_Interface){
-				throw new Exception_ORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\ColumnType_Interface. Typ child nelze pouzit, dokud toto nebude opraveno');
+			if(!$this->childs[$phpAlias] instanceof IColumn){
+				throw new EORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\\ObjectRelationMapper\ColumnType\IColumn. Typ child nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 	}
@@ -504,7 +509,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * @param string $name
 	 * @param \Closure|String $aliases
 	 * @param string $delimiter
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 */
 	protected function addDataAlias($name, $aliases, $delimiter = ' ')
 	{
@@ -512,7 +517,7 @@ abstract class ORM_Abstract extends ORM_Iterator
 			$this->dataAliases[$name] = $aliases;
 		} else {
 			if(empty(explode(',', $aliases))){
-				throw new Exception_ORM('Chybi seznam sloupecku pro vypis');
+				throw new EORM('Chybi seznam sloupecku pro vypis');
 			}
 			$this->dataAliases[$name] = Array('data' => array_filter(explode(',', $aliases)), 'delimiter' => $delimiter);
 		}
@@ -526,11 +531,11 @@ abstract class ORM_Abstract extends ORM_Iterator
 		$configured = array_diff_key($this->requiredBasicConfiguration, $this->basicConfiguration);
 
 		if(!empty($configured)){
-			throw new Exception_ORM('Nejsou nastaveny properties '. implode(', ', array_keys($configured)) . ' nastavte prosim tyto hodnoty');
+			throw new EORM('Nejsou nastaveny properties '. implode(', ', array_keys($configured)) . ' nastavte prosim tyto hodnoty');
 		}
 
 		if(empty($this->columns) || empty($this->aliases)){
-			throw new Exception_ORM('Nejsou nastaveny aliases nebo columns, nastavte prosim tyto hodnoty');
+			throw new EORM('Nejsou nastaveny aliases nebo columns, nastavte prosim tyto hodnoty');
 		}
 	}
 
@@ -538,12 +543,12 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * Nastavi order
 	 * @param $column
 	 * @param string $direction
-	 * @throws Exception_ORM
+	 * @throws ORM
 	 */
 	public function setOrderingOrder($column, $direction = self::ORDERING_ASCENDING)
 	{
 		if(!isset($this->columns[$column]) && !isset($this->aliases[$column])){
-			throw new Exception_ORM('Sloupec nebo alias '. $column .' neexistuje.');
+			throw new EORM('Sloupec nebo alias '. $column .' neexistuje.');
 		}
 
 		if(isset($this->columns[$column])){
@@ -577,13 +582,13 @@ abstract class ORM_Abstract extends ORM_Iterator
 	 * Vrati nazev policka dle aliasu v php
 	 * @param $fieldName
 	 * @param bool $includeTableName
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 * @return string
 	 */
 	public function getDbField($fieldName, $includeTableName = false)
 	{
 		if(!isset($this->aliases[$fieldName])){
-			throw new Exception_ORM('Alias pro column '.$fieldName . ' neexistuje');
+			throw new EORM('Alias pro column '.$fieldName . ' neexistuje');
 		}
 
 		if($includeTableName){
@@ -596,13 +601,13 @@ abstract class ORM_Abstract extends ORM_Iterator
 	/**
 	 * Vrati PHP Alias dle nazvu sloupecku v DB
 	 * @param $fieldName
-	 * @throws Exception_ORM
+	 * @throws EORM
 	 * @return string
 	 */
 	public function getAlias($fieldName)
 	{
 		if(!isset($this->columns[$fieldName])){
-			throw new Exception_ORM('Db Field pro column '.$fieldName . ' neexistuje');
+			throw new EORM('Db Field pro column '.$fieldName . ' neexistuje');
 		}
 
 		return $this->columns[$fieldName]->alias;
@@ -620,9 +625,9 @@ abstract class ORM_Abstract extends ORM_Iterator
 		$s = &$this->configStorage;
 
 		if($includeTableName){
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_DB_FIELDS_WITH_TABLE);
+			$return = $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_DB_FIELDS_WITH_TABLE);
 		} else {
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_DB_FIELDS);
+			$return = $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_DB_FIELDS);
 		}
 
 		if(!empty($exclude)){
@@ -659,9 +664,9 @@ abstract class ORM_Abstract extends ORM_Iterator
 		$s = &$this->configStorage;
 
 		if(!is_null($glue)){
-			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_ALIASES));
+			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_ALIASES));
 		}  else {
-			return  $s::getSpecificConfiguration($this->getConfigObject(), ConfigStorage_Abstract::ALL_ALIASES);
+			return  $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_ALIASES);
 		}
 	}
 

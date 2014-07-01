@@ -1,12 +1,13 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ColumnType;
+use ObjectRelationMapper\Exception\ColumnType as EColumnType;
 
 /**
- * Class ColumnType_Abstract
+ * Class AColumn
  * Definice Db Radku
  */
-abstract class ColumnType_Abstract
+abstract class AColumn
 {
 	protected $col;
 	protected $alias;
@@ -35,14 +36,14 @@ abstract class ColumnType_Abstract
 	 * Vrati hodnotu policka
 	 * @param $propertyName
 	 * @return mixed
-	 * @throws Exception_ColumnType
+	 * @throws ColumnType
 	 */
 	public function &__get($propertyName)
 	{
 		if(property_exists($this, $propertyName)){
 			return $this->{$propertyName};
 		} else {
-			throw new Exception_ColumnType('Property ' . $propertyName . ' neexistuje, opravte si prosim kod.');
+			throw new EColumnType('Property ' . $propertyName . ' neexistuje, opravte si prosim kod.');
 		}
 	}
 }

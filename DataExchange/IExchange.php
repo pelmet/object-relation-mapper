@@ -1,8 +1,10 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\DataExchange;
 
-interface DataExchange_Interface
+use ObjectRelationMapper\ORM;
+
+interface IExchange
 {
 	/**
 	 * Zakladni Construct

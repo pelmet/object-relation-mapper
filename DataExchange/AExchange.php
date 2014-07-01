@@ -1,8 +1,10 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\DataExchange;
 
-abstract class DataExchange_Abstract
+use ObjectRelationMapper\ORM;
+
+abstract class AExchange
 {
 	/**
 	 * @var ORM
