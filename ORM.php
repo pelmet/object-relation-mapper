@@ -42,31 +42,6 @@ abstract class ORM extends Common implements Base\IORM
 		}
 	}
 
-	/**
-	 * Nahraje objekt z daneho storage
-	 * @throws Exception\ORM
-	 * @return boolean|mixed
-	 */
-	public function loadByPrimaryKey()
-	{
-		if(!isset($this->primaryKey) || empty($this->primaryKey)){
-			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
-		}
-
-		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
-			return false;
-		}
-
-		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
-
-		$this->changedVariables = Array();
-
-		if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
-			return false;
-		}
-	}
-
-
 
 	/**
 	 * Spocita, kolik zadanych radku odpovida nastavenym properties
@@ -105,8 +80,6 @@ abstract class ORM extends Common implements Base\IORM
 		}
 	}
 
-
-
 	/**
 	 * Smaze ORMko z uloziste
 	 * @param bool $deleteNow
@@ -139,34 +112,34 @@ abstract class ORM extends Common implements Base\IORM
 		return $this->queryBuilder->deleteByOrm($this);
 	}
 
-	/**
-	 * Vrati kolekci ze zadaneho dotazu
-	 * @param array $loadData
-	 * @return array
-	 */
-	public function loadMultiple($loadData = NULL)
-	{
-		if($this->getOrderingLimit() == 1){
-			$this->setOrderingLimit(9999999999);
-		}
+    /**
+     * Vrati kolekci ze zadaneho dotazu
+     * @param array $loadData
+     * @return array
+     */
+    public function loadMultiple($loadData = NULL)
+    {
+        if($this->getOrderingLimit() == 1){
+            $this->setOrderingLimit(9999999999);
+        }
 
-		if(is_null($loadData)){
-			$collection = $this->queryBuilder->loadMultiple($this);
-		} else {
-			$collection = &$loadData;
-		}
+        if(is_null($loadData)){
+            $collection = $this->queryBuilder->loadMultiple($this);
+        } else {
+            $collection = &$loadData;
+        }
 
-		$return = Array();
-		$object = $this->getConfigObject();
+        $return = Array();
+        $object = $this->getConfigObject();
 
-		foreach($collection as $singleOrm){
-			$tempOrm = new $object();
-			$tempOrm->load($singleOrm);
-			$return[] = $tempOrm;
-		}
+        foreach($collection as $singleOrm){
+            $tempOrm = new $object();
+            $tempOrm->load($singleOrm);
+            $return[] = $tempOrm;
+        }
 
-		return $return;
-	}
+        return $return;
+    }
 
 	/**
 	 * Vlozi najednou vice orm v jednom dotazu (vhodne pro importy, neloaduje ormka zpet)
@@ -241,7 +214,7 @@ abstract class ORM extends Common implements Base\IORM
 		$orm = new $orm();
 
 		if(!is_null($order)){
-			$orm->setOrderingOrder($order, (is_null($direction) ? ORM_Abstract::ORDERING_ASCENDING : $direction));
+			$orm->setOrderingOrder($order, (is_null($direction) ? Base\AORM::ORDERING_ASCENDING : $direction));
 		}
 
 		if(!is_null($limit)){
