@@ -68,14 +68,7 @@ abstract class ORM extends Common implements Base\IORM
 
 
 
-    /**
-	 * Spocita, kolik zadanych radku odpovida nastavenym properties
-	 * @return int
-	 */
-	public function count()
-	{
-		return $this->queryBuilder->count($this);
-	}
+
 
 	/**
 	 * Ulozi objekt ORMka

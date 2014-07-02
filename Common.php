@@ -28,6 +28,15 @@ abstract class Common extends Base\AORM
     }
 
     /**
+     * Spocita, kolik zadanych radku odpovida nastavenym properties
+     * @return int
+     */
+    public function count()
+    {
+        return $this->queryBuilder->count($this);
+    }
+
+    /**
      * Insert Dat
      * @return bool
      */

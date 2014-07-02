@@ -20,6 +20,8 @@ abstract class DataObjects extends Common
         $this->setConfigDbPrimaryKey($this->config['primaryKey']);
         $this->setConfigDbTable($this->config['tableName']);
         $this->setConfigObject($this->config['object']);
+
+
     }
 
     /**
@@ -34,16 +36,16 @@ abstract class DataObjects extends Common
     /**
      * Automaticky overloading pro class properties
      * @param set|get(functionCall) $function
-     * @param string $arguments
+     * @param Array $arguments
      * @return mixed
      */
-    public function __call($function, $arguments)
+    public function __call($function, Array $arguments)
     {
         if (preg_match('/get([A-Z][a-z]+)/', $function, $matches)) {
             return $this->children($matches[1]);
         }
 
-        parent::__call($function, $arguments);
+        return parent::__call($function, $arguments);
     }
 
     /**

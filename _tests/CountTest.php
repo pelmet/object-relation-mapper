@@ -34,21 +34,29 @@ class CountTest extends PHPUnit_Framework_TestCase
 		mysqli_query($this->connection, $delete);
 	}
 
-	public function testCountPrimaryKey()
-	{
-		$testOrm = new ORMTest();
-		$testOrm->id = 5;
-		$count = $testOrm->count();
+    public function providerBasic()
+    {
+        return Array(
+            0 => Array(new ORMTest()),
+            1 => Array(new ORMTestOld())
+        );
+    }
 
-		$this->assertEquals(1, $count);
+    /**
+     * @dataProvider providerBasic
+     */
+	public function testCountPrimaryKey($testOrm)
+	{
+		$testOrm->id = 5;
+		$this->assertEquals(1, $testOrm->count());
 	}
 
-	public function testCountByData()
+    /**
+     * @dataProvider providerBasic
+     */
+	public function testCountByData($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->status = 5;
-		$count = $testOrm->count();
-
-		$this->assertEquals(2, $count);
+		$this->assertEquals(2, $testOrm->count());
 	}
 }

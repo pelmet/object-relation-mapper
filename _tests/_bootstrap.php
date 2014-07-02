@@ -57,6 +57,51 @@ class ORMTest extends ObjectRelationMapper\ORM
 }
 
 /**
+ * Class ORMTest
+ * @property int id
+ * @property string startTime
+ * @property string endTime
+ * @property int status
+ * @property string command
+ */
+class ORMTestOld extends ObjectRelationMapper\DataObjects
+{
+    protected function setORMStorages()
+    {
+        $this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
+
+        $connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+        $this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
+    }
+
+    function setUp()
+    {
+        $this->config['rows'][] = Array('name' => 'qc_id', 'alias' => 'id');
+        $this->config['rows'][] = Array('name' => 'qc_time_start', 'alias' => 'startTime');
+        $this->config['rows'][] = Array('name' => 'qc_time_end', 'alias' => 'endTime');
+        $this->config['rows'][] = Array('name' => 'qc_status', 'alias' => 'status');
+        $this->config['rows'][] = Array('name' => 'qc_command', 'alias' => 'command');
+
+        $this->config['server'] = 'master';
+        $this->config['tableName'] = 'd_queued_commands';
+        $this->config['primaryKey'] = 'qc_id';
+        $this->config['object'] = __CLASS__;
+
+        $this->config['child'][] = Array('name' => 'logs',
+            'object' => 'ORMTestChild',
+            'possibilities' => 'many',
+            'delete' => false,
+            Array(
+                'localKey' => 'qc_id',
+                'foreignKey' => 'qc_id'
+            ));
+
+        $this->addDataAlias('statusStart', function ($orm) { return $orm->status . $orm->startTime; } );
+        $this->addDataAlias('startEndTime', 'startTime, endTime', ' ');
+    }
+}
+
+/**
  * Class ORMTestChild
  * @property int id
  * @property string startTime
