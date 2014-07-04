@@ -29,7 +29,7 @@ class Basic extends AStorage implements IStorage
 		);
 
 		// ALL DB Fields
-		foreach($dbCols as $column){
+		foreach ($dbCols as $column) {
 			self::$configurationStorage[$orm][self::ALL_DB_FIELDS][] = $column->col;
 			self::$configurationStorage[$orm][self::ALL_DB_FIELDS_WITH_TABLE][] = $basicConfiguration['DbTable'] . '.' . $column->col;
 			self::$configurationStorage[$orm][self::ALL_ALIASES][] = $column->alias;
@@ -53,7 +53,7 @@ class Basic extends AStorage implements IStorage
 	 */
 	public static function configurationExists($orm)
 	{
-		if(isset(self::$fullyConfigured[$orm]) && self::$fullyConfigured[$orm] === true){
+		if (isset(self::$fullyConfigured[$orm]) && self::$fullyConfigured[$orm] === true) {
 			return true;
 		} else {
 			return false;

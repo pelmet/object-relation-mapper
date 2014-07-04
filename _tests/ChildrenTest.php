@@ -16,23 +16,23 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysqli_query( $this->connection, $insert);
+		mysqli_query($this->connection, $insert);
 
 		$insert = 'INSERT INTO d_queued_commands_logs SET
 					qc_id = 5,
 					qcl_id = 2,
 					qcl_text = "ls -laf"';
 
-		mysqli_query( $this->connection, $insert);
+		mysqli_query($this->connection, $insert);
 	}
 
 	public function tearDown()
 	{
 		$delete = 'TRUNCATE TABLE d_queued_commands';
-		mysqli_query( $this->connection, $delete);
+		mysqli_query($this->connection, $delete);
 
 		$delete = 'TRUNCATE TABLE d_queued_commands_logs';
-		mysqli_query( $this->connection, $delete);
+		mysqli_query($this->connection, $delete);
 	}
 
 	public function testChildNoLink()
@@ -47,17 +47,17 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 		$this->assertNotEmpty($testOrm->children('logs'));
 	}
 
-    public function testChildProperty()
-    {
-        $testOrm = new ORMTest(5);
+	public function testChildProperty()
+	{
+		$testOrm = new ORMTest(5);
 
-        $this->assertEquals('ls -laf', $testOrm->cProperty('logs.text'));
-    }
+		$this->assertEquals('ls -laf', $testOrm->cProperty('logs.text'));
+	}
 
-    public function testChildProperties()
-    {
-        $testOrm = new ORMTest(5);
+	public function testChildProperties()
+	{
+		$testOrm = new ORMTest(5);
 
-        $this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ''));
-    }
+		$this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ''));
+	}
 }

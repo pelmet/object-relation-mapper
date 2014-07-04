@@ -18,11 +18,11 @@ class PDO implements IConnector
 	 */
 	public function __construct($db = NULL)
 	{
-		if(!$db instanceof \PDO){
+		if (!$db instanceof \PDO) {
 			throw new EQueryBuilder('Db musi byt instance PDO');
 		}
 
-		if(!is_null($db)){
+		if (!is_null($db)) {
 			$this->db = $db;
 		}
 	}

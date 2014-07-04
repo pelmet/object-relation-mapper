@@ -25,7 +25,7 @@ class CountTest extends CommonTestClass
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-        mysqli_query($this->connection, $insert);
+		mysqli_query($this->connection, $insert);
 
 		$insert = 'INSERT INTO d_queued_commands SET
 					qc_id = 7,
@@ -35,7 +35,7 @@ class CountTest extends CommonTestClass
 					qc_command = "ls -laf"';
 
 		mysqli_query($this->connection, $insert);
-    }
+	}
 
 	public function tearDown()
 	{
@@ -43,18 +43,18 @@ class CountTest extends CommonTestClass
 		mysqli_query($this->connection, $delete);
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testCountPrimaryKey($testOrm)
 	{
 		$testOrm->id = 5;
 		$this->assertEquals(1, $testOrm->count());
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testCountByData($testOrm)
 	{
 		$testOrm->status = 5;

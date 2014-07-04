@@ -10,8 +10,8 @@ class Arr extends AExchange implements IExchange
 	 */
 	public function load($data)
 	{
-		foreach($data as $property => $value){
-			if(!isset($this->excluded[$property]) && $this->orm->propertyExists($property)){
+		foreach ($data as $property => $value) {
+			if (!isset($this->excluded[$property]) && $this->orm->propertyExists($property)) {
 				$this->orm->{$property} = $value;
 			}
 		}
@@ -24,7 +24,7 @@ class Arr extends AExchange implements IExchange
 	{
 		$returnData = Array();
 
-		foreach($this->orm as $property => $value){
+		foreach ($this->orm as $property => $value) {
 			$returnData[$property] = $value;
 		}
 

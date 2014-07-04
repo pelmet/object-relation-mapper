@@ -2,17 +2,17 @@
 
 class BasicFunctionalityTest extends CommonTestClass
 {
-    /**
-     * @dataProvider providerBasic
-     */
-    public function testBasic($testOrm)
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testBasic($testOrm)
 	{
 		$this->assertInstanceOf('ObjectRelationMapper\Base\AORM', $testOrm);
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testSetPrimaryKey($testOrm)
 	{
 		$testOrm->primaryKey = 125;
@@ -21,9 +21,9 @@ class BasicFunctionalityTest extends CommonTestClass
 		$this->assertEquals($testOrm->primaryKey, $testOrm->id);
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testSetterAndGetter($testOrm)
 	{
 		$testOrm->status = 5;
@@ -37,7 +37,7 @@ class BasicFunctionalityTest extends CommonTestClass
 
 	/**
 	 * @expectedException ObjectRelationMapper\Exception\ORM
-     * @dataProvider providerBasic
+	 * @dataProvider providerBasic
 	 */
 	public function testSetterToBadColumn($testOrm)
 	{
@@ -46,16 +46,16 @@ class BasicFunctionalityTest extends CommonTestClass
 
 	/**
 	 * @expectedException ObjectRelationMapper\Exception\ORM
-     * @dataProvider providerBasic
+	 * @dataProvider providerBasic
 	 */
 	public function testGetterToBadColumn($testOrm)
 	{
 		$testOrm->iblah;
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testCallMethod($testOrm)
 	{
 		$this->assertEquals('qc_id', $testOrm->getConfigDbPrimaryKey());
@@ -66,16 +66,16 @@ class BasicFunctionalityTest extends CommonTestClass
 
 	/**
 	 * @expectedException ObjectRelationMapper\Exception\ORM
-     * @dataProvider providerBasic
+	 * @dataProvider providerBasic
 	 */
 	public function testDynamicNotDefinedFunction($testOrm)
 	{
 		$testOrm->iblahIsChanged();
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testPropertyHasChanged($testOrm)
 	{
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
@@ -89,9 +89,9 @@ class BasicFunctionalityTest extends CommonTestClass
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testFieldNameAsCallFunction($testOrm)
 	{
 		$this->assertEquals('qc_id', $testOrm->id());
@@ -100,9 +100,9 @@ class BasicFunctionalityTest extends CommonTestClass
 		$this->assertEquals('qc_command', $testOrm->command());
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testFieldNameWithTableAsCallFunction($testOrm)
 	{
 		$this->assertEquals('d_queued_commands.qc_id', $testOrm->idFull());
@@ -113,16 +113,16 @@ class BasicFunctionalityTest extends CommonTestClass
 
 	/**
 	 * @expectedException ObjectRelationMapper\Exception\ORM
-     * @dataProvider providerBasic
+	 * @dataProvider providerBasic
 	 */
 	public function testDynamicFieldNameAsCallFunctionNotDefined($testOrm)
 	{
 		$testOrm->iblahfield();
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testDataAliasClosure($testOrm)
 	{
 		$testOrm->status = 5;
@@ -133,9 +133,9 @@ class BasicFunctionalityTest extends CommonTestClass
 		$this->assertEquals('5987', $testOrm->statusStart);
 	}
 
-    /**
-     * @dataProvider providerBasic
-     */
+	/**
+	 * @dataProvider providerBasic
+	 */
 	public function testDataAliasDelimiterString($testOrm)
 	{
 		$testOrm->status = 5;

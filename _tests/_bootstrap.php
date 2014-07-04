@@ -3,21 +3,22 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'ormtestuser');
 define('DB_PASS', 'testpass');
-define('DB_DB'  , 'orm_test_db');
+define('DB_DB', 'orm_test_db');
 
-require_once __DIR__. '/CommonTestClass.php';
+require_once __DIR__ . '/CommonTestClass.php';
 
 function autoload($className)
 {
 	$className = preg_replace('/^ObjectRelationMapper/', '', $className);
-    $className = str_replace('\\', '/', $className);
+	$className = str_replace('\\', '/', $className);
 	$className = str_replace('_', '/', $className);
 
-	if(is_file(__DIR__.'/../' . '/' . $className . '.php')){
-		require_once (__DIR__.'/../' . '/' . $className . '.php');
+	if (is_file(__DIR__ . '/../' . '/' . $className . '.php')) {
+		require_once(__DIR__ . '/../' . '/' . $className . '.php');
 	}
 
 }
+
 spl_autoload_register('autoload');
 
 /**
@@ -32,9 +33,9 @@ class ORMTest extends ObjectRelationMapper\ORM
 {
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
 
-		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
 		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
@@ -46,15 +47,17 @@ class ORMTest extends ObjectRelationMapper\ORM
 		$this->addColumn('qc_status', 'status', 'int', '1');
 		$this->addColumn('qc_command', 'command', 'string', '2000');
 
-		$this->addDataAlias('statusStart', function ($orm) { return $orm->status . $orm->startTime; } );
+		$this->addDataAlias('statusStart', function ($orm) {
+			return $orm->status . $orm->startTime;
+		});
 		$this->addDataAlias('startEndTime', 'startTime, endTime', ' ');
 
 		$this->addChild('ORMTestChild', 'logs', 'qc_id', 'qc_id');
 
-		$this->setConfigDbPrimaryKey	('qc_id');
-		$this->setConfigDbServer		('master');
-		$this->setConfigObject			(__CLASS__);
-		$this->setConfigDbTable			('d_queued_commands');
+		$this->setConfigDbPrimaryKey('qc_id');
+		$this->setConfigDbServer('master');
+		$this->setConfigObject(__CLASS__);
+		$this->setConfigDbTable('d_queued_commands');
 	}
 }
 
@@ -68,39 +71,41 @@ class ORMTest extends ObjectRelationMapper\ORM
  */
 class ORMTestOld extends ObjectRelationMapper\DataObjects
 {
-    protected function setORMStorages()
-    {
-        $this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
 
-        $connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
-        $this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
-    }
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
+	}
 
-    function setUp()
-    {
-        $this->config['rows'][] = Array('name' => 'qc_id', 'alias' => 'id');
-        $this->config['rows'][] = Array('name' => 'qc_time_start', 'alias' => 'startTime');
-        $this->config['rows'][] = Array('name' => 'qc_time_end', 'alias' => 'endTime');
-        $this->config['rows'][] = Array('name' => 'qc_status', 'alias' => 'status');
-        $this->config['rows'][] = Array('name' => 'qc_command', 'alias' => 'command');
+	function setUp()
+	{
+		$this->config['rows'][] = Array('name' => 'qc_id', 'alias' => 'id');
+		$this->config['rows'][] = Array('name' => 'qc_time_start', 'alias' => 'startTime');
+		$this->config['rows'][] = Array('name' => 'qc_time_end', 'alias' => 'endTime');
+		$this->config['rows'][] = Array('name' => 'qc_status', 'alias' => 'status');
+		$this->config['rows'][] = Array('name' => 'qc_command', 'alias' => 'command');
 
-        $this->config['server'] = 'master';
-        $this->config['tableName'] = 'd_queued_commands';
-        $this->config['primaryKey'] = 'qc_id';
-        $this->config['object'] = __CLASS__;
+		$this->config['server'] = 'master';
+		$this->config['tableName'] = 'd_queued_commands';
+		$this->config['primaryKey'] = 'qc_id';
+		$this->config['object'] = __CLASS__;
 
-        $this->config['child'][] = Array('name' => 'logs',
-            'object' => 'ORMTestChild',
-            'possibilities' => 'many',
-            'delete' => false,
-            Array(
-                'localKey' => 'qc_id',
-                'foreignKey' => 'qc_id'
-            ));
+		$this->config['child'][] = Array('name' => 'logs',
+			'object' => 'ORMTestChild',
+			'possibilities' => 'many',
+			'delete' => false,
+			Array(
+				'localKey' => 'qc_id',
+				'foreignKey' => 'qc_id'
+			));
 
-        $this->addDataAlias('statusStart', function ($orm) { return $orm->status . $orm->startTime; } );
-        $this->addDataAlias('startEndTime', 'startTime, endTime', ' ');
-    }
+		$this->addDataAlias('statusStart', function ($orm) {
+			return $orm->status . $orm->startTime;
+		});
+		$this->addDataAlias('startEndTime', 'startTime, endTime', ' ');
+	}
 }
 
 /**
@@ -115,9 +120,9 @@ class ORMTestChild extends ObjectRelationMapper\ORM
 {
 	protected function setORMStorages()
 	{
-		$this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
 
-		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
 		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
@@ -129,10 +134,10 @@ class ORMTestChild extends ObjectRelationMapper\ORM
 
 		$this->addChild('ORMTest', 'command', 'qc_id', 'qc_id');
 
-		$this->setConfigDbPrimaryKey	('qcl_id');
-		$this->setConfigDbServer		('master');
-		$this->setConfigObject			(__CLASS__);
-		$this->setConfigDbTable			('d_queued_commands_logs');
+		$this->setConfigDbPrimaryKey('qcl_id');
+		$this->setConfigDbServer('master');
+		$this->setConfigObject(__CLASS__);
+		$this->setConfigDbTable('d_queued_commands_logs');
 	}
 }
 
@@ -145,26 +150,26 @@ class ORMTestChild extends ObjectRelationMapper\ORM
  */
 class ORMTestValidation extends ObjectRelationMapper\ORM
 {
-    protected function setORMStorages()
-    {
-        $this->configStorage 	= 'ObjectRelationMapper\ConfigStorage\Basic';
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
 
-        $connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB , DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
-        $this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
-    }
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
+	}
 
-    function setUp()
-    {
-        $this->addColumn('qc_int', 'id', 'int', '10');
-        $this->addColumn('qc_string', 'valString', 'string', '10');
-        $this->addColumn('qc_decimal', 'valDecimal', 'decimal', '5,2');
-        $this->addColumn('qc_boolean', 'valBoolean', 'boolean', '1');
+	function setUp()
+	{
+		$this->addColumn('qc_int', 'id', 'int', '10');
+		$this->addColumn('qc_string', 'valString', 'string', '10');
+		$this->addColumn('qc_decimal', 'valDecimal', 'decimal', '5,2');
+		$this->addColumn('qc_boolean', 'valBoolean', 'boolean', '1');
 
-        $this->setConfigDbPrimaryKey	('qc_int');
-        $this->setConfigDbServer		('master');
-        $this->setConfigObject			(__CLASS__);
-        $this->setConfigDbTable			('d_validate_types');
-    }
+		$this->setConfigDbPrimaryKey('qc_int');
+		$this->setConfigDbServer('master');
+		$this->setConfigObject(__CLASS__);
+		$this->setConfigDbTable('d_validate_types');
+	}
 }
 
 

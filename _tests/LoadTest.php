@@ -78,13 +78,13 @@ class LoadTest extends CommonTestClass
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-        mysqli_query($this->connection, $insert);
+		mysqli_query($this->connection, $insert);
 
 		$testOrm->status = 5;
 		$collection = $testOrm->loadMultiple();
 
 		$this->assertEquals(2, count($collection));
-		foreach($collection as $singleOrm){
+		foreach ($collection as $singleOrm) {
 			$this->assertInstanceOf(get_class($testOrm), $singleOrm);
 			$this->assertEquals(5, $singleOrm->status);
 		}
@@ -102,19 +102,19 @@ class LoadTest extends CommonTestClass
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-        mysqli_query($this->connection, $insert);
+		mysqli_query($this->connection, $insert);
 
 		$query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 5');
 
 		$result = Array();
-		while($row = mysqli_fetch_assoc($query)){
+		while ($row = mysqli_fetch_assoc($query)) {
 			$result[] = $row;
 		}
 
 		$collection = $testOrm->loadMultiple($result);
 
 		$this->assertEquals(2, count($collection));
-		foreach($collection as $singleOrm){
+		foreach ($collection as $singleOrm) {
 			$this->assertInstanceOf(get_class($testOrm), $singleOrm);
 			$this->assertEquals(5, $singleOrm->status);
 		}
@@ -125,11 +125,11 @@ class LoadTest extends CommonTestClass
 	 */
 	public function testLoadFromArrayWithIncompatibleProperties($testOrm)
 	{
-		$testData =  Array ('qc_id' => 6,
-            'qc_time_start' => 123456,
-            'qc_time_end' => 12345678,
-            'qc_status' => 5,
-            'qc_command' => 'ls -laf',
+		$testData = Array('qc_id' => 6,
+			'qc_time_start' => 123456,
+			'qc_time_end' => 12345678,
+			'qc_status' => 5,
+			'qc_command' => 'ls -laf',
 			'iblah' => 'iblaaaah');
 
 		$testOrm->load($testData);
@@ -139,9 +139,9 @@ class LoadTest extends CommonTestClass
 		$this->assertEquals(12345678, $testOrm->endTime);
 		$this->assertEquals('ls -laf', $testOrm->command);
 
-		try{
+		try {
 			$this->assertEquals('iblaaah', $testOrm->iblah);
-		} catch (Exception $e){
+		} catch (Exception $e) {
 			$this->assertInstanceOf('Exception', $e);
 		}
 	}
@@ -149,24 +149,24 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-    public function testLoadWithEmptyArray($testOrm)
-    {
-        $testData =  Array ();
+	public function testLoadWithEmptyArray($testOrm)
+	{
+		$testData = Array();
 
-        $testOrm->load($testData);
+		$testOrm->load($testData);
 
-        $this->assertEquals(false, $testOrm->isLoaded());
-    }
+		$this->assertEquals(false, $testOrm->isLoaded());
+	}
 
 	/**
 	 * @dataProvider providerBasic
 	 */
-    public function testLoadMultipleWithEmptyArray($testOrm)
-    {
-        $testData =  Array ();
+	public function testLoadMultipleWithEmptyArray($testOrm)
+	{
+		$testData = Array();
 
-        $testOrm->loadMultiple($testData);
+		$testOrm->loadMultiple($testData);
 
-        $this->assertEquals(false, $testOrm->isLoaded());
-    }
+		$this->assertEquals(false, $testOrm->isLoaded());
+	}
 }

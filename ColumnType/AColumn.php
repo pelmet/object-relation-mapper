@@ -1,6 +1,7 @@
 <?php
 
 namespace ObjectRelationMapper\ColumnType;
+
 use ObjectRelationMapper\Exception\ColumnType as EColumnType;
 
 /**
@@ -40,7 +41,7 @@ abstract class AColumn
 	 */
 	public function &__get($propertyName)
 	{
-		if(property_exists($this, $propertyName)){
+		if (property_exists($this, $propertyName)) {
 			return $this->{$propertyName};
 		} else {
 			throw new EColumnType('Property ' . $propertyName . ' neexistuje, opravte si prosim kod.');

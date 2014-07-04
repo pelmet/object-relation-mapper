@@ -9,5 +9,6 @@ namespace ObjectRelationMapper\ColumnType;
 interface IColumn
 {
 	public function validate($value);
+
 	public function generateDbLine();
 }

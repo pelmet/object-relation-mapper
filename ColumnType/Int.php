@@ -16,7 +16,7 @@ class Int extends AColumn implements IColumn
 	 */
 	public function validate($value)
 	{
-        $regexp = '/^\d{0,'.$this->length.'}$/';
-        return (is_numeric($value) && (boolean)preg_match($regexp,(string)$value));
+		$regexp = '/^\d{0,' . $this->length . '}$/';
+		return (is_numeric($value) && (boolean)preg_match($regexp, (string)$value));
 	}
 }

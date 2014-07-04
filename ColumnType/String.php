@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
-class String extends AColumn implements  IColumn
+class String extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
