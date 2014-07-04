@@ -164,7 +164,7 @@ abstract class DataObjects extends Common
 	 * Vytvoreni childa z predanych vysledku DB
 	 * @param string $childName
 	 * @param array $loadArray
-	 * @return bool
+	 * @return mixed
 	 * @throws Exception
 	 */
 	public function loadChild($childName, $loadArray)
@@ -172,7 +172,7 @@ abstract class DataObjects extends Common
 		$orm = $this->childs[$childName]->ormName;
 		$orm = new $orm();
 		$this->{$childName} = $orm->loadMultiple($loadArray);
-		return true;
+		return $this->{$childName};
 	}
 
 	/**

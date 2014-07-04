@@ -3,11 +3,10 @@
 require_once '_bootstrap.php';
 
 $invoke = Array();
-$invoke[] = function () use ($this) {
+$invoke[] = function () {
 	return true;
 };
 
-ob_start();
 $time1 = microtime(true);
 for ($i = 0; $i < 100000; $i++) {
 	foreach ($invoke as $method) {
@@ -15,14 +14,18 @@ for ($i = 0; $i < 100000; $i++) {
 	}
 }
 $time1 = microtime(true) - $time1;
-ob_end_clean();
-
 
 class TestClass
 {
+	protected function beforeLoad() {
+		foreach ($invoke as $method) {
+			$method->__invoke();
+		}
+	}
+
 	public function run()
 	{
-		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() !== false) {
+		if ($this->beforeLoad() !== false) {
 			return true;
 		}
 	}
