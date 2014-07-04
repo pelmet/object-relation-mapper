@@ -42,34 +42,6 @@ abstract class ORM extends Common implements Base\IORM
 		}
 	}
 
-    /**
-     * Nahraje objekt z daneho storage
-     * @throws Exception\ORM
-     * @return boolean|mixed
-     */
-    public function loadByPrimaryKey()
-    {
-        if(!isset($this->primaryKey) || empty($this->primaryKey)){
-            throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
-        }
-
-        if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
-            return false;
-        }
-
-        $this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
-
-        $this->changedVariables = Array();
-
-        if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
-            return false;
-        }
-    }
-
-
-
-
-
 	/**
 	 * Ulozi objekt ORMka
 	 * @param bool $forceInsert

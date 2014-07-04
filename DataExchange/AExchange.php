@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper\DataExchange;
 
-use ObjectRelationMapper\ORM;
+use ObjectRelationMapper\Base\AORM;
 
 abstract class AExchange
 {
@@ -14,7 +14,7 @@ abstract class AExchange
 	/**
 	 * @inheritdoc
 	 */
-	public function __construct(ORM $orm)
+	public function __construct(AORM $orm)
 	{
 		$this->orm = $orm;
 	}

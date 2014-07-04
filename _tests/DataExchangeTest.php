@@ -1,28 +1,17 @@
 <?php
 
-class DataExchangeTest extends PHPUnit_Framework_TestCase
+class DataExchangeTest extends CommonTestClass
 {
-	protected $connection;
-
-	public function setUp()
-	{
-
-	}
-
-	public function tearDown()
-	{
-
-	}
-
-	public function testArrayExchangeLoad()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testArrayExchangeLoad($testOrm)
 	{
 		$mergeArray = Array(
 			'id' => '1',
 			'command' => 'iblah',
 			'iblah' => 'iblah'
 		);
-
-		$testOrm = new ORMTest();
 
 		$merge = new ObjectRelationMapper\DataExchange\Arr($testOrm);
 		$merge->addExclude('id');
@@ -32,9 +21,11 @@ class DataExchangeTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(NULL, $testOrm->id);
 	}
 
-	public function testArrayExchangeExport()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testArrayExchangeExport($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->command = 'iblah';
 		$testOrm->endTime = '123456';
 		$testOrm->startTime = '123';

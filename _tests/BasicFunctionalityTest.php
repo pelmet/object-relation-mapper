@@ -1,15 +1,7 @@
 <?php
 
-class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
+class BasicFunctionalityTest extends CommonTestClass
 {
-    public function providerBasic()
-    {
-        return Array(
-            0 => Array(new ORMTest()),
-            1 => Array(new ORMTestOld())
-        );
-    }
-
     /**
      * @dataProvider providerBasic
      */

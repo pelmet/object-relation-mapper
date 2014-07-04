@@ -1,6 +1,6 @@
 <?php
 
-class CountTest extends PHPUnit_Framework_TestCase
+class CountTest extends CommonTestClass
 {
 	protected $connection;
 
@@ -26,6 +26,15 @@ class CountTest extends PHPUnit_Framework_TestCase
 					qc_command = "ls -laf"';
 
         mysqli_query($this->connection, $insert);
+
+		$insert = 'INSERT INTO d_queued_commands SET
+					qc_id = 7,
+					qc_time_start = 123456,
+					qc_time_end = 12345678,
+					qc_status = 5,
+					qc_command = "ls -laf"';
+
+		mysqli_query($this->connection, $insert);
     }
 
 	public function tearDown()
@@ -33,14 +42,6 @@ class CountTest extends PHPUnit_Framework_TestCase
 		$delete = 'TRUNCATE TABLE d_queued_commands';
 		mysqli_query($this->connection, $delete);
 	}
-
-    public function providerBasic()
-    {
-        return Array(
-            0 => Array(new ORMTest()),
-            1 => Array(new ORMTestOld())
-        );
-    }
 
     /**
      * @dataProvider providerBasic
@@ -57,6 +58,6 @@ class CountTest extends PHPUnit_Framework_TestCase
 	public function testCountByData($testOrm)
 	{
 		$testOrm->status = 5;
-		$this->assertEquals(2, $testOrm->count());
+		$this->assertEquals(3, $testOrm->count());
 	}
 }

@@ -13,7 +13,7 @@ abstract class DataObjects extends Common
         }
 
         foreach($this->config['child'] as $child){
-            $this->addChild($child['object'], $child['name'], $child[0]['localKey'], $child[0]['foreignKey']);
+            $this->addChild($child['object'], $child['name'], $child[0]['localKey'], $child[0]['foreignKey'], Array('delete' => $child['delete'], 'relation' => $child['possibilities']));
         }
 
         $this->setConfigDbServer($this->config['server']);
@@ -41,7 +41,7 @@ abstract class DataObjects extends Common
      */
     public function __call($function, Array $arguments)
     {
-        if (preg_match('/get([A-Z][a-z]+)/', $function, $matches)) {
+        if (preg_match('/get([A-Z][a-z]+)/', $function, $matches) && isset($this->childs[$matches[1]])) {
             return $this->children($matches[1]);
         }
 
@@ -142,6 +142,11 @@ abstract class DataObjects extends Common
             return false;
         }
 
+		// OBJECT RELATION MAPPER COMPAT HACK -- DO NOT REMOVE
+		if(is_array($forceReload)){
+			$loadArray = $forceReload;
+		}
+
         if(!is_null($loadArray)){
             $this->loadClassFromArray($loadArray);
         } else {
@@ -170,10 +175,11 @@ abstract class DataObjects extends Common
         return true;
     }
 
-    /**
-     * Nastavi pro object delete marku, nebo rovnou objekt smaze
-     * @param bool $forceDelete
-     */
+	/**
+	 * Nastavi pro object delete marku, nebo rovnou objekt smaze
+	 * @param bool $forceDelete
+	 * @return bool
+	 */
     public function delete($forceDelete = false)
     {
         if(method_exists($this, 'beforeDelete') && $this->beforeDelete() === false){
@@ -264,6 +270,35 @@ abstract class DataObjects extends Common
 
     }
 
+	/**
+	 * Vrati kolekci ze zadaneho dotazu
+	 * @param array $loadData
+	 * @return array
+	 */
+	public function loadMultiple($loadData = NULL)
+	{
+		if($this->getOrderingLimit() == 1){
+			$this->setOrderingLimit(9999999999);
+		}
+
+		if(is_null($loadData)){
+			$collection = $this->queryBuilder->loadMultiple($this);
+		} else {
+			$collection = &$loadData;
+		}
+
+		$return = Array();
+		$object = $this->getConfigObject();
+
+		foreach($collection as $singleOrm){
+			$tempOrm = new $object();
+			$tempOrm->load(false, $singleOrm);
+			$return[] = $tempOrm;
+		}
+
+		return $return;
+	}
+
     /**
      * Slouzi pro ziskani dat pro metodu Collection::fromORM()
      * Nepouzivat primo
@@ -332,10 +367,5 @@ abstract class DataObjects extends Common
     public function isLoaded()
     {
         return $this->isLoaded;
-    }
-
-    public function loadByPrimaryKey()
-    {
-        // TODO: Implement loadByPrimaryKey() method.
     }
 }

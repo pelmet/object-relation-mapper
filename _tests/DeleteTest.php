@@ -1,6 +1,6 @@
 <?php
 
-class DeleteTest extends PHPUnit_Framework_TestCase
+class DeleteTest extends CommonTestClass
 {
     protected $connection;
 
@@ -24,9 +24,13 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         mysqli_query($this->connection, $delete);
     }
 
-    public function testDeleteNotNow()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testDeleteNotNow($testOrm)
     {
-        $testOrm = new ORMTest(5);
+		$testOrm = get_class($testOrm);
+		$testOrm = new $testOrm(5);
         $testOrm->delete();
 
         $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_id = 5');
@@ -37,7 +41,7 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(123456, $result['qc_time_start']);
         $this->assertEquals(12345678, $result['qc_time_end']);
 
-        $testOrm = NULL;
+        unset($testOrm);
 
         $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_id = 5');
         $result = mysqli_fetch_assoc($query);
@@ -45,9 +49,13 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $this->assertEmpty($result);
     }
 
-    public function testDeleteNow()
+	/**
+	 * @dataProvider providerBasic
+	 */
+    public function testDeleteNow($testOrm)
     {
-        $testOrm = new ORMTest(5);
+		$testOrm->primaryKey = 5;
+		$testOrm->load();
         $testOrm->delete(true);
 
         $query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_id = 5');

@@ -2,15 +2,15 @@
 
 namespace ObjectRelationMapper\DataExchange;
 
-use ObjectRelationMapper\ORM;
+use ObjectRelationMapper\Base\AORM;
 
 interface IExchange
 {
 	/**
 	 * Zakladni Construct
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 */
-	public function __construct(ORM $orm);
+	public function __construct(AORM $orm);
 
 	/**
 	 * Naplni ormko daty

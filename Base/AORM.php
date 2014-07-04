@@ -488,15 +488,16 @@ abstract class AORM extends Iterator
 	 * @param $phpAlias
 	 * @param $localKey
 	 * @param $foreignKey
-	 * @throws EORM
+	 * @param array $additionalParams
+	 * @throws \ObjectRelationMapper\Exception\ORM
 	 */
-	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey)
+	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey, $additionalParams = Array())
 	{
 		$className = 'ObjectRelationMapper\ColumnType\Child';
 		if(!class_exists($className) || !class_exists($ormName)){
 			throw new EORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');
 		} else {
-			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, Array());
+			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, $additionalParams);
 
 			if(!$this->childs[$phpAlias] instanceof IColumn){
 				throw new EORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\\ObjectRelationMapper\ColumnType\IColumn. Typ child nelze pouzit, dokud toto nebude opraveno');

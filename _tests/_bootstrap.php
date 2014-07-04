@@ -5,6 +5,8 @@ define('DB_USER', 'ormtestuser');
 define('DB_PASS', 'testpass');
 define('DB_DB'  , 'orm_test_db');
 
+require_once __DIR__. '/CommonTestClass.php';
+
 function autoload($className)
 {
 	$className = preg_replace('/^ObjectRelationMapper/', '', $className);
