@@ -20,8 +20,6 @@ abstract class DataObjects extends Common
 		$this->setConfigDbPrimaryKey($this->config['primaryKey']);
 		$this->setConfigDbTable($this->config['tableName']);
 		$this->setConfigObject($this->config['object']);
-
-
 	}
 
 	/**
@@ -111,7 +109,7 @@ abstract class DataObjects extends Common
 	 */
 	public function save()
 	{
-		if (method_exists($this, 'beforeSave') && $this->beforeSave() === false) {
+		if ($this->beforeSave() === false) {
 			return false;
 		}
 
@@ -123,7 +121,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterSave') && $this->afterSave() === false) {
+		if ($this->afterSave() === false) {
 			return false;
 		}
 	}
@@ -138,7 +136,7 @@ abstract class DataObjects extends Common
 	 */
 	public function load($forceReload = false, $loadArray = NULL, $additionalParams = NULL)
 	{
-		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
+		if ($this->beforeLoad() === false) {
 			return false;
 		}
 
@@ -155,7 +153,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
+		if ($this->afterLoad() === false) {
 			return false;
 		}
 	}
@@ -182,7 +180,7 @@ abstract class DataObjects extends Common
 	 */
 	public function delete($forceDelete = false)
 	{
-		if (method_exists($this, 'beforeDelete') && $this->beforeDelete() === false) {
+		if ($this->beforeDelete() === false) {
 			return false;
 		}
 
@@ -194,7 +192,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterDelete') && $this->afterDelete() === false) {
+		if ($this->afterDelete() === false) {
 			return false;
 		}
 	}

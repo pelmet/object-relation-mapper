@@ -25,7 +25,7 @@ abstract class ORM extends Common implements Base\IORM
 	 */
 	public function load($loadData = NULL)
 	{
-		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
+		if ($this->beforeLoad() === false) {
 			return false;
 		}
 
@@ -37,7 +37,7 @@ abstract class ORM extends Common implements Base\IORM
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
+		if ($this->afterLoad() === false) {
 			return false;
 		}
 	}
@@ -53,7 +53,7 @@ abstract class ORM extends Common implements Base\IORM
 			return true;
 		}
 
-		if (method_exists($this, 'beforeSave') && $this->beforeSave() === false) {
+		if ($this->beforeSave() === false) {
 			return false;
 		}
 
@@ -65,7 +65,7 @@ abstract class ORM extends Common implements Base\IORM
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterSave') && $this->afterSave() === false) {
+		if ($this->afterSave() === false) {
 			return false;
 		}
 	}
@@ -77,7 +77,7 @@ abstract class ORM extends Common implements Base\IORM
 	 */
 	public function delete($deleteNow = false)
 	{
-		if (method_exists($this, 'beforeDelete') && $this->beforeDelete() === false) {
+		if ($this->beforeDelete() === false) {
 			return false;
 		}
 
@@ -89,7 +89,7 @@ abstract class ORM extends Common implements Base\IORM
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterDelete') && $this->afterDelete() === false) {
+		if ($this->afterDelete() === false) {
 			return false;
 		}
 	}

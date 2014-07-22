@@ -42,7 +42,7 @@ abstract class Common extends Base\AORM
 	 */
 	protected function insert()
 	{
-		if (method_exists($this, 'beforeInsert') && $this->beforeInsert() === false) {
+		if ($this->beforeInsert() === false) {
 			return false;
 		}
 
@@ -50,7 +50,7 @@ abstract class Common extends Base\AORM
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterInsert') && $this->afterInsert() === false) {
+		if ($this->afterInsert() === false) {
 			return false;
 		}
 	}
@@ -61,7 +61,7 @@ abstract class Common extends Base\AORM
 	 */
 	protected function update()
 	{
-		if (method_exists($this, 'beforeUpdate') && $this->beforeUpdate() === false) {
+		if ($this->beforeUpdate() === false) {
 			return false;
 		}
 
@@ -69,7 +69,7 @@ abstract class Common extends Base\AORM
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterUpdate') && $this->afterUpdate() === false) {
+		if ($this->afterUpdate() === false) {
 			return false;
 		}
 	}
@@ -151,7 +151,7 @@ abstract class Common extends Base\AORM
 			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
-		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
+		if ($this->beforeLoad() === false) {
 			return false;
 		}
 
@@ -159,7 +159,7 @@ abstract class Common extends Base\AORM
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
+		if ($this->afterLoad() === false) {
 			return false;
 		}
 	}
