@@ -145,21 +145,7 @@ abstract class ORM extends Common implements Base\IORM
 		return $return;
 	}
 
-	/**
-	 * Nahraje count pres danou query
-	 * @param $query
-	 * @param $params
-	 * @return array
-	 * @throws Exception\ORM
-	 */
-	public function countByQuery($query, $params)
-	{
-		if (empty($query)) {
-			throw new Exception\ORM('Nemohu loadovat pres prazdnou query.');
-		}
 
-		return $this->queryBuilder->countByQuery($this, $query, $params);
-	}
 
 	/**
 	 * Vrati naloadovaneho childa a ulozi ho k pozdejsimu pouziti

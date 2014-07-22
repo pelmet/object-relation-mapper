@@ -107,13 +107,17 @@ abstract class DataObjects extends Common
 	/**
 	 * Ulozi objekt do databaze nebo do jineho specifikovaneho uloziste
 	 */
-	public function save()
+	public function save($forceInsert = false)
 	{
+		if ($this->readOnly == true) {
+			return true;
+		}
+
 		if ($this->beforeSave() === false) {
 			return false;
 		}
 
-		if (empty($this->primaryKey)) {
+		if ($forceInsert == true || empty($this->primaryKey)) {
 			$this->insert();
 		} else {
 			$this->update();

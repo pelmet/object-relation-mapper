@@ -1,6 +1,6 @@
 <?php
 
-class SaveTest extends PHPUnit_Framework_TestCase
+class SaveTest extends CommonTestClass
 {
 	protected $connection;
 
@@ -18,9 +18,11 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		mysqli_query($this->connection, $delete);
 	}
 
-	public function testInsert()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testInsert($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->status = 5;
 		$testOrm->command = 'ls -l';
 		$testOrm->save();
@@ -34,7 +36,10 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(NULL, $result['qc_time_end']);
 	}
 
-	public function testUpdate()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testUpdate($testOrm)
 	{
 		$insert = 'INSERT INTO d_queued_commands SET
 					qc_id = 5,
@@ -45,7 +50,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
 
 		mysqli_query($this->connection, $insert);
 
-		$testOrm = new ORMTest(5);
+		$class = get_class($testOrm);
+		$testOrm = new $class(5);
 		$testOrm->status = 10;
 		$testOrm->command = 'ls -l';
 		$testOrm->save();
@@ -59,9 +65,11 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('12345678', $result['qc_time_end']);
 	}
 
-	public function testForceInsert()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testForceInsert($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->id = 6;
 		$testOrm->status = 10;
 		$testOrm->command = 'ls -l';
@@ -76,9 +84,11 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(NULL, $result['qc_time_end']);
 	}
 
-	public function testReadOnly()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testReadOnly($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->setReadOnly();
 		$testOrm->id = 6;
 		$testOrm->status = 10;
@@ -91,7 +101,10 @@ class SaveTest extends PHPUnit_Framework_TestCase
 		$this->assertEmpty($result);
 	}
 
-	public function testUpdateChangedPrimaryKey()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testUpdateChangedPrimaryKey($testOrm)
 	{
 		$insert = 'INSERT INTO d_queued_commands SET
 					qc_id = 5,
@@ -102,7 +115,8 @@ class SaveTest extends PHPUnit_Framework_TestCase
 
 		mysqli_query($this->connection, $insert);
 
-		$testOrm = new ORMTest(5);
+		$class = get_class($testOrm);
+		$testOrm = new $class(5);
 		$testOrm->status = 10;
 		$testOrm->command = 'ls -l';
 		$testOrm->id = 15;

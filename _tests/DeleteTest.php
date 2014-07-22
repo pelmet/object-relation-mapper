@@ -64,20 +64,24 @@ class DeleteTest extends CommonTestClass
 		$this->assertEmpty($result);
 	}
 
-	public function testDeleteByOrm()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testDeleteByOrm($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->startTime = 123456;
 		$testOrm->endTime = 12345678;
 		$testOrm->load();
 		$this->assertTrue($testOrm->isLoaded());
 
-		$testOrm = new ORMTest();
+		$testOrm = get_class($testOrm);
+		$testOrm = new $testOrm();
 		$testOrm->startTime = 123456;
 		$testOrm->endTime = 12345678;
 		$testOrm->getQueryBuilder()->deleteByOrm($testOrm);
 
-		$testOrm = new ORMTest();
+		$testOrm = get_class($testOrm);
+		$testOrm = new $testOrm();
 		$testOrm->startTime = 123456;
 		$testOrm->endTime = 12345678;
 		$testOrm->load();
