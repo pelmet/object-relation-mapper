@@ -123,20 +123,6 @@ abstract class AORM extends Iterator
 		'Limit' => 1
 	);
 
-	public $beforeSave = Array();
-	public $afterSave = Array();
-
-	public $beforeLoad = Array();
-	public $afterLoad = Array();
-
-	public $beforeInsert = Array();
-	public $afterInsert = Array();
-
-	public $beforeDelete = Array();
-	public $afterDelete = Array();
-
-	public $beforeUpdate = Array();
-	public $afterUpdate = Array();
 
 	/**
 	 * Nastaveni ORM Tridy
@@ -645,7 +631,7 @@ abstract class AORM extends Iterator
 	 * @param array $exclude
 	 * @return string|array
 	 */
-	public function getAllDbFields($glue = NULL, $includeTableName = false, Array $exclude = Array())
+	public function getAllDbFieldsInternal($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
 		$s = & $this->configStorage;
 
@@ -773,33 +759,4 @@ abstract class AORM extends Iterator
 		return ob_get_clean();
 	}
 
-	/**
-	 * Invokne dane metody
-	 * @param array $arCallArray
-	 * @return bool
-	 */
-	protected function internalCalls(Array $arCallArray)
-	{
-		foreach($arCallArray as $callableMethod){
-			if(is_callable($callableMethod)){
-				call_user_func($callableMethod);
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * @return bool
-	 */
-	protected function beforeSave()	{ $this->internalCalls($this->beforeSave); }
-	protected function afterSave() { $this->internalCalls($this->afterSave); }
-	protected function beforeDelete() { $this->internalCalls($this->beforeDelete); }
-	protected function afterDelete() { $this->internalCalls($this->afterDelete); }
-	protected function beforeUpdate() { $this->internalCalls($this->beforeUpdate); }
-	protected function afterUpdate() { $this->internalCalls($this->afterUpdate); }
-	protected function beforeInsert() { $this->internalCalls($this->beforeInsert); }
-	protected function afterInsert() { $this->internalCalls($this->afterInsert); }
-	protected function beforeLoad() { $this->internalCalls($this->beforeLoad); }
-	protected function afterLoad() { $this->internalCalls($this->afterLoad); }
 }

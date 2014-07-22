@@ -12,14 +12,87 @@ abstract class DataObjects extends Common
 			$this->addColumn($row['name'], $row['alias'], 'string', '5000');
 		}
 
-		foreach ($this->config['child'] as $child) {
-			$this->addChild($child['object'], $child['name'], $child[0]['localKey'], $child[0]['foreignKey'], Array('delete' => $child['delete'], 'relation' => $child['possibilities']));
+		if(isset($this->config['child'])){
+			foreach ($this->config['child'] as $child) {
+				$this->addChild($child['object'], $child['name'], $child[0]['localKey'], $child[0]['foreignKey'], Array('delete' => $child['delete'], 'relation' => $child['possibilities']));
+			}
 		}
 
 		$this->setConfigDbServer($this->config['server']);
 		$this->setConfigDbPrimaryKey($this->config['primaryKey']);
 		$this->setConfigDbTable($this->config['tableName']);
 		$this->setConfigObject($this->config['object']);
+	}
+
+	public function __get($property)
+	{
+		if($property == 'objectData'){
+			return $this->data;
+		}
+
+		return parent::__get($property);
+	}
+
+	/**
+	 * Insert Dat
+	 * @return bool
+	 */
+	protected function insert()
+	{
+		if (method_exists($this, 'beforeInsert') && $this->beforeInsert() === false) {
+			return false;
+		}
+
+		$this->queryBuilder->insert($this);
+
+		$this->changedVariables = Array();
+
+		if (method_exists($this, 'beforeInsert') && $this->afterInsert() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Update dat dle PK
+	 * @return bool
+	 */
+	protected function update()
+	{
+		if (method_exists($this, 'beforeUpdate') && $this->beforeUpdate() === false) {
+			return false;
+		}
+
+		$this->queryBuilder->update($this, $this->changedPrimaryKey);
+
+		$this->changedVariables = Array();
+
+		if (method_exists($this, 'afterUpdate') && $this->afterUpdate() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Nahraje objekt z daneho storage
+	 * @throws Exception\ORM
+	 * @return boolean|mixed
+	 */
+	public function loadByPrimaryKey()
+	{
+		if (!isset($this->primaryKey) || empty($this->primaryKey)) {
+			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+		}
+
+		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
+			return false;
+		}
+
+		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
+
+		$this->changedVariables = Array();
+
+		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
+			return false;
+		}
 	}
 
 	/**
@@ -39,8 +112,9 @@ abstract class DataObjects extends Common
 	 */
 	public function __call($function, Array $arguments)
 	{
-		if (preg_match('/get([A-Z][a-z]+)/', $function, $matches) && isset($this->childs[$matches[1]])) {
-			return $this->children($matches[1]);
+		if (preg_match('/get([A-Z][a-z]+)/', $function, $matches) && isset($this->childs[strtolower($matches[1])])) {
+			$ormName = $this->childs[strtolower($matches[1])]->alias;
+			return $this->children($ormName);
 		}
 
 		return parent::__call($function, $arguments);
@@ -113,7 +187,7 @@ abstract class DataObjects extends Common
 			return true;
 		}
 
-		if ($this->beforeSave() === false) {
+		if (method_exists($this, 'beforeSave') && $this->beforeSave() === false) {
 			return false;
 		}
 
@@ -125,7 +199,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if ($this->afterSave() === false) {
+		if (method_exists($this, 'afterSave') && $this->afterSave() === false) {
 			return false;
 		}
 	}
@@ -140,7 +214,7 @@ abstract class DataObjects extends Common
 	 */
 	public function load($forceReload = false, $loadArray = NULL, $additionalParams = NULL)
 	{
-		if ($this->beforeLoad() === false) {
+		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
 			return false;
 		}
 
@@ -157,7 +231,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if ($this->afterLoad() === false) {
+		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
 			return false;
 		}
 	}
@@ -171,7 +245,7 @@ abstract class DataObjects extends Common
 	 */
 	public function loadChild($childName, $loadArray)
 	{
-		$orm = $this->childs[$childName]->ormName;
+		$orm = $this->childs[strtolower($childName)]->ormName;
 		$orm = new $orm();
 		$this->{$childName} = $orm->loadMultiple($loadArray);
 		return $this->{$childName};
@@ -184,7 +258,7 @@ abstract class DataObjects extends Common
 	 */
 	public function delete($forceDelete = false)
 	{
-		if ($this->beforeDelete() === false) {
+		if (method_exists($this, 'beforeDelete') && $this->beforeDelete() === false) {
 			return false;
 		}
 
@@ -196,7 +270,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if ($this->afterDelete() === false) {
+		if (method_exists($this, 'afterDelete') && $this->afterDelete() === false) {
 			return false;
 		}
 	}
@@ -243,34 +317,7 @@ abstract class DataObjects extends Common
 		}
 	}
 
-	/**
-	 * Propoji hodnoty, ktere nalezne v Tride Context a poli post
-	 * s konfiguraci objektu ORM a vlozi je jako data do teto tridy pro
-	 * dalsi pouziti
-	 *
-	 * @param array|Abstract_DataObjects|Abstract_Form $varToMerge
-	 * @return boolean
-	 */
-	public function merge($varToMerge = NULL)
-	{
-		if (is_array($varToMerge)) {
-			foreach ($this->config['rows'] as $value) {
-				if ((!isset($value['merge']) || $value['merge'] == true) && isset($varToMerge[$value['alias']])) {
-					$this->$value['alias'] = $varToMerge[$value['alias']];
-				}
-			}
-			return true;
-		} else if (is_null($varToMerge)) {
-			return $this->merge(\Factory::Context()->post);
-		} else if ($varToMerge instanceof \Abstract_DataObjects) {
-			return $this->merge($varToMerge->getData());
-		} else if ($varToMerge instanceof \Abstract_Form) {
-			return $this->merge($varToMerge->getData());
-		}
 
-		return false;
-
-	}
 
 	/**
 	 * Slouzi pro ziskani dat pro metodu Collection::fromORM()
@@ -313,5 +360,10 @@ abstract class DataObjects extends Common
 	public function isLoaded()
 	{
 		return $this->isLoaded;
+	}
+
+	public function getAllDbFields($imploder = ',', $includeTableName = false)
+	{
+		return $this->getAllDbFieldsInternal($imploder, $includeTableName);
 	}
 }

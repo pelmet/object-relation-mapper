@@ -9,6 +9,118 @@ namespace ObjectRelationMapper;
  */
 abstract class ORM extends Common implements Base\IORM
 {
+	public $beforeSave = Array();
+	public $afterSave = Array();
+	public $beforeLoad = Array();
+	public $afterLoad = Array();
+	public $beforeInsert = Array();
+	public $afterInsert = Array();
+	public $beforeDelete = Array();
+	public $afterDelete = Array();
+	public $beforeUpdate = Array();
+	public $afterUpdate = Array();
+
+	/**
+	 * Invokne dane metody
+	 * @param array $arCallArray
+	 * @return bool
+	 */
+	protected function internalCalls(Array $arCallArray)
+	{
+		foreach($arCallArray as $callableMethod){
+			if(is_callable($callableMethod)){
+				call_user_func($callableMethod);
+			}
+		}
+
+		return true;
+	}
+
+	protected function beforeSave()	{ $this->internalCalls($this->beforeSave); }
+	protected function afterSave() { $this->internalCalls($this->afterSave); }
+	protected function beforeDelete() { $this->internalCalls($this->beforeDelete); }
+	protected function afterDelete() { $this->internalCalls($this->afterDelete); }
+	protected function beforeUpdate() { $this->internalCalls($this->beforeUpdate); }
+	protected function afterUpdate() { $this->internalCalls($this->afterUpdate); }
+	protected function beforeInsert() { $this->internalCalls($this->beforeInsert); }
+	protected function afterInsert() { $this->internalCalls($this->afterInsert); }
+	protected function beforeLoad() { $this->internalCalls($this->beforeLoad); }
+	protected function afterLoad() { $this->internalCalls($this->afterLoad); }
+
+	/**
+	 * Vrati vsechna DB POLE bud v poli nebo spojene pres glue
+	 * @param null $glue
+	 * @param bool $includeTableName
+	 * @param array $exclude
+	 * @return string|array
+	 */
+	public function getAllDbFields($glue = NULL, $includeTableName = false, Array $exclude = Array())
+	{
+		return $this->getAllDbFieldsInternal($glue, $includeTableName, $exclude);
+	}
+
+	/**
+	 * Insert Dat
+	 * @return bool
+	 */
+	protected function insert()
+	{
+		if ($this->beforeInsert() === false) {
+			return false;
+		}
+
+		$this->queryBuilder->insert($this);
+
+		$this->changedVariables = Array();
+
+		if ($this->afterInsert() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Update dat dle PK
+	 * @return bool
+	 */
+	protected function update()
+	{
+		if ($this->beforeUpdate() === false) {
+			return false;
+		}
+
+		$this->queryBuilder->update($this, $this->changedPrimaryKey);
+
+		$this->changedVariables = Array();
+
+		if ($this->afterUpdate() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Nahraje objekt z daneho storage
+	 * @throws Exception\ORM
+	 * @return boolean|mixed
+	 */
+	public function loadByPrimaryKey()
+	{
+		if (!isset($this->primaryKey) || empty($this->primaryKey)) {
+			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+		}
+
+		if ($this->beforeLoad() === false) {
+			return false;
+		}
+
+		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
+
+		$this->changedVariables = Array();
+
+		if ($this->afterLoad() === false) {
+			return false;
+		}
+	}
+
 	/**
 	 * Da se prepsat na cokoliv jineho v extendovane tride
 	 */

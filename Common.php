@@ -36,43 +36,7 @@ abstract class Common extends Base\AORM
 		return $this->queryBuilder->count($this);
 	}
 
-	/**
-	 * Insert Dat
-	 * @return bool
-	 */
-	protected function insert()
-	{
-		if ($this->beforeInsert() === false) {
-			return false;
-		}
 
-		$this->queryBuilder->insert($this);
-
-		$this->changedVariables = Array();
-
-		if ($this->afterInsert() === false) {
-			return false;
-		}
-	}
-
-	/**
-	 * Update dat dle PK
-	 * @return bool
-	 */
-	protected function update()
-	{
-		if ($this->beforeUpdate() === false) {
-			return false;
-		}
-
-		$this->queryBuilder->update($this, $this->changedPrimaryKey);
-
-		$this->changedVariables = Array();
-
-		if ($this->afterUpdate() === false) {
-			return false;
-		}
-	}
 
 	/**
 	 * Vrati danou property prvniho childa ve formatu child.property[, ["$param1", "$paramx"]]
@@ -140,29 +104,7 @@ abstract class Common extends Base\AORM
 		return $return;
 	}
 
-	/**
-	 * Nahraje objekt z daneho storage
-	 * @throws Exception\ORM
-	 * @return boolean|mixed
-	 */
-	public function loadByPrimaryKey()
-	{
-		if (!isset($this->primaryKey) || empty($this->primaryKey)) {
-			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
-		}
 
-		if ($this->beforeLoad() === false) {
-			return false;
-		}
-
-		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
-
-		$this->changedVariables = Array();
-
-		if ($this->afterLoad() === false) {
-			return false;
-		}
-	}
 
 	/**
 	 * Vrati danou property vsech childu ve formatu child.property
