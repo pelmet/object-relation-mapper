@@ -4,10 +4,38 @@ namespace ObjectRelationMapper;
 
 abstract class DataObjects extends Common
 {
+	protected function beforeSave()	{ $this->internalCalls($this->beforeSave); }
+	protected function afterSave() { $this->internalCalls($this->afterSave); }
+	protected function beforeDelete() { $this->internalCalls($this->beforeDelete); }
+	protected function afterDelete() { $this->internalCalls($this->afterDelete); }
+	protected function beforeUpdate() { $this->internalCalls($this->beforeUpdate); }
+	protected function afterUpdate() { $this->internalCalls($this->afterUpdate); }
+	protected function beforeInsert() { $this->internalCalls($this->beforeInsert); }
+	protected function afterInsert() { $this->internalCalls($this->afterInsert); }
+	protected function beforeLoad() { $this->internalCalls($this->beforeLoad); }
+	protected function afterLoad() { $this->internalCalls($this->afterLoad); }
+
 	protected $config;
+
+	protected $translations = Array(
+		'rows' => 'columns',
+		'child' => 'childs',
+		'server' => 'DbServer',
+		'primaryKey' => 'DbPrimaryKey',
+		'tableName' => 'DbTable',
+		'object' => 'Object'
+	);
+
+	public function __construct($primaryKey = NULL)
+	{
+		parent::__construct($primaryKey);
+		$this->config = $this->basicConfiguration;
+	}
 
 	protected function translateConfig()
 	{
+		$this->configurationCheck = false;
+
 		foreach ($this->config['rows'] as $row) {
 			$this->addColumn($row['name'], $row['alias'], 'string', '5000');
 		}
@@ -22,6 +50,10 @@ abstract class DataObjects extends Common
 		$this->setConfigDbPrimaryKey($this->config['primaryKey']);
 		$this->setConfigDbTable($this->config['tableName']);
 		$this->setConfigObject($this->config['object']);
+
+		foreach(array_diff_key($this->config, $this->translations) as $key => $value){
+			$this->basicConfiguration[$key] = $value;
+		}
 	}
 
 	public function __get($property)
@@ -39,7 +71,7 @@ abstract class DataObjects extends Common
 	 */
 	protected function insert()
 	{
-		if (method_exists($this, 'beforeInsert') && $this->beforeInsert() === false) {
+		if ($this->beforeInsert() === false) {
 			return false;
 		}
 
@@ -47,7 +79,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'beforeInsert') && $this->afterInsert() === false) {
+		if ($this->afterInsert(true) === false) {
 			return false;
 		}
 	}
@@ -58,7 +90,7 @@ abstract class DataObjects extends Common
 	 */
 	protected function update()
 	{
-		if (method_exists($this, 'beforeUpdate') && $this->beforeUpdate() === false) {
+		if ($this->beforeUpdate() === false) {
 			return false;
 		}
 
@@ -66,7 +98,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterUpdate') && $this->afterUpdate() === false) {
+		if ($this->afterUpdate(true) === false) {
 			return false;
 		}
 	}
@@ -82,7 +114,7 @@ abstract class DataObjects extends Common
 			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
-		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
+		if ($this->beforeLoad() === false) {
 			return false;
 		}
 
@@ -90,7 +122,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
+		if ($this->afterLoad(true) === false) {
 			return false;
 		}
 	}
@@ -144,9 +176,13 @@ abstract class DataObjects extends Common
 	 * @param type $configDirective
 	 * @return mixed
 	 */
-	public function &config($configDirective)
+	public function config($configDirective)
 	{
-		return $this->config[$configDirective];
+		if(isset($this->translations[$configDirective])){
+			return $this->{'getConfig'.$this->translations[$configDirective]}();
+		} else {
+			return $this->basicConfiguration[$configDirective];
+		}
 	}
 
 	/**
@@ -157,7 +193,7 @@ abstract class DataObjects extends Common
 	 */
 	public function &configChild($childName, $configDirective)
 	{
-		return $this->configChildren[$childName][$configDirective];
+		return $this->childs[$childName]->{$configDirective};
 	}
 
 	/**
@@ -187,7 +223,7 @@ abstract class DataObjects extends Common
 			return true;
 		}
 
-		if (method_exists($this, 'beforeSave') && $this->beforeSave() === false) {
+		if ($this->beforeSave() === false) {
 			return false;
 		}
 
@@ -199,7 +235,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterSave') && $this->afterSave() === false) {
+		if ($this->afterSave(true) === false) {
 			return false;
 		}
 	}
@@ -214,7 +250,7 @@ abstract class DataObjects extends Common
 	 */
 	public function load($forceReload = false, $loadArray = NULL, $additionalParams = NULL)
 	{
-		if (method_exists($this, 'beforeLoad') && $this->beforeLoad() === false) {
+		if ($this->beforeLoad() === false) {
 			return false;
 		}
 
@@ -231,7 +267,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterLoad') && $this->afterLoad() === false) {
+		if ($this->afterLoad(true) === false) {
 			return false;
 		}
 	}
@@ -258,7 +294,7 @@ abstract class DataObjects extends Common
 	 */
 	public function delete($forceDelete = false)
 	{
-		if (method_exists($this, 'beforeDelete') && $this->beforeDelete() === false) {
+		if ($this->beforeDelete() === false) {
 			return false;
 		}
 
@@ -270,7 +306,7 @@ abstract class DataObjects extends Common
 
 		$this->changedVariables = Array();
 
-		if (method_exists($this, 'afterDelete') && $this->afterDelete() === false) {
+		if ($this->afterDelete(true) === false) {
 			return false;
 		}
 	}
@@ -289,6 +325,8 @@ abstract class DataObjects extends Common
 	public function children($child = false, $order = false, $direction = false, $forceReload = false, $limit = false, $offset = false)
 	{
 		$orm = $this->childs[$child]->ormName;
+		$sRelation = $this->childs[$child]->additionalParams['relation'];
+		/** @var $this */
 		$orm = new $orm();
 
 		if ($order !== false) {
@@ -308,16 +346,22 @@ abstract class DataObjects extends Common
 
 		if (!empty($this->{$localKey})) {
 			$orm->{$foreignKey} = $this->{$localKey};
-			$collection = $orm->loadMultiple();
-			$this->$child = $collection;
-			return $collection;
+			if($sRelation == 'many'){
+				$this->$child = $orm->loadMultiple();
+			} else {
+				$orm->load();
+				$this->$child = $orm;
+			}
 		} else {
-			$this->$child = Array();
-			return Array();
+			if($sRelation == 'many'){
+				$this->$child = Array();
+			} else {
+				$this->$child = null;
+			}
 		}
+
+		return $this->$child;
 	}
-
-
 
 	/**
 	 * Slouzi pro ziskani dat pro metodu Collection::fromORM()
@@ -325,14 +369,19 @@ abstract class DataObjects extends Common
 	 */
 	public function _fetchAll($order = null, $direction = null, $limit = null, $offset = null, $forceReload = false)
 	{
-		$additionalParams = array(
-			'order' => $order,
-			'smer' => $direction,
-			'limit' => $limit,
-			'offset' => $offset
-		);
+		if(!is_null($order)){
+			$this->setOrderingOrder($order, ($direction == self::ORDERING_ASCENDING) ? self::ORDERING_ASCENDING : self::ORDERING_DESCENDING);
+		}
 
-		return $this->get(true, false, $forceReload, $additionalParams);
+		if(!is_null($limit)){
+			$this->setOrderingLimit($limit);
+		}
+
+		if(!is_null($offset)){
+			$this->setOrderingOffset($offset);
+		}
+
+		return $this->queryBuilder->loadMultiple($this);
 	}
 
 	/**

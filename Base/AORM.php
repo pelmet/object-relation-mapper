@@ -76,6 +76,11 @@ abstract class AORM extends Iterator
 	protected $dataAliases = Array();
 
 	/**
+	 * @var Array
+	 */
+	protected $additionalConfiguration = Array();
+
+	/**
 	 * Promenne, s kterymy se nejak hybalo
 	 * @var array
 	 */

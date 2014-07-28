@@ -156,4 +156,31 @@ abstract class Common extends Base\AORM
 
 		return $this->queryBuilder->countByQuery($this, $query, $params);
 	}
+
+	public $beforeSave = Array();
+	public $afterSave = Array();
+	public $beforeLoad = Array();
+	public $afterLoad = Array();
+	public $beforeInsert = Array();
+	public $afterInsert = Array();
+	public $beforeDelete = Array();
+	public $afterDelete = Array();
+	public $beforeUpdate = Array();
+	public $afterUpdate = Array();
+
+	/**
+	 * Invokne dane metody
+	 * @param array $arCallArray
+	 * @return bool
+	 */
+	protected function internalCalls(Array $arCallArray)
+	{
+		foreach($arCallArray as $callableMethod){
+			if(is_callable($callableMethod)){
+				call_user_func($callableMethod);
+			}
+		}
+
+		return true;
+	}
 }
