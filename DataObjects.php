@@ -136,18 +136,10 @@ abstract class DataObjects extends Common
 		$this->queryBuilder = new QueryBuilder\DB(new Connector\ESDB());
 	}
 
-	/**
-	 * Automaticky overloading pro class properties
-	 * @param set|get(functionCall) $function
-	 * @param Array $arguments
-	 * @return mixed
-	 */
+
 	public function __call($function, Array $arguments)
 	{
-		if (preg_match('/get([A-Z][a-z]+)/', $function, $matches) && isset($this->childs[strtolower($matches[1])])) {
-			$ormName = $this->childs[strtolower($matches[1])]->alias;
-			return $this->children($ormName);
-		}
+
 
 		return parent::__call($function, $arguments);
 	}
