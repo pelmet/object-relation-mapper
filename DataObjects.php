@@ -273,9 +273,11 @@ abstract class DataObjects extends Common
 	 */
 	public function loadChild($childName, $loadArray)
 	{
-		$orm = $this->childs[strtolower($childName)]->ormName;
+		$orm = $this->childs[$childName]->ormName;
+		/** @var $orm \ObjectRelationMapper\DataObjects */
 		$orm = new $orm();
-		$this->{$childName} = $orm->loadMultiple($loadArray);
+		$orm->load(false, $loadArray);
+		$this->{$childName} = $orm;
 		return $this->{$childName};
 	}
 
