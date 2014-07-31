@@ -22,7 +22,7 @@ class PDO implements IConnector
 			throw new EQueryBuilder('Db musi byt instance PDO');
 		}
 
-		if (!is_null($db)) {
+		if ($db != NULL) {
 			$this->db = $db;
 		}
 	}

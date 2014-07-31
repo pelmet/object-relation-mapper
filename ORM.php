@@ -250,15 +250,15 @@ abstract class ORM extends Common implements Base\IORM
 		$orm = $this->childs[$child]->ormName;
 		$orm = new $orm();
 
-		if (!is_null($order)) {
-			$orm->setOrderingOrder($order, (is_null($direction) ? Base\AORM::ORDERING_ASCENDING : $direction));
+		if ($order != NULL) {
+			$orm->setOrderingOrder($order, ($direction == NULL ? Base\AORM::ORDERING_ASCENDING : $direction));
 		}
 
-		if (!is_null($limit)) {
+		if ($limit != NULL) {
 			$orm->setOrderingLimit($limit);
 		}
 
-		if (!is_null($offset)) {
+		if ($offset != NULL) {
 			$orm->setOrderingOffset($offset);
 		}
 

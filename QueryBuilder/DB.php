@@ -14,7 +14,7 @@ class DB extends ABuilder
 
 	public function __construct($connector = NULL)
 	{
-		if (!is_null($connector)) {
+		if ($connector != NULL) {
 			$this->connector = $connector;
 		} else {
 			$this->connector = new ESDB();
@@ -125,7 +125,7 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			if (!is_null($oldPrimaryKey) && $orm->primaryKey != $oldPrimaryKey) {
+			if ($oldPrimaryKey != NULL && $orm->primaryKey != $oldPrimaryKey) {
 				$columns[] = $dbColumn . ' = :' . $dbColumn;
 				$params[] = Array(':' . $dbColumn, $propertyValue);
 			} else {
@@ -140,7 +140,7 @@ class DB extends ABuilder
 
 		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :primaryKey';
 
-		if (!is_null($oldPrimaryKey) && $orm->primaryKey != $oldPrimaryKey) {
+		if ($oldPrimaryKey != NULL && $orm->primaryKey != $oldPrimaryKey) {
 			$params[] = Array(':primaryKey', $oldPrimaryKey);
 		} else {
 			$params[] = Array(':primaryKey', $orm->primaryKey);

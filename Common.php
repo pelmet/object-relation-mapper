@@ -13,7 +13,7 @@ abstract class Common extends Base\AORM
 	{
 		$return = true;
 
-		if (!is_null($property)) {
+		if ($property != NULL) {
 			$return = $this->aliases[$property]->validate($this->{$property});
 		} else {
 			foreach ($this as $property => $value) {
@@ -134,7 +134,7 @@ abstract class Common extends Base\AORM
 			$return[$key] = $child->{$matches[2]};
 		}
 
-		if (!is_null($glue)) {
+		if ($glue != NULL) {
 			return implode($glue, $return);
 		} else {
 			return $return;

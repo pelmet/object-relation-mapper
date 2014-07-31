@@ -17,10 +17,6 @@ use ObjectRelationMapper\QueryBuilder\ABuilder;
  * @method setConfigDbServer
  * @method setConfigObject
  * @method setConfigDbPrimaryKey
- * @method setOrderingOffset
- * @method getOrderingOffset
- * @method setOrderingLimit
- * @method getOrderingLimit
  * @method primaryKeyIsChanged
  * @method (.*)IsChanged
  * @method getIdConfig
@@ -194,7 +190,7 @@ abstract class AORM extends Iterator
 			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs, $this->dataAliases);
 		}
 
-		if (!is_null($primaryKey)) {
+		if ($primaryKey != NULL) {
 			$this->setPrimaryKey($primaryKey);
 			$this->loadByPrimaryKey();
 		}
@@ -220,37 +216,34 @@ abstract class AORM extends Iterator
 	}
 
 	/**
-	 * Vratu hodnotu property nebo NULL, pokud neni k dispozici
+	 * Vrati hodnotu property nebo NULL, pokud neni k dispozici
 	 * @param $property
 	 * @throws EORM
 	 * @return mixed|null
 	 */
 	public function __get($property)
 	{
-		if ($property == 'primaryKey') {
+		if ( isset($this->data[$property]) ) {
+			return $this->data[$property];
+		} elseif ($property == 'primaryKey') {
 			return $this->getPrimaryKey();
+		} elseif ( isset($this->childsData[$property]) ) {
+			return $this->childsData[$property];
+		} elseif ( isset($this->dataAliases[$property]) ) {
+			if ($this->dataAliases[$property] instanceof \Closure) {
+				return call_user_func($this->dataAliases[$property], $this);
+			} else {
+				$return = Array();
+				foreach ($this->dataAliases[$property]['data'] as $prop) {
+					$return[] = $this->{trim($prop)};
+				}
+				return implode($this->dataAliases[$property]['delimiter'], $return);
+			}
 		} else {
 			if (!isset($this->aliases[$property]) && !isset($this->childs[$property]) && !isset($this->dataAliases[$property])) {
 				throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 			}
-
-			if (isset($this->data[$property])) {
-				return $this->data[$property];
-			} elseif (isset($this->childsData[$property])) {
-				return $this->childsData[$property];
-			} elseif (isset($this->dataAliases[$property])) {
-				if ($this->dataAliases[$property] instanceof \Closure) {
-					return call_user_func($this->dataAliases[$property], $this);
-				} else {
-					$return = Array();
-					foreach ($this->dataAliases[$property]['data'] as $prop) {
-						$return[] = $this->{trim($prop)};
-					}
-					return implode($this->dataAliases[$property]['delimiter'], $return);
-				}
-			} else {
-				return NULL;
-			}
+			return NULL;
 		}
 	}
 
@@ -274,20 +267,16 @@ abstract class AORM extends Iterator
 	{
 		if ($property == 'primaryKey') {
 			$this->setPrimaryKey($value);
-		} else {
-			if (!isset($this->aliases[$property]) && !isset($this->childs[$property])) {
-				throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+		} elseif (!isset($this->aliases[$property]) && !isset($this->childs[$property])) {
+			throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+		} elseif (isset($this->aliases[$property])) {
+			$this->changedVariables[$property] = true;
+			if ($this->isAliasPrimaryKey($property) && $this->changedPrimaryKey == NULL) {
+				$this->changedPrimaryKey = $this->primaryKey;
 			}
-
-			if (isset($this->aliases[$property])) {
-				$this->changedVariables[$property] = true;
-				if ($this->isAliasPrimaryKey($property) && is_null($this->changedPrimaryKey)) {
-					$this->changedPrimaryKey = $this->primaryKey;
-				}
-				$this->data[$property] = $value;
-			} elseif (isset($this->childs[$property])) {
-				$this->childsData[$property] = $value;
-			}
+			$this->data[$property] = $value;
+		} elseif (isset($this->childs[$property])) {
+			$this->childsData[$property] = $value;
 		}
 	}
 
@@ -315,6 +304,26 @@ abstract class AORM extends Iterator
 		return $this->basicConfiguration['Object'];
 	}
 
+	public function getOrderingLimit()
+	{
+		return $this->additionalOrdering['Limit'];
+	}
+
+	public function setOrderingLimit($limit)
+	{
+		$this->additionalOrdering['Limit'] = $limit;
+	}
+
+	public function getOrderingOffset()
+	{
+		return $this->additionalOrdering['Offset'];
+	}
+
+	public function setOrderingOffset($offset)
+	{
+		$this->additionalOrdering['Offset'] = $offset;
+	}
+
 	/**
 	 * Obecny caller pro urctite typy metod
 	 * @param $function
@@ -325,9 +334,6 @@ abstract class AORM extends Iterator
 	public function __call($function, Array $arguments)
 	{
 		if (preg_match('/^get(.*)$/', $function, $matches)) {
-			if (preg_match('/^getOrdering(.*)$/', $function, $matches)) {
-				return $this->additionalOrdering[$matches[1]];
-			}
 			if (preg_match('/^get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])) {
 				return $this->aliases[$matches[1]];
 			}
@@ -335,9 +341,7 @@ abstract class AORM extends Iterator
 			if (preg_match('/^getChild(.*)Config$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])) {
 				return $this->childs[lcfirst($matches[1])];
 			}
-			if (preg_match('/^getOrdering(.*)$/', $function, $matches)) {
-				return $this->additionalOrdering[$matches[1]];
-			}
+
 			if (preg_match('/^getFirst(.*)$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])) {
 				if (!isset($this->childsData[lcfirst($matches[1])])) {
 					$this->children(lcfirst($matches[1]));
@@ -353,11 +357,6 @@ abstract class AORM extends Iterator
 			// setConfig
 			if (preg_match('/^setConfig(.*)$/', $function, $matches) && isset($this->requiredBasicConfiguration[$matches[1]])) {
 				$this->basicConfiguration[$matches[1]] = $arguments[0];
-				return true;
-			}
-
-			if (preg_match('/^setOrdering(.*)$/', $function, $matches)) {
-				$this->additionalOrdering[$matches[1]] = $arguments[0];
 				return true;
 			}
 		}
@@ -559,7 +558,7 @@ abstract class AORM extends Iterator
 	 * Nastavi order
 	 * @param $column
 	 * @param string $direction
-	 * @throws ORM
+	 * @throws \ObjectRelationMapper\Exception\ORM
 	 */
 	public function setOrderingOrder($column, $direction = self::ORDERING_ASCENDING)
 	{
@@ -654,7 +653,7 @@ abstract class AORM extends Iterator
 			}
 		}
 
-		if (!is_null($glue)) {
+		if ($glue != NULL) {
 			return implode($glue, $return);
 		} else {
 			return $return;
@@ -679,7 +678,7 @@ abstract class AORM extends Iterator
 	{
 		$s = & $this->configStorage;
 
-		if (!is_null($glue)) {
+		if ($glue != NULL) {
 			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_ALIASES));
 		} else {
 			return $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_ALIASES);
@@ -743,7 +742,7 @@ abstract class AORM extends Iterator
 			$returnArray[] = ' * @property ' . $value->type . ' ' . $value->alias;
 		}
 
-		if (!is_null($glue)) {
+		if ($glue != NULL) {
 			return implode($glue, $returnArray);
 		} else {
 			return $returnArray;

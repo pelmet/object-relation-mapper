@@ -318,6 +318,10 @@ abstract class DataObjects extends Common
 	 */
 	public function children($child = false, $order = false, $direction = false, $forceReload = false, $limit = false, $offset = false)
 	{
+		if(!$forceReload && isset($this->childsData[$child])){
+			return $this->{$child};
+		}
+
 		$orm = $this->childs[$child]->ormName;
 		$sRelation = $this->childs[$child]->additionalParams['relation'];
 		/** @var $this */
@@ -363,15 +367,15 @@ abstract class DataObjects extends Common
 	 */
 	public function _fetchAll($order = null, $direction = null, $limit = null, $offset = null, $forceReload = false)
 	{
-		if(!is_null($order)){
+		if($order != NULL){
 			$this->setOrderingOrder($order, ($direction == self::ORDERING_ASCENDING) ? self::ORDERING_ASCENDING : self::ORDERING_DESCENDING);
 		}
 
-		if(!is_null($limit)){
+		if($limit != NULL){
 			$this->setOrderingLimit($limit);
 		}
 
-		if(!is_null($offset)){
+		if($offset != NULL ){
 			$this->setOrderingOffset($offset);
 		}
 

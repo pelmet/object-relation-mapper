@@ -247,7 +247,6 @@ abstract class ASearch
 		}
 
 		$query .= ' LIMIT ' . $this->offset . ', ' . $this->limit;
-
 		return $query;
 	}
 

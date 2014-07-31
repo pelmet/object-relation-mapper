@@ -141,7 +141,6 @@ class SearchTest extends CommonTestClass
 		$search->null('command');
 
 		$results = $search->getResults();
-
 		$this->assertEmpty($results);
 	}
 

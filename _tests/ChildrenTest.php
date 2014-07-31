@@ -58,6 +58,6 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 	{
 		$testOrm = new ORMTest(5);
 
-		$this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ''));
+		$this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ' '));
 	}
 }

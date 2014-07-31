@@ -173,7 +173,7 @@ class Search extends ASearch
 	 */
 	public function notExist($child, $property, $value = NULL, $matching = '=')
 	{
-		if (!is_null($value)) {
+		if ($value != NULL) {
 			$this->addChild($child, 'LEFT OUTER', Array($property => $value), $matching);
 		} else {
 			$this->addChild($child, 'LEFT OUTER');

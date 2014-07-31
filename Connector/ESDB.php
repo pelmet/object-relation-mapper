@@ -8,7 +8,7 @@ class ESDB implements IConnector
 
 	public function __construct($db = NULL)
 	{
-		if (!is_null($db)) {
+		if ($db != NULL) {
 			$this->db = $db;
 		} else {
 			$this->db = \Factory::Db();
