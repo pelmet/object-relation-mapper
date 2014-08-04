@@ -10,11 +10,11 @@ use ObjectRelationMapper\Exception\ColumnType as EColumnType;
  */
 abstract class AColumn
 {
-	protected $col;
-	protected $alias;
-	protected $type;
-	protected $length;
-	protected $additionalParams = Array();
+	public $col;
+	public $alias;
+	public $type;
+	public $length;
+	public $additionalParams;
 
 	/**
 	 * Construct
@@ -36,15 +36,10 @@ abstract class AColumn
 	/**
 	 * Vrati hodnotu policka
 	 * @param $propertyName
-	 * @return mixed
-	 * @throws ColumnType
+	 * @throws EColumnType
 	 */
 	public function &__get($propertyName)
 	{
-		if (property_exists($this, $propertyName)) {
-			return $this->{$propertyName};
-		} else {
-			throw new EColumnType('Property ' . $propertyName . ' neexistuje, opravte si prosim kod.');
-		}
+		throw new EColumnType('Property ' . $propertyName . ' neexistuje, opravte si prosim kod.');
 	}
 }

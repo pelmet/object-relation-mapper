@@ -6,7 +6,7 @@ class String extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->row . ' VARCHAR(' . $this->length . ') ';
+		return $this->col . ' VARCHAR(' . $this->length . ') ';
 	}
 
 	/**

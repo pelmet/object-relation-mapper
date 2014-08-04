@@ -13,6 +13,7 @@ use ObjectRelationMapper\QueryBuilder\ABuilder;
  *
  * Obsluzne a pomocne funkce jsou rozdelene zde pro lepsi prehlednost
  *
+ * @property mixed primaryKey
  * @method setConfigDbTable
  * @method setConfigDbServer
  * @method setConfigObject
@@ -150,7 +151,7 @@ abstract class AORM extends Iterator
 	 * Vrati QueryBuilder
 	 * @return ABuilder
 	 */
-	public function getQueryBuilder()
+	public function &getQueryBuilder()
 	{
 		return $this->queryBuilder;
 	}
@@ -168,12 +169,12 @@ abstract class AORM extends Iterator
 			\ObjectRelationMapper\QueryBuilder\ABuilder.');
 		}
 
+		/** @var \ObjectRelationMapper\ConfigStorage\Basic $storage */
 		$storage = & $this->configStorage;
 		$finalClass = get_called_class();
 
 		if ($storage::configurationExists($finalClass)) {
 			$configuration = $storage::getConfiguration($finalClass);
-
 			$this->basicConfiguration = $configuration[$storage::BASIC_CONFIG];
 			$this->columns = $configuration[$storage::DB_COLS];
 			$this->aliases = $configuration[$storage::PHP_ALIASES];
@@ -187,6 +188,7 @@ abstract class AORM extends Iterator
 				$this->isConfigurationOk();
 			}
 
+			$this->basicConfiguration['AliasPrimaryKey'] = $this->getAlias($this->basicConfiguration['DbPrimaryKey']);
 			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs, $this->dataAliases);
 		}
 
@@ -206,14 +208,12 @@ abstract class AORM extends Iterator
 		}
 	}
 
-	protected function translateConfig()
-	{
-	}
+	protected function translateConfig() {	}
 
-	protected function isAliasPrimaryKey($alias)
+	/*protected function isAliasPrimaryKey($alias)
 	{
-		return $this->getDbField($alias) == $this->getConfigDbPrimaryKey();
-	}
+		return $alias == $this->basicConfiguration['AliasPrimaryKey'];
+	}*/
 
 	/**
 	 * Vrati hodnotu property nebo NULL, pokud neni k dispozici
@@ -265,18 +265,18 @@ abstract class AORM extends Iterator
 	 */
 	public function __set($property, $value)
 	{
-		if ($property == 'primaryKey') {
-			$this->setPrimaryKey($value);
-		} elseif (!isset($this->aliases[$property]) && !isset($this->childs[$property])) {
-			throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
-		} elseif (isset($this->aliases[$property])) {
+		if (isset($this->aliases[$property])) {
 			$this->changedVariables[$property] = true;
-			if ($this->isAliasPrimaryKey($property) && $this->changedPrimaryKey == NULL) {
+			if ($this->basicConfiguration['AliasPrimaryKey'] == $property && $this->changedPrimaryKey == NULL) {
 				$this->changedPrimaryKey = $this->primaryKey;
 			}
 			$this->data[$property] = $value;
 		} elseif (isset($this->childs[$property])) {
 			$this->childsData[$property] = $value;
+		} elseif ($property == 'primaryKey') {
+			$this->setPrimaryKey($value);
+		}  else {
+			throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
 		}
 	}
 
@@ -449,7 +449,7 @@ abstract class AORM extends Iterator
 	 */
 	protected function setPrimaryKey($primaryKey)
 	{
-		$this->{$this->getAlias($this->getConfigDbPrimaryKey())} = $primaryKey;
+		$this->{$this->basicConfiguration['AliasPrimaryKey']} = $primaryKey;
 	}
 
 	/**
@@ -458,7 +458,7 @@ abstract class AORM extends Iterator
 	 */
 	protected function getPrimaryKey()
 	{
-		return $this->{$this->getAlias($this->getConfigDbPrimaryKey())};
+		return $this->{$this->basicConfiguration['AliasPrimaryKey']};
 	}
 
 	/**
@@ -621,11 +621,11 @@ abstract class AORM extends Iterator
 	 */
 	public function getAlias($fieldName)
 	{
-		if (!isset($this->columns[$fieldName])) {
+		if (isset($this->columns[$fieldName])) {
+			return $this->columns[$fieldName]->alias;
+		} else {
 			throw new EORM('Db Field pro column ' . $fieldName . ' neexistuje');
 		}
-
-		return $this->columns[$fieldName]->alias;
 	}
 
 	/**

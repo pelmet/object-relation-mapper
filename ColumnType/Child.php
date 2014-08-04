@@ -4,11 +4,11 @@ namespace ObjectRelationMapper\ColumnType;
 
 class Child extends AColumn implements IColumn
 {
-	protected $ormName;
-	protected $alias;
-	protected $localKey;
-	protected $foreignKey;
-	protected $additionalParams = Array();
+	public $ormName;
+	public $alias;
+	public $localKey;
+	public $foreignKey;
+	public $additionalParams = Array();
 
 	/**
 	 * Construct

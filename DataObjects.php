@@ -136,14 +136,6 @@ abstract class DataObjects extends Common
 		$this->queryBuilder = new QueryBuilder\DB(new Connector\ESDB());
 	}
 
-
-	public function __call($function, Array $arguments)
-	{
-
-
-		return parent::__call($function, $arguments);
-	}
-
 	/**
 	 * Vrati vsechny data objektu
 	 * @return array

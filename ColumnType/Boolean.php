@@ -6,7 +6,7 @@ class Boolean extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->row . ' INT(1) ';
+		return $this->col . ' INT(1) ';
 	}
 
 	/**
