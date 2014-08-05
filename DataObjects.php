@@ -171,13 +171,28 @@ abstract class DataObjects extends Common
 
 	/**
 	 * Vrati konfiguracni direktivu childu bud jako text, nebo jako pole hodnot
-	 * @param type $childName
-	 * @param type $configDirective
+	 * @param string $childName
+	 * @param string $configDirective
 	 * @return mixed
 	 */
-	public function &configChild($childName, $configDirective)
+	public function configChild($childName, $configDirective)
 	{
-		return $this->childs[$childName]->{$configDirective};
+		if($configDirective == 'object'){
+			return $this->childs[$childName]->ormName;
+		} elseif ($configDirective == 0 || $configDirective == '0') {
+			return Array(
+				'localKey' => $this->childs[$childName]->localKey,
+				'foreignKey' => $this->childs[$childName]->foreignKey,
+			);
+		} elseif ($configDirective == 'possibilities'){
+			return $this->childs[$childName]->additionalParams['relation'];
+		} elseif ($configDirective == 'name'){
+			return $this->childs[$childName]->alias;
+		} elseif ($configDirective == 'delete'){
+			return $this->childs[$childName]->additionalParams['delete'];
+		} else {
+			return $this->childs[$childName]->{$configDirective};
+		}
 	}
 
 	/**
