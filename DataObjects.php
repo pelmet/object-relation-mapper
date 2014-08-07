@@ -375,7 +375,13 @@ abstract class DataObjects extends Common
 	public function _fetchAll($order = null, $direction = null, $limit = null, $offset = null, $forceReload = false)
 	{
 		if($order != NULL){
-			$this->setOrderingOrder($order, ($direction == self::ORDERING_ASCENDING) ? self::ORDERING_ASCENDING : self::ORDERING_DESCENDING);
+			if (is_array($order)) {
+				foreach ($order as $key => $value) {
+					$this->setOrderingOrder($value, ($direction[$key] == self::ORDERING_ASCENDING) ? self::ORDERING_ASCENDING : self::ORDERING_DESCENDING);
+				}
+			} else {
+				$this->setOrderingOrder($order, ($direction == self::ORDERING_ASCENDING) ? self::ORDERING_ASCENDING : self::ORDERING_DESCENDING);
+			}
 		}
 
 		if($limit != NULL){
