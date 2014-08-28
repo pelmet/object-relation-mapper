@@ -145,7 +145,6 @@ class DB extends ABuilder
 		} else {
 			$params[] = Array(':primaryKey', $orm->primaryKey);
 		}
-
 		if (!empty($columns)) {
 			return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 		} else {
