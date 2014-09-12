@@ -1,29 +1,31 @@
 <?php
 
-class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
+class BasicFunctionalityTest extends CommonTestClass
 {
-	public function testBasic()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testBasic($testOrm)
 	{
-		$testOrm = new ORMTest();
-
-		$this->assertInstanceOf('ObjectRelationMapper\ORM_Interface', $testOrm);
-		$this->assertInstanceOf('ObjectRelationMapper\ORM_Abstract', $testOrm);
+		$this->assertInstanceOf('ObjectRelationMapper\Base\AORM', $testOrm);
 	}
 
-	public function testSetPrimaryKey()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testSetPrimaryKey($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$testOrm->primaryKey = 125;
 
 		$this->assertEquals(125, $testOrm->id);
 		$this->assertEquals($testOrm->primaryKey, $testOrm->id);
 	}
 
-	public function testSetterAndGetter()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testSetterAndGetter($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$testOrm->status = 5;
 		$testOrm->command = 'ls -la';
 		$testOrm->endTime = '123456';
@@ -34,49 +36,48 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper\Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception\ORM
+	 * @dataProvider providerBasic
 	 */
-	public function testSetterToBadColumn()
+	public function testSetterToBadColumn($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$testOrm->iblah = 5;
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper\Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception\ORM
+	 * @dataProvider providerBasic
 	 */
-	public function testGetterToBadColumn()
+	public function testGetterToBadColumn($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$testOrm->iblah;
 	}
 
-	public function testCallMethod()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testCallMethod($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$this->assertEquals('qc_id', $testOrm->getConfigDbPrimaryKey());
 		$this->assertEquals('master', $testOrm->getConfigDbServer());
-		$this->assertEquals('ORMTest', $testOrm->getConfigObject());
+		$this->assertContains('ORMTest', $testOrm->getConfigObject());
 		$this->assertEquals('d_queued_commands', $testOrm->getConfigDbTable());
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper\Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception\ORM
+	 * @dataProvider providerBasic
 	 */
-	public function testDynamicNotDefinedFunction()
+	public function testDynamicNotDefinedFunction($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$testOrm->iblahIsChanged();
 	}
 
-	public function testPropertyHasChanged()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testPropertyHasChanged($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 
 		$testOrm->id = 5;
@@ -88,20 +89,22 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 	}
 
-	public function testFieldNameAsCallFunction()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testFieldNameAsCallFunction($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$this->assertEquals('qc_id', $testOrm->id());
 		$this->assertEquals('qc_time_end', $testOrm->endTime());
 		$this->assertEquals('qc_status', $testOrm->status());
 		$this->assertEquals('qc_command', $testOrm->command());
 	}
 
-	public function testFieldNameWithTableAsCallFunction()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testFieldNameWithTableAsCallFunction($testOrm)
 	{
-		$testOrm = new ORMTest();
-
 		$this->assertEquals('d_queued_commands.qc_id', $testOrm->idFull());
 		$this->assertEquals('d_queued_commands.qc_time_end', $testOrm->endTimeFull());
 		$this->assertEquals('d_queued_commands.qc_status', $testOrm->statusFull());
@@ -109,11 +112,37 @@ class BasicFunctionalityTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException ObjectRelationMapper\Exception_ORM
+	 * @expectedException ObjectRelationMapper\Exception\ORM
+	 * @dataProvider providerBasic
 	 */
-	public function testDynamicFieldNameAsCallFunctionNotDefined()
+	public function testDynamicFieldNameAsCallFunctionNotDefined($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->iblahfield();
+	}
+
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testDataAliasClosure($testOrm)
+	{
+		$testOrm->status = 5;
+		$testOrm->command = 'ls -la';
+		$testOrm->endTime = '123456';
+		$testOrm->startTime = '987';
+
+		$this->assertEquals('5987', $testOrm->statusStart);
+	}
+
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testDataAliasDelimiterString($testOrm)
+	{
+		$testOrm->status = 5;
+		$testOrm->command = 'ls -la';
+		$testOrm->endTime = '123456';
+		$testOrm->startTime = '987';
+
+		$this->assertEquals('987 123456', $testOrm->startEndTime);
 	}
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Connector;
 
-interface Connector_Interface
+interface IConnector
 {
 	/**
 	 * Runne query a vypise vysledek

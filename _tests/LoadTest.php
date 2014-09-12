@@ -1,6 +1,6 @@
 <?php
 
-class LoadTest extends PHPUnit_Framework_TestCase
+class LoadTest extends CommonTestClass
 {
 	protected $connection;
 
@@ -13,20 +13,22 @@ class LoadTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		$this->connection = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-		mysql_select_db(DB_DB, $this->connection);
-		mysql_query($insert, $this->connection);
+		$this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+		mysqli_select_db($this->connection, DB_DB);
+		mysqli_query($this->connection, $insert);
 	}
 
 	public function tearDown()
 	{
 		$delete = 'TRUNCATE TABLE d_queued_commands';
-		mysql_query($delete, $this->connection);
+		mysqli_query($this->connection, $delete);
 	}
 
-	public function testLoadByData()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadByData($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->status = 5;
 		$testOrm->load();
 
@@ -36,9 +38,11 @@ class LoadTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('ls -laf', $testOrm->command);
 	}
 
-	public function testLoadByPrimaryKey()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadByPrimaryKey($testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->primaryKey = 5;
 		$testOrm->loadByPrimaryKey();
 
@@ -48,9 +52,13 @@ class LoadTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('ls -laf', $testOrm->command);
 	}
 
-	public function testLoadByConstructor()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadByConstructor($testOrm)
 	{
-		$testOrm = new ORMTest(5);
+		$testOrm = get_class($testOrm);
+		$testOrm = new $testOrm(5);
 
 		$this->assertEquals(5, $testOrm->status);
 		$this->assertEquals(123456, $testOrm->startTime);
@@ -58,7 +66,10 @@ class LoadTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('ls -laf', $testOrm->command);
 	}
 
-	public function testLoadMultipleFromDb()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadMultipleFromDb($testOrm)
 	{
 		$insert = 'INSERT INTO d_queued_commands SET
 					qc_id = 6,
@@ -67,20 +78,22 @@ class LoadTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+		mysqli_query($this->connection, $insert);
 
-		$testOrm = new ORMTest();
 		$testOrm->status = 5;
 		$collection = $testOrm->loadMultiple();
 
 		$this->assertEquals(2, count($collection));
-		foreach($collection as $singleOrm){
-			$this->assertInstanceOf('ORMTest', $singleOrm);
+		foreach ($collection as $singleOrm) {
+			$this->assertInstanceOf(get_class($testOrm), $singleOrm);
 			$this->assertEquals(5, $singleOrm->status);
 		}
 	}
 
-	public function testLoadMultipleFromArrayResult()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadMultipleFromArrayResult($testOrm)
 	{
 		$insert = 'INSERT INTO d_queued_commands SET
 					qc_id = 6,
@@ -89,35 +102,36 @@ class LoadTest extends PHPUnit_Framework_TestCase
 					qc_status = 5,
 					qc_command = "ls -laf"';
 
-		mysql_query($insert, $this->connection);
+		mysqli_query($this->connection, $insert);
 
-		$query = mysql_query('SELECT * FROM d_queued_commands WHERE qc_status = 5', $this->connection);
+		$query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 5');
 
 		$result = Array();
-		while($row = mysql_fetch_assoc($query)){
+		while ($row = mysqli_fetch_assoc($query)) {
 			$result[] = $row;
 		}
 
-		$testOrm = new ORMTest();
 		$collection = $testOrm->loadMultiple($result);
 
 		$this->assertEquals(2, count($collection));
-		foreach($collection as $singleOrm){
-			$this->assertInstanceOf('ORMTest', $singleOrm);
+		foreach ($collection as $singleOrm) {
+			$this->assertInstanceOf(get_class($testOrm), $singleOrm);
 			$this->assertEquals(5, $singleOrm->status);
 		}
 	}
 
-	public function testLoadFromArrayWithIncompatibleProperties()
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadFromArrayWithIncompatibleProperties($testOrm)
 	{
-		$testData =  Array ('qc_id' => 6,
-            'qc_time_start' => 123456,
-            'qc_time_end' => 12345678,
-            'qc_status' => 5,
-            'qc_command' => 'ls -laf',
+		$testData = Array('qc_id' => 6,
+			'qc_time_start' => 123456,
+			'qc_time_end' => 12345678,
+			'qc_status' => 5,
+			'qc_command' => 'ls -laf',
 			'iblah' => 'iblaaaah');
 
-		$testOrm = new ORMTest();
 		$testOrm->load($testData);
 
 		$this->assertEquals(5, $testOrm->status);
@@ -125,30 +139,34 @@ class LoadTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(12345678, $testOrm->endTime);
 		$this->assertEquals('ls -laf', $testOrm->command);
 
-		try{
+		try {
 			$this->assertEquals('iblaaah', $testOrm->iblah);
-		} catch (Exception $e){
+		} catch (Exception $e) {
 			$this->assertInstanceOf('Exception', $e);
 		}
 	}
 
-    public function testLoadWithEmptyArray()
-    {
-        $testData =  Array ();
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadWithEmptyArray($testOrm)
+	{
+		$testData = Array();
 
-        $testOrm = new ORMTest();
-        $testOrm->load($testData);
+		$testOrm->load($testData);
 
-        $this->assertEquals(false, $testOrm->isLoaded());
-    }
+		$this->assertEquals(false, $testOrm->isLoaded());
+	}
 
-    public function testLoadMultipleWithEmptyArray()
-    {
-        $testData =  Array ();
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadMultipleWithEmptyArray($testOrm)
+	{
+		$testData = Array();
 
-        $testOrm = new ORMTest();
-        $testOrm->loadMultiple($testData);
+		$testOrm->loadMultiple($testData);
 
-        $this->assertEquals(false, $testOrm->isLoaded());
-    }
+		$this->assertEquals(false, $testOrm->isLoaded());
+	}
 }

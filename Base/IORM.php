@@ -1,13 +1,18 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Base;
 
-interface ORM_Interface
+interface IORM
 {
 	public function save($forceInsert = false);
+
 	public function delete($deleteNow = false);
+
 	public function load($loadData = NULL);
+
 	public function loadByPrimaryKey();
+
 	public function count();
+
 	public function loadMultiple($loadData = NULL);
 }

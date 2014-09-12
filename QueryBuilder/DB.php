@@ -1,11 +1,14 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\QueryBuilder;
 
-class QueryBuilder_DB extends QueryBuilder_Abstract
+use ObjectRelationMapper\Connector\ESDB;
+use ObjectRelationMapper\Base\AORM;
+
+class DB extends ABuilder
 {
 	/**
-	 * @var Connector_ESDB
+	 * @var ESDB
 	 */
 	protected $connector;
 
@@ -13,24 +16,24 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 
 	public function __construct($connector = NULL)
 	{
-		if(!is_null($connector)){
+		if ($connector != NULL) {
 			$this->connector = $connector;
 		} else {
-			$this->connector = new Connector_ESDB();
+			$this->connector = new ESDB();
 		}
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function load(ORM $orm)
+	public function load(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm as $propertyName => $propertyValue){
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
 			$propertyValue = $orm->getSenitazedValue($propertyName);
 
@@ -38,12 +41,12 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
-		if(!empty($columns)){
+		if (!empty($columns)) {
 			$query .= ' WHERE ' . implode(' AND ', $columns);
 		}
 
 		$ordering = $orm->getOrderingOrder();
-		if(!empty($ordering)){
+		if (!empty($ordering)) {
 			// ORDER BY col1 ASC, col2 DESC
 			$query .= ' ORDER BY ' . $ordering . ' ';
 		}
@@ -52,7 +55,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
-		if(isset($query[0])){
+		if (isset($query[0])) {
 			return $query[0];
 		} else {
 			return Array();
@@ -62,16 +65,16 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function loadByPrimaryKey(ORM $orm)
+	public function loadByPrimaryKey(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		// SELECT columns FROM table WHERE
-		$query  = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable() . ' WHERE ';
+		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable() . ' WHERE ';
 		// primaryKey = :primaryKey
 		$query .= $orm->getConfigDbPrimaryKey() . ' = :primaryKey ';
 
 		$ordering = $orm->getOrderingOrder();
-		if(!empty($ordering)){
+		if (!empty($ordering)) {
 			// ORDER BY col1 ASC, col2 DESC
 			$query .= ' ORDER BY ' . $ordering . ' ';
 		}
@@ -82,7 +85,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
-		if(isset($query[0])){
+		if (isset($query[0])) {
 			return $query[0];
 		} else {
 			return Array();
@@ -92,13 +95,13 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function insert(ORM $orm)
+	public function insert(AORM $orm)
 	{
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . ' SET ';
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm as $propertyName => $propertyValue){
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
 			$propertyValue = $orm->getSenitazedValue($propertyName);
 
@@ -107,7 +110,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		}
 
 		$query .= implode(', ', $columns);
-		if(!empty($columns)){
+		if (!empty($columns)) {
 			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
 			$id = $this->connector->query('SELECT LAST_INSERT_ID() as id', Array(), $orm->getConfigDbServer());
 			$orm->primaryKey = $id[0]['id'];
@@ -120,15 +123,15 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function update(ORM $orm, $oldPrimaryKey = NULL)
+	public function update(AORM $orm, $oldPrimaryKey = NULL)
 	{
 		$query = 'UPDATE ' . $orm->getConfigDbTable() . ' SET ';
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm as $propertyName => $propertyValue){
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			if(!is_null($oldPrimaryKey) && $orm->primaryKey != $oldPrimaryKey){
+			if ($oldPrimaryKey != NULL && $orm->primaryKey != $oldPrimaryKey) {
 				$columns[] = $dbColumn . ' = :' . $dbColumn;
 				$params[] = Array(':' . $dbColumn, $propertyValue);
 			} else {
@@ -145,13 +148,12 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 
 		$query .= ' WHERE ' . $orm->getConfigDbPrimaryKey() . ' = :primaryKey';
 
-		if(!is_null($oldPrimaryKey) && $orm->primaryKey != $oldPrimaryKey){
+		if ($oldPrimaryKey != NULL && $orm->primaryKey != $oldPrimaryKey) {
 			$params[] = Array(':primaryKey', $oldPrimaryKey);
 		} else {
 			$params[] = Array(':primaryKey', $orm->primaryKey);
 		}
-
-		if(!empty($columns)){
+		if (!empty($columns)) {
 			return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 		} else {
 			return false;
@@ -161,7 +163,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function delete(ORM $orm)
+	public function delete(AORM $orm)
 	{
 		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
 
@@ -172,16 +174,16 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 
 	/**
 	 * Vytvoří SQL delete příkaz podle nastavených hodnot ORM
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 * @return bool
 	 */
-	public function deleteByOrm(ORM $orm)
+	public function deleteByOrm(AORM $orm)
 	{
 		$query = 'DELETE FROM ' . $orm->getConfigDbTable() . ' ';
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm as $propertyName => $propertyValue){
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
 			$propertyValue = $orm->getSenitazedValue($propertyName);
 
@@ -189,7 +191,7 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
-		if(!empty($columns)){
+		if (!empty($columns)) {
 			$query .= ' WHERE ' . implode(' AND ', $columns);
 		}
 
@@ -199,14 +201,14 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function count(ORM $orm)
+	public function count(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT count(' . $orm->getConfigDbPrimaryKey() . ') as count FROM ' . $orm->getConfigDbTable();
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm as $propertyName => $propertyValue){
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
 			$propertyValue = $orm->getSenitazedValue($propertyName);
 
@@ -214,13 +216,13 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
-		if(!empty($columns)){
+		if (!empty($columns)) {
 			$query .= ' WHERE ' . implode(' AND ', $columns);
 		}
 
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
-		if(isset($query[0]['count'])){
+		if (isset($query[0]['count'])) {
 			return $query[0]['count'];
 		} else {
 			return Array();
@@ -230,11 +232,11 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function countByQuery(ORM $orm, $query, $params)
+	public function countByQuery(AORM $orm, $query, $params)
 	{
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
-		if(isset($query[0]['count'])){
+		if (isset($query[0]['count'])) {
 			return $query[0]['count'];
 		} else {
 			return Array();
@@ -244,14 +246,14 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function loadMultiple(ORM $orm)
+	public function loadMultiple(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm as $propertyName => $propertyValue){
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
 			$propertyValue = $orm->getSenitazedValue($propertyName);
 
@@ -259,12 +261,12 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
-		if(!empty($columns)){
+		if (!empty($columns)) {
 			$query .= ' WHERE ' . implode(' AND ', $columns);
 		}
 
 		$ordering = $orm->getOrderingOrder();
-		if(!empty($ordering)){
+		if (!empty($ordering)) {
 			// ORDER BY col1 ASC, col2 DESC
 			$query .= ' ORDER BY ' . $ordering . ' ';
 		}
@@ -272,21 +274,51 @@ class QueryBuilder_DB extends QueryBuilder_Abstract
 		$query .= ' LIMIT ' . $orm->getOrderingOffset() . ', ' . $orm->getOrderingLimit();
 		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
 
-		if(isset($query)){
+		if (isset($query)) {
 			return $query;
 		} else {
 			return Array();
 		}
 	}
 
-    public function loadByQuery(ORM $orm, $query, $params)
-    {
-        $query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+	/**
+	 * @inheritdoc
+	 */
+	public function insertMultiple(AORM $orm, Array $data)
+	{
+		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
+		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . '  ';
+		$query .= '(' . implode(',', $columns) . ')';
 
-        if(isset($query)){
-            return $query;
-        } else {
-            return Array();
-        }
-    }
+		$i = 0;
+		$values = Array();
+		$params = Array();
+		foreach ($data as $singleOrm) {
+			$cols = Array();
+			foreach ($columns as $column) {
+				$cols[] = ':' . $i . $column;
+				$params[] = Array(':' . $i . $column, $singleOrm->{$orm->getAlias($column)});
+			}
+
+			$values[] = '(' . implode(',', $cols) . ')';
+			$i++;
+		}
+
+		$query .= ' VALUES ' . implode(', ', $values);
+		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function loadByQuery(AORM $orm, $query, $params)
+	{
+		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+
+		if (isset($query)) {
+			return $query;
+		} else {
+			return Array();
+		}
+	}
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ColumnType;
 
-class ColumnType_Boolean extends ColumnType_Abstract implements ColumnType_Interface
+class Boolean extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->row . ' INT(1) ';
+		return $this->col . ' INT(1) ';
 	}
 
 	/**
@@ -16,6 +16,6 @@ class ColumnType_Boolean extends ColumnType_Abstract implements ColumnType_Inter
 	 */
 	public function validate($value)
 	{
-        return (is_bool($value) || (!is_array($value) && !is_object($value) && (boolean)preg_match('/(^(0|1)$)|(^(T|F)$)|(^(TRUE|FALSE)$)/i',(string)$value)));
+		return (is_bool($value) || (!is_array($value) && !is_object($value) && (boolean)preg_match('/(^(0|1)$)|(^(T|F)$)|(^(TRUE|FALSE)$)/i', (string)$value)));
 	}
 }

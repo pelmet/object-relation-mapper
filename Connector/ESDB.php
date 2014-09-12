@@ -1,14 +1,14 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Connector;
 
-class Connector_ESDB implements Connector_Interface
+class ESDB implements IConnector
 {
 	protected $db;
 
 	public function __construct($db = NULL)
 	{
-		if(!is_null($db)){
+		if ($db != NULL) {
 			$this->db = $db;
 		} else {
 			$this->db = \Factory::Db();

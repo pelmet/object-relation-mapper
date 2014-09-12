@@ -1,8 +1,8 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ConfigStorage;
 
-class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorage_Interface
+class Basic extends AStorage implements IStorage
 {
 	protected static $fullyConfigured = Array();
 	protected static $configurationStorage = Array();
@@ -14,8 +14,9 @@ class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorag
 	 * @param array $dbCols
 	 * @param array $phpAliases
 	 * @param array $childs
+	 * @param array $dataAliases
 	 */
-	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases, Array $childs)
+	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases, Array $childs, Array $dataAliases)
 	{
 		self::$fullyConfigured[$orm] = TRUE;
 
@@ -23,11 +24,12 @@ class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorag
 			self::BASIC_CONFIG => $basicConfiguration,
 			self::DB_COLS => $dbCols,
 			self::PHP_ALIASES => $phpAliases,
-			self::CHILDS => $childs
+			self::CHILDS => $childs,
+			self::DATA_ALIASES => $dataAliases
 		);
 
 		// ALL DB Fields
-		foreach($dbCols as $column){
+		foreach ($dbCols as $column) {
 			self::$configurationStorage[$orm][self::ALL_DB_FIELDS][] = $column->col;
 			self::$configurationStorage[$orm][self::ALL_DB_FIELDS_WITH_TABLE][] = $basicConfiguration['DbTable'] . '.' . $column->col;
 			self::$configurationStorage[$orm][self::ALL_ALIASES][] = $column->alias;
@@ -51,7 +53,7 @@ class ConfigStorage_Basic extends ConfigStorage_Abstract implements ConfigStorag
 	 */
 	public static function configurationExists($orm)
 	{
-		if(isset(self::$fullyConfigured[$orm]) && self::$fullyConfigured[$orm] === true){
+		if (isset(self::$fullyConfigured[$orm]) && self::$fullyConfigured[$orm] === true) {
 			return true;
 		} else {
 			return false;

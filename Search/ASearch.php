@@ -1,8 +1,10 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Search;
 
-abstract class Search_Abstract
+use ObjectRelationMapper\Base\AORM;
+
+abstract class ASearch
 {
 
 	/**
@@ -28,9 +30,9 @@ abstract class Search_Abstract
 
 	/**
 	 * Standardni construct
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 */
-	public function __construct(ORM $orm)
+	public function __construct(AORM $orm)
 	{
 		$this->orm = $orm;
 		$this->aliases = $orm->getAllAliases();
@@ -45,8 +47,8 @@ abstract class Search_Abstract
 	protected function addParameter($value)
 	{
 		$this->searchCount++;
-		$this->params[] = Array(':param' .$this->searchCount, $value);
-		return ':param' .$this->searchCount;
+		$this->params[] = Array(':param' . $this->searchCount, $value);
+		return ':param' . $this->searchCount;
 	}
 
 	/**
@@ -59,16 +61,16 @@ abstract class Search_Abstract
 	 */
 	protected function addChild($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
 	{
-		if(!isset($this->additionalOrms[$childName])){
-			$child = $this->orm->{'getChild'.ucfirst($childName).'Config'}();
+		if (!isset($this->additionalOrms[$childName])) {
+			$child = $this->orm->{'getChild' . ucfirst($childName) . 'Config'}();
 			$orm = new $child->ormName();
 			$this->additionalOrms[$childName] = $orm;
 
-			$join = ' '.$joinType.' JOIN '. $orm->getConfigDbTable().' ON
-					'.$this->orm->getConfigDbTable().'.'.$child->localKey. ' = '.$orm->getConfigDbTable().'.'.$child->foreignKey.' ';
+			$join = ' ' . $joinType . ' JOIN ' . $orm->getConfigDbTable() . ' ON
+					' . $this->orm->getConfigDbTable() . '.' . $child->localKey . ' = ' . $orm->getConfigDbTable() . '.' . $child->foreignKey . ' ';
 
-			foreach($additionalCols as $col => $value){
-				$join .= ' AND ' . $orm->getDbField($col, true). ' '.$matching.' '.$this->addParameter($value) .' ';
+			foreach ($additionalCols as $col => $value) {
+				$join .= ' AND ' . $orm->getDbField($col, true) . ' ' . $matching . ' ' . $this->addParameter($value) . ' ';
 			}
 
 			$this->joinTables[$childName] = $join;
@@ -85,34 +87,34 @@ abstract class Search_Abstract
 	 */
 	protected function dbFieldName($field)
 	{
-		if(preg_match('/(.*)\.(.*)/', $field, $matches)){
-            return $this->getOrmDbColumn($this->addChild($matches[1]), $matches[2]);
+		if (preg_match('/(.*)\.(.*)/', $field, $matches)) {
+			return $this->getOrmDbColumn($this->addChild($matches[1]), $matches[2]);
 		} else {
-            $this->aliasExists($field);
-            return $this->getOrmDbColumn($this->orm, $field);
+			$this->aliasExists($field);
+			return $this->getOrmDbColumn($this->orm, $field);
 		}
 	}
 
-    /**
-     * Vrati column z childa
-     * @param ORM $orm
-     * @param $alias
-     * @return string
-     */
-    protected function getOrmDbColumn(ORM $orm, $alias)
-    {
-        return $orm->getDbField($alias, true);
-    }
+	/**
+	 * Vrati column z childa
+	 * @param AORM $orm
+	 * @param $alias
+	 * @return string
+	 */
+	protected function getOrmDbColumn(AORM $orm, $alias)
+	{
+		return $orm->getDbField($alias, true);
+	}
 
 	/**
 	 * Vrati, zda na ORM existuje Alias
 	 * @param $property
-	 * @throws Exception_ORM
+	 * @throws \ObjectRelationMapper\Exception\ORM
 	 */
 	protected function aliasExists($property)
 	{
-		if(!in_array($property, $this->aliases)){
-			throw new Exception_ORM('Alias '.$property.' neexistuje na ORM '. $this->orm->getConfigObject());
+		if (!in_array($property, $this->aliases)) {
+			throw new \ObjectRelationMapper\Exception\ORM('Alias ' . $property . ' neexistuje na ORM ' . $this->orm->getConfigObject());
 		}
 	}
 
@@ -149,14 +151,14 @@ abstract class Search_Abstract
 	 */
 	protected function composeCountQuery()
 	{
-		$query = 'SELECT count('. $this->orm->getConfigDbPrimaryKey(). ') AS count FROM '.$this->orm->getConfigDbTable() . ' ';
+		$query = 'SELECT count(' . $this->orm->getConfigDbPrimaryKey() . ') AS count FROM ' . $this->orm->getConfigDbTable() . ' ';
 
-        if(!empty($this->joinTables)){
-            $query .= ' ' . implode(' ', $this->joinTables);
-        }
+		if (!empty($this->joinTables)) {
+			$query .= ' ' . implode(' ', $this->joinTables);
+		}
 
-		if(!empty($this->search)){
-			$query .= ' WHERE ' .implode($this->imploder, $this->search);
+		if (!empty($this->search)) {
+			$query .= ' WHERE ' . implode($this->imploder, $this->search);
 		}
 
 		return $query;
@@ -168,7 +170,7 @@ abstract class Search_Abstract
 	 */
 	public function getResults()
 	{
-		if(empty($this->results)){
+		if (empty($this->results)) {
 			$queryBuilder = $this->orm->getQueryBuilder();
 			$this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params);
 		}
@@ -185,19 +187,19 @@ abstract class Search_Abstract
 		$return = Array();
 
 
-		foreach($this->getResults() as $orm){
+		foreach ($this->getResults() as $orm) {
 			$return[$orm->primaryKey] = $orm;
 		}
 
-		foreach($this->additionalOrms as $child => $load){
+		foreach ($this->additionalOrms as $child => $load) {
 			$childs = Array();
-			$childConfig = $this->orm->{'getChild'.ucfirst($child).'Config'}();
+			$childConfig = $this->orm->{'getChild' . ucfirst($child) . 'Config'}();
 
-			foreach($this->fillDifferentORM(new $childConfig->ormName()) as $orm){
+			foreach ($this->fillDifferentORM(new $childConfig->ormName()) as $orm) {
 				$childs[$orm->{$orm->getAlias($childConfig->foreignKey)}][$orm->primaryKey] = $orm;
 			}
 
-			foreach($childs as $id => $value){
+			foreach ($childs as $id => $value) {
 				$return[$id]->$child = $value;
 			}
 		}
@@ -207,10 +209,10 @@ abstract class Search_Abstract
 
 	/**
 	 * Naplni jine ORM daty z vyhledavani
-	 * @param ORM $orm
+	 * @param AORM $orm
 	 * @return array
 	 */
-	public function fillDifferentORM(ORM $orm)
+	public function fillDifferentORM(AORM $orm)
 	{
 		return $orm->loadMultiple($this->results);
 	}
@@ -229,23 +231,22 @@ abstract class Search_Abstract
 	 */
 	protected function composeLoadQuery()
 	{
-		$query = 'SELECT '. $this->getSelectCols() . ' FROM '.$this->orm->getConfigDbTable() . ' ';
-        $query .= ' ' . implode(' ', $this->joinTables);
+		$query = 'SELECT ' . $this->getSelectCols() . ' FROM ' . $this->orm->getConfigDbTable() . ' ';
+		$query .= ' ' . implode(' ', $this->joinTables);
 
-		if(!empty($this->search)){
-			$query .= ' WHERE ' .implode($this->imploder, $this->search);
+		if (!empty($this->search)) {
+			$query .= ' WHERE ' . implode($this->imploder, $this->search);
 		}
 
-		if(!empty($this->group)){
-			$query .= ' GROUP BY ' .implode(', ', $this->group);
+		if (!empty($this->group)) {
+			$query .= ' GROUP BY ' . implode(', ', $this->group);
 		}
 
-		if(!empty($this->ordering)){
-			$query .= ' ORDER BY ' .implode(', ', $this->ordering);
+		if (!empty($this->ordering)) {
+			$query .= ' ORDER BY ' . implode(', ', $this->ordering);
 		}
 
-		$query .= ' LIMIT '.$this->offset .', '.$this->limit;
-
+		$query .= ' LIMIT ' . $this->offset . ', ' . $this->limit;
 		return $query;
 	}
 
@@ -253,9 +254,9 @@ abstract class Search_Abstract
 	{
 		$return = Array();
 
-		foreach($this->selectCols as $cols){
-			foreach($cols as $key => &$col){
-				if(isset($this->functionColumn[$col])){
+		foreach ($this->selectCols as $cols) {
+			foreach ($cols as $key => &$col) {
+				if (isset($this->functionColumn[$col])) {
 					$col = $this->functionColumn[$col];
 				}
 			}

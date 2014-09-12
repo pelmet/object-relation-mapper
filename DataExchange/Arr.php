@@ -2,8 +2,9 @@
 
 namespace ObjectRelationMapper\DataExchange;
 
-class ORM extends AExchange implements IExchange
+class Arr extends AExchange implements IExchange
 {
+
 	/**
 	 * @inheritdoc
 	 */
@@ -21,6 +22,12 @@ class ORM extends AExchange implements IExchange
 	 */
 	public function export()
 	{
-		return $this->orm;
+		$returnData = Array();
+
+		foreach ($this->orm as $property => $value) {
+			$returnData[$property] = $value;
+		}
+
+		return $returnData;
 	}
 }

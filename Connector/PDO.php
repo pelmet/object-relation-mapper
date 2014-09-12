@@ -1,9 +1,11 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\Connector;
 
 
-class Connector_PDO implements Connector_Interface
+use ObjectRelationMapper\Exception\QueryBuilder as EQueryBuilder;
+
+class PDO implements IConnector
 {
 	/**
 	 * @var PDO
@@ -12,15 +14,15 @@ class Connector_PDO implements Connector_Interface
 
 	/**
 	 * @param null $db
-	 * @throws Exception_QueryBuilder
+	 * @throws EQueryBuilder
 	 */
 	public function __construct($db = NULL)
 	{
-		if(!$db instanceof \PDO){
-			throw new Exception_QueryBuilder('Db musi byt instance PDO');
+		if (!$db instanceof \PDO) {
+			throw new EQueryBuilder('Db musi byt instance PDO');
 		}
 
-		if(!is_null($db)){
+		if ($db != NULL) {
 			$this->db = $db;
 		}
 	}

@@ -1,13 +1,14 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ColumnType;
 
 /**
- * Class ColumnType_Interface
+ * Class IColumn
  * Interface pro ColType
  */
-interface ColumnType_Interface
+interface IColumn
 {
 	public function validate($value);
+
 	public function generateDbLine();
 }

@@ -7,124 +7,33 @@ namespace ObjectRelationMapper;
  *
  * @property mixed primaryKey
  */
-abstract class ORM extends ORM_Abstract implements ORM_Interface
+abstract class ORM extends Common implements Base\IORM
 {
-	/**
-	 * Da se prepsat na cokoliv jineho v extendovane tride
-	 */
-	protected function setORMStorages()
-	{
-		$this->configStorage 	= 'ConfigStorage_Basic';
-		$this->queryBuilder		= new QueryBuilder_DB();
-	}
+
+
+
+
+	protected function beforeSave()	{ $this->internalCalls($this->beforeSave); }
+	protected function afterSave() { $this->internalCalls($this->afterSave); }
+	protected function beforeDelete() { $this->internalCalls($this->beforeDelete); }
+	protected function afterDelete() { $this->internalCalls($this->afterDelete); }
+	protected function beforeUpdate() { $this->internalCalls($this->beforeUpdate); }
+	protected function afterUpdate() { $this->internalCalls($this->afterUpdate); }
+	protected function beforeInsert() { $this->internalCalls($this->beforeInsert); }
+	protected function afterInsert() { $this->internalCalls($this->afterInsert); }
+	protected function beforeLoad() { $this->internalCalls($this->beforeLoad); }
+	protected function afterLoad() { $this->internalCalls($this->afterLoad); }
 
 	/**
-	 * Nahraje objekt z daneho storage
-	 * @param Array $loadData
-	 * @throws Exception
-	 * @return boolean|mixed
+	 * Vrati vsechna DB POLE bud v poli nebo spojene pres glue
+	 * @param null $glue
+	 * @param bool $includeTableName
+	 * @param array $exclude
+	 * @return string|array
 	 */
-	public function load($loadData = NULL)
+	public function getAllDbFields($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
-		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
-			return false;
-		}
-
-		if(!is_null($loadData)){
-			$this->loadClassFromArray($loadData);
-		} else {
-			$this->loadClassFromArray($this->queryBuilder->load($this));
-		}
-
-		$this->changedVariables = Array();
-
-		if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
-			return false;
-		}
-	}
-
-	/**
-	 * Nahraje objekt z daneho storage
-	 * @throws Exception_ORM
-	 * @return boolean|mixed
-	 */
-	public function loadByPrimaryKey()
-	{
-		if(!isset($this->primaryKey) || empty($this->primaryKey)){
-			throw new Exception_ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
-		}
-
-		if(method_exists($this, 'beforeLoad') && $this->beforeLoad() === false){
-			return false;
-		}
-
-		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
-
-		$this->changedVariables = Array();
-
-		if(method_exists($this, 'afterLoad') && $this->afterLoad() === false){
-			return false;
-		}
-	}
-
-	/**
-	 * Zvaliduje vsechny hodnoty | jednu hodnotu ORMka oproti definici jeho sloupce
-	 * @param null $property
-	 * @return bool
-	 */
-	public function validate($property = NULL)
-	{
-		$return = true;
-
-		if(!is_null($property)){
-			$return = $this->aliases[$property]->validate($this->{$property});
-		} else {
-			foreach($this as $property => $value){
-				if($this->aliases[$property]->validate($value) == false){
-					$return = false;
-					break;
-				}
-			}
-		}
-
-		return $return;
-	}
-
-	/**
-	 * Spocita, kolik zadanych radku odpovida nastavenym properties
-	 * @return int
-	 */
-	public function count()
-	{
-		return $this->queryBuilder->count($this);
-	}
-
-	/**
-	 * Ulozi objekt ORMka
-	 * @param bool $forceInsert
-	 * @return bool
-	 */
-	public function save($forceInsert = false)
-	{
-		if($this->readOnly == true){
-			return true;
-		}
-
-		if(method_exists($this, 'beforeSave') && $this->beforeSave() === false){
-			return false;
-		}
-
-		if($forceInsert == true || empty($this->primaryKey)){
-			$this->insert();
-		} else {
-			$this->update();
-		}
-
-		$this->changedVariables = Array();
-
-		if(method_exists($this, 'afterSave') && $this->afterSave() === false){
-			return false;
-		}
+		return $this->getAllDbFieldsInternal($glue, $includeTableName, $exclude);
 	}
 
 	/**
@@ -133,7 +42,7 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 	 */
 	protected function insert()
 	{
-		if(method_exists($this, 'beforeInsert') && $this->beforeInsert() === false){
+		if ($this->beforeInsert() === false) {
 			return false;
 		}
 
@@ -141,7 +50,7 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 
 		$this->changedVariables = Array();
 
-		if(method_exists($this, 'afterInsert') && $this->afterInsert() === false){
+		if ($this->afterInsert() === false) {
 			return false;
 		}
 	}
@@ -152,7 +61,7 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 	 */
 	protected function update()
 	{
-		if(method_exists($this, 'beforeUpdate') && $this->beforeUpdate() === false){
+		if ($this->beforeUpdate() === false) {
 			return false;
 		}
 
@@ -160,7 +69,92 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 
 		$this->changedVariables = Array();
 
-		if(method_exists($this, 'afterUpdate') && $this->afterUpdate() === false){
+		if ($this->afterUpdate() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Nahraje objekt z daneho storage
+	 * @throws Exception\ORM
+	 * @return boolean|mixed
+	 */
+	public function loadByPrimaryKey()
+	{
+		if (!isset($this->primaryKey) || empty($this->primaryKey)) {
+			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
+		}
+
+		if ($this->beforeLoad() === false) {
+			return false;
+		}
+
+		$this->loadClassFromArray($this->queryBuilder->loadByPrimaryKey($this));
+
+		$this->changedVariables = Array();
+
+		if ($this->afterLoad() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Da se prepsat na cokoliv jineho v extendovane tride
+	 */
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ConfigStorage\Basic';
+		$this->queryBuilder = new QueryBuilder\DB();
+	}
+
+	/**
+	 * Nahraje objekt z daneho storage
+	 * @param Array $loadData
+	 * @return boolean|mixed
+	 */
+	public function load($loadData = NULL)
+	{
+		if ($this->beforeLoad() === false) {
+			return false;
+		}
+
+		if (!is_null($loadData)) {
+			$this->loadClassFromArray($loadData);
+		} else {
+			$this->loadClassFromArray($this->queryBuilder->load($this));
+		}
+
+		$this->changedVariables = Array();
+
+		if ($this->afterLoad() === false) {
+			return false;
+		}
+	}
+
+	/**
+	 * Ulozi objekt ORMka
+	 * @param bool $forceInsert
+	 * @return bool
+	 */
+	public function save($forceInsert = false)
+	{
+		if ($this->readOnly == true) {
+			return true;
+		}
+
+		if ($this->beforeSave() === false) {
+			return false;
+		}
+
+		if ($forceInsert == true || empty($this->primaryKey)) {
+			$this->insert();
+		} else {
+			$this->update();
+		}
+
+		$this->changedVariables = Array();
+
+		if ($this->afterSave() === false) {
 			return false;
 		}
 	}
@@ -172,11 +166,11 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 	 */
 	public function delete($deleteNow = false)
 	{
-		if(method_exists($this, 'beforeDelete') && $this->beforeDelete() === false){
+		if ($this->beforeDelete() === false) {
 			return false;
 		}
 
-		if($deleteNow == true){
+		if ($deleteNow == true) {
 			$this->queryBuilder->delete($this);
 		} else {
 			$this->deleteMark = true;
@@ -184,7 +178,7 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 
 		$this->changedVariables = Array();
 
-		if(method_exists($this, 'afterDelete') && $this->afterDelete() === false){
+		if ($this->afterDelete() === false) {
 			return false;
 		}
 	}
@@ -197,27 +191,41 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 		return $this->queryBuilder->deleteByOrm($this);
 	}
 
+
 	/**
-	 * Vrati kolekci ze zadaneho dotazu
+	 * Vlozi najednou vice orm v jednom dotazu (vhodne pro importy, neloaduje ormka zpet)
 	 * @param array $loadData
-	 * @return array
+	 * @return mixed
+	 * @throws Exception\ORM
 	 */
-	public function loadMultiple($loadData = NULL)
+	public function insertMultiple(Array $loadData)
 	{
-		if($this->getOrderingLimit() == 1){
-			$this->setOrderingLimit(9999999999);
+		if (empty($loadData)) {
+			return false;
 		}
 
-		if(is_null($loadData)){
-			$collection = $this->queryBuilder->loadMultiple($this);
-		} else {
-			$collection = &$loadData;
+		return $this->queryBuilder->insertMultiple($this, $loadData);
+	}
+
+	/**
+	 * Nahraje objekt pres zadanou query, vykona ji a vrati pole objektu, podle toho kolik toho query vratila
+	 * @param $query
+	 * @param $params
+	 * @return array
+	 * @throws Exception\ORM
+	 */
+	public function loadByQuery($query, $params)
+	{
+		if (empty($query)) {
+			throw new Exception\ORM('Nemohu loadovat pres prazdnou query.');
 		}
+
+		$collection = $this->queryBuilder->loadByQuery($this, $query, $params);
 
 		$return = Array();
 		$object = $this->getConfigObject();
 
-		foreach($collection as $singleOrm){
+		foreach ($collection as $singleOrm) {
 			$tempOrm = new $object();
 			$tempOrm->load($singleOrm);
 			$return[] = $tempOrm;
@@ -226,48 +234,7 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 		return $return;
 	}
 
-    /**
-     * Nahraje objekt pres zadanou query, vykona ji a vrati pole objektu, podle toho kolik toho query vratila
-     * @param $query
-     * @param $params
-     * @return array
-     * @throws Exception_ORM
-     */
-    public function loadByQuery($query, $params)
-    {
-        if(empty($query)){
-            throw new Exception_ORM('Nemohu loadovat pres prazdnou query.');
-        }
 
-        $collection = $this->queryBuilder->loadByQuery($this, $query, $params);
-
-        $return = Array();
-        $object = $this->getConfigObject();
-
-        foreach($collection as $singleOrm){
-            $tempOrm = new $object();
-            $tempOrm->load($singleOrm);
-            $return[] = $tempOrm;
-        }
-
-        return $return;
-    }
-
-	/**
-	 * Nahraje count pres danou query
-	 * @param $query
-	 * @param $params
-	 * @return array
-	 * @throws Exception_ORM
-	 */
-	public function countByQuery($query, $params)
-	{
-		if(empty($query)){
-			throw new Exception_ORM('Nemohu loadovat pres prazdnou query.');
-		}
-
-		return $this->queryBuilder->countByQuery($this, $query, $params);
-	}
 
 	/**
 	 * Vrati naloadovaneho childa a ulozi ho k pozdejsimu pouziti
@@ -283,22 +250,22 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 		$orm = $this->childs[$child]->ormName;
 		$orm = new $orm();
 
-		if(!is_null($order)){
-			$orm->setOrderingOrder($order, (is_null($direction) ? ORM_Abstract::ORDERING_ASCENDING : $direction));
+		if ($order != NULL) {
+			$orm->setOrderingOrder($order, ($direction == NULL ? Base\AORM::ORDERING_ASCENDING : $direction));
 		}
 
-		if(!is_null($limit)){
+		if ($limit != NULL) {
 			$orm->setOrderingLimit($limit);
 		}
 
-		if(!is_null($offset)){
+		if ($offset != NULL) {
 			$orm->setOrderingOffset($offset);
 		}
 
 		$localKey = $this->getAlias($this->childs[$child]->localKey);
 		$foreignKey = $orm->getAlias($this->childs[$child]->foreignKey);
 
-		if(!empty($this->{$localKey})){
+		if (!empty($this->{$localKey})) {
 			$orm->{$foreignKey} = $this->{$localKey};
 			$collection = $orm->loadMultiple();
 			$this->$child = $collection;
@@ -309,86 +276,4 @@ abstract class ORM extends ORM_Abstract implements ORM_Interface
 		}
 	}
 
-    /**
-     * Vrati danou property prvniho childa ve formatu child.property[, ["$param1", "$paramx"]]
-     * @example $orm->cProperty('user.name')
-     * @example $orm->cProperty('user.getAllRights, [", ", "//", "adsfdsaf"]')
-     * @param $string
-     * @throws Exception_ORM
-     * @return string
-     */
-    public function cProperty($string)
-    {
-        if(!preg_match('/^(.*)\.(.*?)(\,(.*))?$/', $string, $matches)){
-            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property[, ["$param1", "$paramx"]]');
-        }
-
-        if(!isset($this->childs[$matches[1]])){
-            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
-        }
-
-        if(!isset($this->childsData[$matches[1]])){
-            $this->children($matches[1]);
-        }
-
-        if(isset($this->childsData[$matches[1]][0]->{$matches[2]})){
-            return $this->childsData[$matches[1]][0]->{$matches[2]};
-        } elseif(isset($this->childsData[$matches[1]][0]) && method_exists($this->childsData[$matches[1]][0], $matches[2])) {
-	        if(isset($matches[3]) && isset($matches[4])){
-		        preg_match_all('/([\'"])(.*?)([\'"])/i', $matches[4], $params);
-		        return call_user_func_array(Array($this->childsData[$matches[1]][0], $matches[2]), $params[2]);
-	        } else {
-		        return $this->childsData[$matches[1]][0]->{$matches[2]}();
-	        }
-
-        } else {
-            return NULL;
-        }
-    }
-
-    /**
-     * Vrati danou property vsech childu ve formatu child.property
-     * @example $orm->cProperties('report.time')
-     * @param $string
-     * @param null $glue
-     * @throws Exception_ORM
-     * @return string
-     */
-    public function cProperties($string, $glue = NULL)
-    {
-        if(!preg_match('/^(.*)\.(.*)$/', $string, $matches)){
-            throw new Exception_ORM('Vyber child property musi byt ve formatu child.property');
-        }
-
-        if(!isset($this->childs[$matches[1]])){
-            throw new Exception_ORM('Child '. $matches[1] . ' neni nadefinovan.');
-        }
-
-        if(!isset($this->childsData[$matches[1]])){
-            $this->children($matches[1]);
-        }
-
-        $return = Array();
-
-        foreach($this->childsData[$matches[1]] as $key => $child){
-            $return[$key] = $child->{$matches[2]};
-        }
-
-        if(!is_null($glue)){
-            return implode($glue, $return);
-        } else {
-            return $return;
-        }
-    }
-
-	/**
-	 * upravuje hodnotu podle typu sloupce pro ulozeni pres PDO
-	 * @param $propertyName
-	 * @return mixed
-	 */
-	public function getSenitazedValue($propertyName)
-	{
-		/** @var ColumnType_Abstract $m */
-		return $this->aliases[$propertyName]->getSanitezedPDOValue($this->$propertyName);
-	}
 }

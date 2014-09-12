@@ -1,8 +1,10 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\DataExchange;
 
-abstract class DataExchange_Abstract
+use ObjectRelationMapper\Base\AORM;
+
+abstract class AExchange
 {
 	/**
 	 * @var ORM
@@ -12,7 +14,7 @@ abstract class DataExchange_Abstract
 	/**
 	 * @inheritdoc
 	 */
-	public function __construct(ORM $orm)
+	public function __construct(AORM $orm)
 	{
 		$this->orm = $orm;
 	}

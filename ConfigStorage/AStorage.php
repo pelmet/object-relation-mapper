@@ -1,12 +1,12 @@
 <?php
 
-namespace ObjectRelationMapper;
+namespace ObjectRelationMapper\ConfigStorage;
 
 /**
  * Class Storage
  * Ulozna pro ORM konfigurace
  */
-class ConfigStorage_Abstract
+class AStorage
 {
 	const BASIC_CONFIG = 1;
 	const DB_COLS = 2;
@@ -15,4 +15,5 @@ class ConfigStorage_Abstract
 	const ALL_DB_FIELDS_WITH_TABLE = 5;
 	const ALL_ALIASES = 6;
 	const CHILDS = 7;
+	const DATA_ALIASES = 8;
 }
