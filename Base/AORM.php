@@ -249,7 +249,7 @@ abstract class AORM extends Iterator
 
 	public function __sleep()
 	{
-		return array('data', 'childsData');
+		return array('data', 'childsData', 'isLoaded');
 	}
 
 	public function __wakeup()
