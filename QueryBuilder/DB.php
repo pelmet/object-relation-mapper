@@ -129,17 +129,21 @@ class DB extends ABuilder
 
 		$columns = Array();
 		$params = Array();
-		foreach ($orm as $propertyName => $propertyValue) {
+		foreach($orm->getChangedVariables() AS $propertyName){
+			$propertyValue = $orm->getValue($propertyName);
 			$dbColumn = $orm->getDbField($propertyName);
 			if ($oldPrimaryKey != NULL && $orm->primaryKey != $oldPrimaryKey) {
 				$columns[] = $dbColumn . ' = :' . $dbColumn;
 				$params[] = Array(':' . $dbColumn, $propertyValue);
 			} else {
 				if($dbColumn != $orm->getConfigDbPrimaryKey()){
-					$propertyValue = $orm->getSenitazedValue($propertyName);
-					
-					$columns[] = $dbColumn . ' = :' . $dbColumn;
-					$params[] = Array(':' . $dbColumn, $propertyValue);
+					if (is_null($propertyValue)) {
+						$columns[] = $dbColumn . ' = NULL ';
+					} else {
+						$propertyValue = $orm->getSenitazedValue($propertyName);
+						$columns[] = $dbColumn . ' = :' . $dbColumn;
+						$params[] = Array(':' . $dbColumn, $propertyValue);
+					}
 				}
 			}
 		}

@@ -763,4 +763,23 @@ abstract class AORM extends Iterator
 		return ob_get_clean();
 	}
 
+	public function getChangedVariables()
+	{
+		return array_keys($this->changedVariables);
+	}
+	public function getValue($property)
+	{
+		return $this->data[$property];
+	}
+
+	/**
+	 * upravuje hodnotu podle typu sloupce pro ulozeni pres PDO
+	 * @param $propertyName
+	 * @return mixed
+	 */
+	public function getSenitazedValue($propertyName)
+	{
+		/** @var \ObjectRelationMapper\ColumnType\AColumn $this->aliases */
+		return $this->aliases[$propertyName]->getSanitezedPDOValue($this->$propertyName);
+	}
 }
