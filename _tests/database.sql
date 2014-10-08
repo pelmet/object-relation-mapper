@@ -13,3 +13,10 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands_logs` (
   `qcl_text` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`qcl_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+
+CREATE TABLE IF NOT EXISTS `d_update_test` (
+  `ut_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ut_name` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `ut_text` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`ut_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;

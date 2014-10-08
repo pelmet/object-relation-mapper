@@ -12,8 +12,6 @@ class DB extends ABuilder
 	 */
 	protected $connector;
 
-	protected $changeValueForPDO = array();
-
 	public function __construct($connector = NULL)
 	{
 		if ($connector != NULL) {
@@ -35,8 +33,6 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$propertyValue = $orm->getSenitazedValue($propertyName);
-
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -103,8 +99,6 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$propertyValue = $orm->getSenitazedValue($propertyName);
-
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -129,21 +123,15 @@ class DB extends ABuilder
 
 		$columns = Array();
 		$params = Array();
-		foreach($orm->getChangedVariables() AS $propertyName){
-			$propertyValue = $orm->getValue($propertyName);
+		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
 			if ($oldPrimaryKey != NULL && $orm->primaryKey != $oldPrimaryKey) {
 				$columns[] = $dbColumn . ' = :' . $dbColumn;
 				$params[] = Array(':' . $dbColumn, $propertyValue);
 			} else {
-				if($dbColumn != $orm->getConfigDbPrimaryKey()){
-					if (is_null($propertyValue)) {
-						$columns[] = $dbColumn . ' = NULL ';
-					} else {
-						$propertyValue = $orm->getSenitazedValue($propertyName);
-						$columns[] = $dbColumn . ' = :' . $dbColumn;
-						$params[] = Array(':' . $dbColumn, $propertyValue);
-					}
+				if ($dbColumn != $orm->getConfigDbPrimaryKey()) {
+					$columns[] = $dbColumn . ' = :' . $dbColumn;
+					$params[] = Array(':' . $dbColumn, $propertyValue);
 				}
 			}
 		}
@@ -189,8 +177,6 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$propertyValue = $orm->getSenitazedValue($propertyName);
-
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -214,8 +200,6 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$propertyValue = $orm->getSenitazedValue($propertyName);
-
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
@@ -259,8 +243,6 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$propertyValue = $orm->getSenitazedValue($propertyName);
-
 			$columns[] = $dbColumn . ' = :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
