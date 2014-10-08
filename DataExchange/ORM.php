@@ -10,7 +10,7 @@ class ORM extends AExchange implements IExchange
 	public function load($data)
 	{
 		foreach ($data as $property => $value) {
-			if (!isset($this->excluded[$property]) && $this->orm->propertyExists($property)) {
+			if (!isset($this->excluded[$property]) && $this->orm->propertyExists($property) && ($value !== $this->orm->{$property})) {
 				$this->orm->{$property} = $value;
 			}
 		}
