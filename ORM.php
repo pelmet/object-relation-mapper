@@ -275,6 +275,4 @@ abstract class ORM extends Common implements Base\IORM
 			return Array();
 		}
 	}
-
-
 }

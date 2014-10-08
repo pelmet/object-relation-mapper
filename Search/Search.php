@@ -182,4 +182,42 @@ class Search extends ASearch
 		$this->search[] = $this->dbFieldName($child . '.' . $property) . ' IS NULL';
 		return $this;
 	}
+
+	/**
+	 * hleda vse krome vybranych hodnot
+	 * @param $property
+	 * @param array $values
+	 * @return $this
+	 */
+	public function notIn($property, Array $values)
+	{
+		$this->search[] = $this->dbFieldName($property) . ' NOT IN ('.$this->prepareArray($values).')';
+		return $this;
+	}
+
+	/**
+	 * hleda nekterou z vybranych hodnot
+	 * @param $property
+	 * @param array $values
+	 * @return $this
+	 */
+	public function in($property, Array $values)
+	{
+		$this->search[] = $this->dbFieldName($property) . ' IN ('.$this->prepareArray($values).')';
+		return $this;
+	}
+
+	/**
+	 * prevadi pole hodnot na string a vytvari parametry pro PDO
+	 * @param array $values
+	 * @return string
+	 */
+	private function prepareArray(Array $values)
+	{
+		$prepared = null;
+		foreach($values As $value){
+			$prepared .= $this->addParameter($value).',';
+		}
+		return substr($prepared, 0, -1);
+	}
 }

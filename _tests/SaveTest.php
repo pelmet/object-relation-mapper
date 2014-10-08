@@ -132,4 +132,68 @@ class SaveTest extends CommonTestClass
 		$this->assertEquals('15', $result['qc_id']);
 	}
 
+	/**
+	 * @dataProvider providerUpdateChanged
+	 */
+	public function testUseOfChangedProperties($testOrm1)
+	{
+		$testOrm2 = clone $testOrm1;
+		$testOrm3 = clone $testOrm1;
+		/** @var  ORMTestUpdateFromChangedProperties $testOrm1 */
+		/** @var  ORMTestUpdateFromChangedProperties $testOrm2 */
+		/** @var  ORMTestUpdateFromChangedProperties $testOrm3 */
+
+		$testOrm1->valName = 1;
+		$testOrm1->valText = 2;
+		$testOrm1->save();
+
+		$testOrm2->id = $testOrm1->id;
+		$testOrm2->load();
+
+		$testOrm1->valName = 5;
+		$testOrm1->save();
+
+		$testOrm2->valText = 10;
+		$testOrm2->save();
+
+		$testOrm3->id = $testOrm1->id;
+		$testOrm3->load();
+
+		$this->assertEquals($testOrm1->id, $testOrm3->id);
+		$this->assertEquals($testOrm2->id, $testOrm3->id);
+		$this->assertEquals($testOrm3->valName, 5);
+		$this->assertEquals($testOrm3->valText, 10);
+	}
+
+	/**
+	 * @dataProvider providerUpdateAll
+	 */
+	public function testUseOfAllProperties($testOrm1)
+	{
+		$testOrm2 = clone $testOrm1;
+		$testOrm3 = clone $testOrm1;
+		/** @var  ORMTestUpdateFromAllProperties $testOrm1 */
+		/** @var  ORMTestUpdateFromAllProperties $testOrm2 */
+		/** @var  ORMTestUpdateFromAllProperties $testOrm3 */
+		$testOrm1->valName = 1;
+		$testOrm1->valText = 2;
+		$testOrm1->save();
+
+		$testOrm2->id = $testOrm1->id;
+		$testOrm2->load();
+
+		$testOrm1->valName = 5;
+		$testOrm1->save();
+
+		$testOrm2->valText = 10;
+		$testOrm2->save();
+
+		$testOrm3->id = $testOrm1->id;
+		$testOrm3->load();
+
+		$this->assertEquals($testOrm1->id, $testOrm3->id);
+		$this->assertEquals($testOrm2->id, $testOrm3->id);
+		$this->assertEquals($testOrm3->valName, 1);
+		$this->assertEquals($testOrm3->valText, 10);
+	}
 }

@@ -172,4 +172,118 @@ class ORMTestValidation extends ObjectRelationMapper\ORM
 	}
 }
 
+/**
+ * Class ORMTest
+ * @property int id
+ * @property string valName
+ * @property string valText
+ */
+class ORMTestUpdateFromChangedProperties extends ObjectRelationMapper\ORM
+{
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
 
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DBUpdateFromChangedProperties($connector);
+	}
+
+	function setUp()
+	{
+		$this->addColumn('ut_id', 'id', 'int', '10');
+		$this->addColumn('ut_name', 'valName', 'string', '10');
+		$this->addColumn('ut_text', 'valText', 'string', '10');
+
+		$this->setConfigDbPrimaryKey('ut_id');
+		$this->setConfigDbServer('master');
+		$this->setConfigObject(__CLASS__);
+		$this->setConfigDbTable('d_update_test');
+	}
+}
+
+/**
+ * Class ORMTest
+ * @property int id
+ * @property string valName
+ * @property string valText
+ */
+class ORMTestUpdateFromChangedPropertiesOld extends ObjectRelationMapper\DataObjects
+{
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
+
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DBUpdateFromChangedProperties($connector);
+	}
+
+	function setUp()
+	{
+		$this->config['rows'][] = Array('name' => 'ut_id', 'alias' => 'id');
+		$this->config['rows'][] = Array('name' => 'ut_name', 'alias' => 'valName');
+		$this->config['rows'][] = Array('name' => 'ut_text', 'alias' => 'valText');
+
+		$this->config['server'] = 'master';
+		$this->config['tableName'] = 'd_update_test';
+		$this->config['primaryKey'] = 'ut_id';
+		$this->config['object'] = __CLASS__;
+	}
+}
+
+/**
+ * Class ORMTest
+ * @property int id
+ * @property string valName
+ * @property string valText
+ */
+class ORMTestUpdateFromAllProperties extends ObjectRelationMapper\ORM
+{
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
+
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
+	}
+
+	function setUp()
+	{
+		$this->addColumn('ut_id', 'id', 'int', '10');
+		$this->addColumn('ut_name', 'valName', 'string', '10');
+		$this->addColumn('ut_text', 'valText', 'string', '10');
+
+		$this->setConfigDbPrimaryKey('ut_id');
+		$this->setConfigDbServer('master');
+		$this->setConfigObject(__CLASS__);
+		$this->setConfigDbTable('d_update_test');
+	}
+}
+
+/**
+ * Class ORMTest
+ * @property int id
+ * @property string valName
+ * @property string valText
+ */
+class ORMTestUpdateFromAllPropertiesOld extends ObjectRelationMapper\DataObjects
+{
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
+
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
+	}
+
+	function setUp()
+	{
+		$this->config['rows'][] = Array('name' => 'ut_id', 'alias' => 'id');
+		$this->config['rows'][] = Array('name' => 'ut_name', 'alias' => 'valName');
+		$this->config['rows'][] = Array('name' => 'ut_text', 'alias' => 'valText');
+
+		$this->config['server'] = 'master';
+		$this->config['tableName'] = 'd_update_test';
+		$this->config['primaryKey'] = 'ut_id';
+		$this->config['object'] = __CLASS__;
+	}
+}

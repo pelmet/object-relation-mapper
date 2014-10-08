@@ -26,4 +26,14 @@ class Decimal extends AColumn implements IColumn
 		}
 		return true;
 	}
+
+	/**
+	 * float čísla se mění v PDO na string a je nahrazena tečka za čárku, což databáze nepochopí a odstraní hodnoty za čárkou protože nejsou int typu
+	 * @param $value
+	 * @return mixed
+	 */
+	public function getSanitezedPDOValue($value)
+	{
+		return str_replace(',', '.', strval($value));
+	}
 }

@@ -249,7 +249,7 @@ abstract class AORM extends Iterator
 
 	public function __sleep()
 	{
-		return array('data', 'childsData');
+		return array('data', 'childsData', 'isLoaded');
 	}
 
 	public function __wakeup()
@@ -335,7 +335,7 @@ abstract class AORM extends Iterator
 	{
 		if (preg_match('/^get(.*)$/', $function, $matches)) {
 			if (preg_match('/^get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])) {
-				return $this->aliases[$matches[1]];
+				return $this->aliases[lcfirst($matches[1])];
 			}
 
 			if (preg_match('/^getChild(.*)Config$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])) {
@@ -763,4 +763,23 @@ abstract class AORM extends Iterator
 		return ob_get_clean();
 	}
 
+	public function getChangedVariables()
+	{
+		return array_keys($this->changedVariables);
+	}
+	public function getValue($property)
+	{
+		return $this->data[$property];
+	}
+
+	/**
+	 * upravuje hodnotu podle typu sloupce pro ulozeni pres PDO
+	 * @param $propertyName
+	 * @return mixed
+	 */
+	public function getSenitazedValue($propertyName)
+	{
+		/** @var \ObjectRelationMapper\ColumnType\AColumn $this->aliases */
+		return $this->aliases[$propertyName]->getSanitezedPDOValue($this->$propertyName);
+	}
 }

@@ -42,4 +42,15 @@ abstract class AColumn
 	{
 		throw new EColumnType('Property ' . $propertyName . ' neexistuje, opravte si prosim kod.');
 	}
+
+	/**
+	 * metoda volajici nad typy sloupcu osetreni pro PDO
+	 * pokud chceme osetrovat zmenime telo fce u potomka
+	 * @param $value
+	 * @return mixed
+	 */
+	public function getSanitezedPDOValue($value)
+	{
+		return $value;
+	}
 }
