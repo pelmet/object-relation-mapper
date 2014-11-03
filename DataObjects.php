@@ -157,7 +157,7 @@ abstract class DataObjects extends Common
 
 	/**
 	 * Vrati konfiguracni direktivu bud jako text, nebo jako pole hodnot
-	 * @param type $configDirective
+	 * @param string $configDirective
 	 * @return mixed
 	 */
 	public function config($configDirective)
