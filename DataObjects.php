@@ -276,7 +276,6 @@ abstract class DataObjects extends Common
 	 * @param string $childName
 	 * @param array $loadArray
 	 * @return mixed
-	 * @throws Exception
 	 */
 	public function loadChild($childName, $loadArray)
 	{
@@ -331,7 +330,7 @@ abstract class DataObjects extends Common
 
 		$orm = $this->childs[$child]->ormName;
 		$sRelation = $this->childs[$child]->additionalParams['relation'];
-		/** @var $this */
+		/** @var DataObjects $orm */
 		$orm = new $orm();
 
 		if ($order !== false) {
