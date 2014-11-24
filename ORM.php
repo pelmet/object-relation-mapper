@@ -9,10 +9,6 @@ namespace ObjectRelationMapper;
  */
 abstract class ORM extends Common implements Base\IORM
 {
-
-
-
-
 	protected function beforeSave()	{ $this->internalCalls($this->beforeSave); }
 	protected function afterSave() { $this->internalCalls($this->afterSave); }
 	protected function beforeDelete() { $this->internalCalls($this->beforeDelete); }
@@ -53,6 +49,8 @@ abstract class ORM extends Common implements Base\IORM
 		if ($this->afterInsert() === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -72,6 +70,8 @@ abstract class ORM extends Common implements Base\IORM
 		if ($this->afterUpdate() === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -129,6 +129,8 @@ abstract class ORM extends Common implements Base\IORM
 		if ($this->afterLoad() === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -157,6 +159,8 @@ abstract class ORM extends Common implements Base\IORM
 		if ($this->afterSave() === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -181,6 +185,8 @@ abstract class ORM extends Common implements Base\IORM
 		if ($this->afterDelete() === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**

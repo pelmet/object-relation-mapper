@@ -82,6 +82,8 @@ abstract class DataObjects extends Common
 		if ($this->afterInsert(true) === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -101,6 +103,8 @@ abstract class DataObjects extends Common
 		if ($this->afterUpdate(true) === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -125,6 +129,8 @@ abstract class DataObjects extends Common
 		if ($this->afterLoad(true) === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -237,6 +243,8 @@ abstract class DataObjects extends Common
 		if ($this->afterSave(true) === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -269,6 +277,8 @@ abstract class DataObjects extends Common
 		if ($this->afterLoad(true) === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -309,6 +319,8 @@ abstract class DataObjects extends Common
 		if ($this->afterDelete(true) === false) {
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
