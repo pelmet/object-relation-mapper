@@ -16,24 +16,11 @@ class Basic extends AStorage implements IStorage
 	 * @param array $childs
 	 * @param array $dataAliases
 	 */
-	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbCols, Array $phpAliases, Array $childs, Array $dataAliases)
+	public static function setConfiguration($orm, Array $configuration)
 	{
 		self::$fullyConfigured[$orm] = TRUE;
 
-		self::$configurationStorage[$orm] = Array(
-			self::BASIC_CONFIG => $basicConfiguration,
-			self::DB_COLS => $dbCols,
-			self::PHP_ALIASES => $phpAliases,
-			self::CHILDS => $childs,
-			self::DATA_ALIASES => $dataAliases
-		);
-
-		// ALL DB Fields
-		foreach ($dbCols as $column) {
-			self::$configurationStorage[$orm][self::ALL_DB_FIELDS][] = $column->col;
-			self::$configurationStorage[$orm][self::ALL_DB_FIELDS_WITH_TABLE][] = $basicConfiguration['DbTable'] . '.' . $column->col;
-			self::$configurationStorage[$orm][self::ALL_ALIASES][] = $column->alias;
-		}
+		self::$configurationStorage[$orm] = $configuration;
 	}
 
 	/**

@@ -4,7 +4,7 @@ namespace ObjectRelationMapper\ConfigStorage;
 
 interface IStorage
 {
-	public static function setConfiguration($orm, Array $basicConfiguration, Array $dbRows, Array $phpAliases, Array $childs, Array $dataAliases);
+	public static function setConfiguration($orm, Array $configuration);
 
 	public static function &getConfiguration($orm);
 

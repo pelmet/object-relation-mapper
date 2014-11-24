@@ -157,16 +157,7 @@ abstract class Common extends Base\AORM
 		return $this->queryBuilder->countByQuery($this, $query, $params);
 	}
 
-	public $beforeSave = Array();
-	public $afterSave = Array();
-	public $beforeLoad = Array();
-	public $afterLoad = Array();
-	public $beforeInsert = Array();
-	public $afterInsert = Array();
-	public $beforeDelete = Array();
-	public $afterDelete = Array();
-	public $beforeUpdate = Array();
-	public $afterUpdate = Array();
+
 
 	/**
 	 * Invokne dane metody

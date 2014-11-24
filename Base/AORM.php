@@ -125,6 +125,21 @@ abstract class AORM extends Iterator
 		'Limit' => 1
 	);
 
+	protected $persistentParams = Array();
+
+	protected $preGeneratedInfo = Array();
+
+	public $beforeSave = Array();
+	public $afterSave = Array();
+	public $beforeLoad = Array();
+	public $afterLoad = Array();
+	public $beforeInsert = Array();
+	public $afterInsert = Array();
+	public $beforeDelete = Array();
+	public $afterDelete = Array();
+	public $beforeUpdate = Array();
+	public $afterUpdate = Array();
+
 
 	/**
 	 * Nastaveni ORM Tridy
@@ -173,13 +188,28 @@ abstract class AORM extends Iterator
 		$storage = & $this->configStorage;
 		$finalClass = get_called_class();
 
+		$this->persistParam('basicConfiguration');
+		$this->persistParam('columns');
+		$this->persistParam('aliases');
+		$this->persistParam('childs');
+		$this->persistParam('dataAliases');
+		$this->persistParam('beforeLoad');
+		$this->persistParam('beforeSave');
+		$this->persistParam('beforeInsert');
+		$this->persistParam('beforeDelete');
+		$this->persistParam('beforeUpdate');
+		$this->persistParam('afterLoad');
+		$this->persistParam('afterSave');
+		$this->persistParam('afterInsert');
+		$this->persistParam('afterDelete');
+		$this->persistParam('afterUpdate');
+		$this->persistParam('preGeneratedInfo');
+		$this->persistAdditional();
+
 		if ($storage::configurationExists($finalClass)) {
-			$configuration = $storage::getConfiguration($finalClass);
-			$this->basicConfiguration = $configuration[$storage::BASIC_CONFIG];
-			$this->columns = $configuration[$storage::DB_COLS];
-			$this->aliases = $configuration[$storage::PHP_ALIASES];
-			$this->childs = $configuration[$storage::CHILDS];
-			$this->dataAliases = $configuration[$storage::DATA_ALIASES];
+			foreach( $storage::getConfiguration($finalClass) as $config => &$value ){
+				$this->$config = $value;
+			}
 		} else {
 			$this->setUp();
 			$this->translateConfig();
@@ -189,7 +219,20 @@ abstract class AORM extends Iterator
 			}
 
 			$this->basicConfiguration['AliasPrimaryKey'] = $this->getAlias($this->basicConfiguration['DbPrimaryKey']);
-			$storage::setConfiguration($finalClass, $this->basicConfiguration, $this->columns, $this->aliases, $this->childs, $this->dataAliases);
+
+			// Vybrani columns a dalsich drobnosti pred ulozenim
+			foreach ($this->columns as $column) {
+				$this->preGeneratedInfo['allDbFields'][] = $column->col;
+				$this->preGeneratedInfo['allDbFieldsWithTable'][] = $this->basicConfiguration['DbTable'] . '.' . $column->col;
+				$this->preGeneratedInfo['allAliases'][] = $column->alias;
+			}
+
+			$config = Array();
+			foreach ( $this->persistentParams as $persistentParam => $save ){
+				$config[$persistentParam] = $this->$persistentParam;
+			}
+
+			$storage::setConfiguration($finalClass, $config);
 		}
 
 		if ($primaryKey != NULL) {
@@ -208,12 +251,23 @@ abstract class AORM extends Iterator
 		}
 	}
 
-	protected function translateConfig() {	}
-
-	/*protected function isAliasPrimaryKey($alias)
+	/**
+	 * Nastavi Persistenci parametru, moznost volat i v setupu
+	 * @param $param
+	 *
+	 */
+	protected function persistParam($param)
 	{
-		return $alias == $this->basicConfiguration['AliasPrimaryKey'];
-	}*/
+		$this->persistentParams[$param] = true;
+	}
+
+	/**
+	 * Metoda slouzici k extendnuti a nastaveni dalsich persistent parametru
+	 */
+	protected function persistAdditional() {  }
+
+
+	protected function translateConfig() {	}
 
 	/**
 	 * Vrati hodnotu property nebo NULL, pokud neni k dispozici
@@ -637,12 +691,10 @@ abstract class AORM extends Iterator
 	 */
 	public function getAllDbFieldsInternal($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
-		$s = & $this->configStorage;
-
 		if ($includeTableName) {
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_DB_FIELDS_WITH_TABLE);
+			$return = $this->preGeneratedInfo['allDbFieldsWithTable'];
 		} else {
-			$return = $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_DB_FIELDS);
+			$return = $this->preGeneratedInfo['allDbFields'];
 		}
 
 		if (!empty($exclude)) {
@@ -679,9 +731,9 @@ abstract class AORM extends Iterator
 		$s = & $this->configStorage;
 
 		if ($glue != NULL) {
-			return implode($glue, $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_ALIASES));
+			return implode($glue, $this->preGeneratedInfo['allAliases']);
 		} else {
-			return $s::getSpecificConfiguration($this->getConfigObject(), AStorage::ALL_ALIASES);
+			return $this->preGeneratedInfo['allAliases'];
 		}
 	}
 
