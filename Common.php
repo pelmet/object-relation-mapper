@@ -104,6 +104,30 @@ abstract class Common extends Base\AORM
 		return $return;
 	}
 
+	/**
+	 * Nahraje z ORMka pouze properties, ktere jsme nastavili v aliasu
+	 * @param $alias
+	 */
+	public function loadMFU($alias, $loadData = NULL)
+	{
+		$this->mfuActive = $alias;
+		$return = $this->load($loadData);
+		$this->mfuActive = false;
+		return $return;
+	}
+
+	/**
+	 * Nahraje z ORMka pouze properties, ktere jsme nastavili v aliasu
+	 * @param $alias
+	 * @return array
+	 */
+	public function loadMultipleMFU($alias, $loadData = NULL)
+	{
+		$this->mfuActive = $alias;
+		$return = $this->loadMultiple($loadData);
+		$this->mfuActive = false;
+		return $return;
+	}
 
 
 	/**

@@ -169,4 +169,30 @@ class LoadTest extends CommonTestClass
 
 		$this->assertEquals(false, $testOrm->isLoaded());
 	}
+
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadMFU($testOrm)
+	{
+		$testOrm->loadMFU('test-data');
+
+		$this->assertEquals(true, $testOrm->isLoaded());
+		$this->assertEquals(5, $testOrm->id);
+		$this->assertEquals(123456, $testOrm->startTime);
+		$this->assertEquals(NULL, $testOrm->command);
+	}
+
+	/**
+	 * @dataProvider providerBasic
+	 */
+	public function testLoadMultipleMFU($testOrm)
+	{
+		$results = $testOrm->loadMultipleMFU('test-data');
+
+		$this->assertEquals(true, $results[0]->isLoaded());
+		$this->assertEquals(5, $results[0]->id);
+		$this->assertEquals(123456, $results[0]->startTime);
+		$this->assertEquals(NULL, $results[0]->command);
+	}
 }

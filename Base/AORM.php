@@ -140,6 +140,12 @@ abstract class AORM extends Iterator
 	public $beforeUpdate = Array();
 	public $afterUpdate = Array();
 
+	/**
+	 * MFU Config pole
+	 * @var array
+	 */
+	protected $mfuConfig = Array();
+	protected $mfuActive = false;
 
 	/**
 	 * Nastaveni ORM Tridy
@@ -204,6 +210,7 @@ abstract class AORM extends Iterator
 		$this->persistParam('afterDelete');
 		$this->persistParam('afterUpdate');
 		$this->persistParam('preGeneratedInfo');
+		$this->persistParam('mfuConfig');
 		$this->persistAdditional();
 
 		if ($storage::configurationExists($finalClass)) {
@@ -226,6 +233,20 @@ abstract class AORM extends Iterator
 				$this->preGeneratedInfo['allDbFieldsWithTable'][] = $this->basicConfiguration['DbTable'] . '.' . $column->col;
 				$this->preGeneratedInfo['allAliases'][] = $column->alias;
 			}
+
+			// MFU Predgenerovani
+			$mfuConfig = Array();
+			foreach ($this->mfuConfig as $alias => $configuration){
+				$currentAlias = Array();
+
+				foreach($configuration as $column => $active){
+					$currentAlias['allDbFields'][] = $this->aliases[$column]->col;
+					$currentAlias['allDbFieldsWithTable'][] = $this->basicConfiguration['DbTable'] . '.' . $this->aliases[$column]->col;
+				}
+
+				$mfuConfig[$alias] = $currentAlias;
+			}
+			$this->mfuConfig = $mfuConfig;
 
 			$config = Array();
 			foreach ( $this->persistentParams as $persistentParam => $save ){
@@ -691,10 +712,18 @@ abstract class AORM extends Iterator
 	 */
 	public function getAllDbFieldsInternal($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
-		if ($includeTableName) {
-			$return = $this->preGeneratedInfo['allDbFieldsWithTable'];
+		if($this->mfuActive === false){
+			if ($includeTableName) {
+				$return = $this->preGeneratedInfo['allDbFieldsWithTable'];
+			} else {
+				$return = $this->preGeneratedInfo['allDbFields'];
+			}
 		} else {
-			$return = $this->preGeneratedInfo['allDbFields'];
+			if ($includeTableName) {
+				$return = $this->mfuConfig[$this->mfuActive]['allDbFieldsWithTable'];
+			} else {
+				$return = $this->mfuConfig[$this->mfuActive]['allDbFields'];
+			}
 		}
 
 		if (!empty($exclude)) {
@@ -813,6 +842,16 @@ abstract class AORM extends Iterator
 			var_dump($value);
 		}
 		return ob_get_clean();
+	}
+
+	/**
+	 * Nastavi parametr jako MFU Alias
+	 * @param $parameter
+	 * @param $alias
+	 */
+	protected function setupMFU($parameter, $alias)
+	{
+		$this->mfuConfig[$alias][$parameter] = true;
 	}
 
 }

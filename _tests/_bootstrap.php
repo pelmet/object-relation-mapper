@@ -58,6 +58,9 @@ class ORMTest extends ObjectRelationMapper\ORM
 		$this->setConfigDbServer('master');
 		$this->setConfigObject(__CLASS__);
 		$this->setConfigDbTable('d_queued_commands');
+
+		$this->setupMFU('id', 'test-data');
+		$this->setupMFU('startTime', 'test-data');
 	}
 }
 
@@ -105,6 +108,9 @@ class ORMTestOld extends ObjectRelationMapper\DataObjects
 			return $orm->status . $orm->startTime;
 		});
 		$this->addDataAlias('startEndTime', 'startTime, endTime', ' ');
+
+		$this->setupMFU('id', 'test-data');
+		$this->setupMFU('startTime', 'test-data');
 	}
 }
 
