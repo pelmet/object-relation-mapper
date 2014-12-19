@@ -182,4 +182,36 @@ class Search_Search extends Search_Abstract
 		$this->search[] = $this->dbFieldName($child . '.' .$property) . ' IS NULL';
 		return $this;
 	}
+
+    /**
+     * @param $property
+     * @param array $values
+     * @return $this
+     */
+    public function in($property, Array $values)
+    {
+        $preparedValues = array();
+        foreach($values As $value){
+            $preparedValues[] = $this->addParameter($value);
+        }
+
+        $this->search[] = $this->dbFieldName($property) . ' IN ('. implode(',', $preparedValues) . ')';
+        return $this;
+    }
+
+    /**
+     * @param $property
+     * @param array $values
+     * @return $this
+     */
+    public function notIn($property, Array $values)
+    {
+        $preparedValues = array();
+        foreach($values As $value){
+            $preparedValues[] = $this->addParameter($value);
+        }
+
+        $this->search[] = $this->dbFieldName($property) . ' NOT IN ('. implode(',', $preparedValues) . ')';
+        return $this;
+    }
 }
