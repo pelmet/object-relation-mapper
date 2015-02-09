@@ -151,7 +151,7 @@ abstract class ASearch
 	 */
 	protected function composeCountQuery()
 	{
-		$query = 'SELECT count(' . $this->orm->getConfigDbPrimaryKey() . ') AS count FROM ' . $this->orm->getConfigDbTable() . ' ';
+		$query = 'SELECT count(' . $this->orm->getConfigDbTable() . '.' . $this->orm->getConfigDbPrimaryKey() . ') AS count FROM ' . $this->orm->getConfigDbTable() . ' ';
 
 		if (!empty($this->joinTables)) {
 			$query .= ' ' . implode(' ', $this->joinTables);
