@@ -28,6 +28,9 @@ abstract class ASearch
 	protected $functionColumn = Array();
 	protected $additionalOrms = Array();
 
+    const RESULTS_BY_FETCH_NUM = false;
+    const RESULTS_BY_FETCH_ASSOC = true;
+
 	/**
 	 * Standardni construct
 	 * @param AORM $orm
@@ -166,16 +169,20 @@ abstract class ASearch
 
 	/**
 	 * Vrati vsechny vysledky
-	 * @return Array
-	 */
-	public function getResults()
+	 * @param int $fetchType
+     * @return Array
+     */
+    public function getResults($fetchType = \Query::FETCH_ASSOC)
 	{
-		if (empty($this->results)) {
+        if (empty($this->results)) {
 			$queryBuilder = $this->orm->getQueryBuilder();
-			$this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params);
+            $this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType);
+            if($fetchType == \Query::FETCH_NUM){
+                $this->results = $this->renameFieldsFromFetchNum($this->results);
+            }
 		}
 
-		return $this->orm->loadMultiple($this->results);
+		return $this->orm->loadMultiple($this->results, $fetchType);
 	}
 
 	/**
@@ -186,8 +193,7 @@ abstract class ASearch
 	{
 		$return = Array();
 
-
-		foreach ($this->getResults() as $orm) {
+		foreach ($this->getResults(\Query::FETCH_NUM) as $orm) {
 			$return[$orm->primaryKey] = $orm;
 		}
 
@@ -252,23 +258,105 @@ abstract class ASearch
 
 	protected function getSelectCols()
 	{
-		$return = Array();
-
-		foreach ($this->selectCols as $cols) {
-			foreach ($cols as $key => &$col) {
-				if (isset($this->functionColumn[$col])) {
-					$col = $this->functionColumn[$col];
-				}
-			}
-			$return[] = implode(', ', $cols);
-		}
-
-		return implode(', ', $return);
+        return implode(', ', $this->getSelectColsInArray());
 	}
+
+    protected function getSelectColsInArray(){
+        $return = Array();
+
+        foreach ($this->selectCols as $cols) {
+            foreach ($cols as $key => &$col) {
+                if (isset($this->functionColumn[$col])) {
+                    $col = $this->functionColumn[$col];
+                }
+            }
+            $return = array_merge($return, $cols);
+        }
+
+        return $return;
+    }
 
 	public function addPager(\Listing\Pager_IPager $pager)
 	{
 		$this->offset = $pager->getOffset();
 		$this->limit = $pager->getLimit();
 	}
+
+    /**
+     * if used \PDO::FETCH_NUM method rename columns from numbers to format table.column
+     * @param $results
+     * @return mixed
+     */
+    public function renameFieldsFromFetchNum($results)
+    {
+        $cols = $this->getSelectColsInArray();
+        $i = $j = 0;
+        $return = array();
+        foreach($results AS $result){
+            foreach($result As $row){
+                $return[$i][$cols[$j]] = $row;
+                $j++;
+            }
+            $i++;
+        }
+        return $return;
+    }
+
+
+    public function getResultsWithChildsLoaded2()
+    {
+        $fetchType = \Query::FETCH_NUM;
+        $queryBuilder = $this->orm->getQueryBuilder();
+        $rows = $this->renameFieldsFromFetchNum($queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType));
+        dump($rows);
+
+        $ormColumns = new Columns($this->orm);
+        $ormColumns->fields = $this->orm->getAllDbFields();
+        $ormColumns->aliases = $this->orm->getAllAliases();
+        $ormColumns->objectName = $this->orm->getConfigObject();
+        $ormColumns->primary = true;
+
+        $columns = array();
+        foreach($this->additionalOrms As $key => $additionalOrm){
+            if($additionalOrm instanceof \ORM\Base){
+                $additionalOrmColumns = new Columns($additionalOrm);
+            } elseif($additionalOrm instanceof \Abstract_DataObjects) {
+                $additionalOrmColumns = new ColumnsOldOrm($additionalOrm);
+            } else {
+                throw new \Exception('Unknown ORM search');
+            }
+            $additionalOrmColumns->name = $key;
+            $additionalOrmColumns->fields = $additionalOrm->getAllDbFields();
+            $additionalOrmColumns->aliases = $additionalOrm->getAllAliases();
+            $additionalOrmColumns->objectName = $additionalOrm->getConfigObject();
+            $columns[] = $additionalOrmColumns;
+        }
+        dump($columns);
+
+        $results = array();
+        foreach($rows As $row){
+            /** @var \ORM\Base $primaryOrm */
+            $primaryOrm = new $ormColumns->object;
+            foreach($ormColumns->getColumns() AS $alias => $field){
+                $primaryOrm->$alias = $row[$primaryOrm->getConfigDbTable().'.'.$field];
+            }
+            $children = array();
+            foreach($columns AS $column){
+                /** @var Columns|ColumnsOldOrm $column */
+                $orm = new $column->object;
+                foreach($column->getColumns() AS $alias => $field){
+                    $orm->$alias = $row[$orm->getConfigDbTable().'.'.$field];
+                }
+                $children[] = $orm;
+                $primaryOrm->{$column->name} = $children;
+            }
+            $results[] = $primaryOrm;
+        }
+//        dump($results);
+//        dump($results[0]);
+//        dump($results[0]->zone);
+//        dump($results[0]->zone[0]);
+//        die();
+        return $results;
+    }
 }

@@ -236,7 +236,7 @@ class DB extends ABuilder
 	 */
 	public function loadMultiple(AORM $orm)
 	{
-		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
+        //ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
 		$columns = Array();
@@ -297,9 +297,9 @@ class DB extends ABuilder
 	/**
 	 * @inheritdoc
 	 */
-	public function loadByQuery(AORM $orm, $query, $params)
+	public function loadByQuery(AORM $orm, $query, $params, $fetchByAssoc = true)
 	{
-		$query = $this->connector->query($query, $params, $orm->getConfigDbServer());
+        $query = $this->connector->query($query, $params, $orm->getConfigDbServer(), $fetchByAssoc);
 
 		if (isset($query)) {
 			return $query;

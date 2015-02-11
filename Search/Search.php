@@ -20,7 +20,7 @@ class Search extends ASearch
 		return $this;
 	}
 
-	/**
+    /**
 	 * Hleda presnou schodu
 	 * @param $property
 	 * @param $value
@@ -157,9 +157,9 @@ class Search extends ASearch
 	 * @param $childName
 	 * @return $this
 	 */
-	public function child($childName)
+	public function child($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
 	{
-		$this->addChild($childName);
+		$this->addChild($childName, $joinType, $additionalCols, $matching);
 		return $this;
 	}
 
@@ -182,4 +182,9 @@ class Search extends ASearch
 		$this->search[] = $this->dbFieldName($child . '.' . $property) . ' IS NULL';
 		return $this;
 	}
+
+    public function getParams()
+    {
+        return $this->params;
+    }
 }
