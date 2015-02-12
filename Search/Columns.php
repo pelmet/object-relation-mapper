@@ -7,7 +7,6 @@ use ObjectRelationMapper\Base\AORM;
 /**
  * Class Columns
  * @property string|null $name
- * @property string|null $objectName
  * @property \ORM\Base $object
  * @property boolean $primary
  * @property Array $columns
@@ -17,7 +16,6 @@ use ObjectRelationMapper\Base\AORM;
  */
 class Columns {
     public $name;
-    public $objectName;
     public $object = null;
     public $primary = false;
     protected $columns = array();
@@ -46,5 +44,15 @@ class Columns {
             $i++;
         }
         $this->columns = $columns;
+    }
+
+    public function loadData(){
+        $this->fields = $this->object->getAllDbFields();
+        $this->aliases = $this->object->getAllAliases();
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 }

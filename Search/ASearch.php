@@ -3,6 +3,7 @@
 namespace ObjectRelationMapper\Search;
 
 use ObjectRelationMapper\Base\AORM;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 abstract class ASearch
 {
@@ -169,48 +170,16 @@ abstract class ASearch
 
 	/**
 	 * Vrati vsechny vysledky
-	 * @param int $fetchType
      * @return Array
      */
-    public function getResults($fetchType = \Query::FETCH_ASSOC)
+    public function getResults()
 	{
         if (empty($this->results)) {
 			$queryBuilder = $this->orm->getQueryBuilder();
-            $this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType);
-            if($fetchType == \Query::FETCH_NUM){
-                $this->results = $this->renameFieldsFromFetchNum($this->results);
-            }
+            $this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params);
 		}
 
-		return $this->orm->loadMultiple($this->results, $fetchType);
-	}
-
-	/**
-	 * Vrati vysledky s childama podle master ORM
-	 * @return Array
-	 */
-	public function getResultsWithChildsLoaded()
-	{
-		$return = Array();
-
-		foreach ($this->getResults(\Query::FETCH_NUM) as $orm) {
-			$return[$orm->primaryKey] = $orm;
-		}
-
-		foreach ($this->additionalOrms as $child => $load) {
-			$childs = Array();
-			$childConfig = $this->orm->{'getChild' . ucfirst($child) . 'Config'}();
-
-			foreach ($this->fillDifferentORM(new $childConfig->ormName()) as $orm) {
-				$childs[$orm->{$orm->getAlias($childConfig->foreignKey)}][$orm->primaryKey] = $orm;
-			}
-
-			foreach ($childs as $id => $value) {
-				$return[$id]->$child = $value;
-			}
-		}
-
-		return $return;
+		return $this->orm->loadMultiple($this->results);
 	}
 
 	/**
@@ -293,6 +262,7 @@ abstract class ASearch
         $i = $j = 0;
         $return = array();
         foreach($results AS $result){
+            $j = 0;
             foreach($result As $row){
                 $return[$i][$cols[$j]] = $row;
                 $j++;
@@ -302,61 +272,70 @@ abstract class ASearch
         return $return;
     }
 
-
-    public function getResultsWithChildsLoaded2()
+    /**
+     * @param $orm
+     * @return Columns|ColumnsOldOrm
+     * @throws \Exception
+     */
+    protected function getColumnsClass($orm)
     {
-        $fetchType = \Query::FETCH_NUM;
-        $queryBuilder = $this->orm->getQueryBuilder();
-        $rows = $this->renameFieldsFromFetchNum($queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType));
-        dump($rows);
+        if($orm instanceof \ORM\Base){
+            $columns = new Columns($orm);
+        } elseif($orm instanceof \Abstract_DataObjects) {
+            $columns = new ColumnsOldOrm($orm);
+        } else {
+            throw new \Exception('Unallowed ORM class: "'.$orm.'"');
+        }
+        $columns->object = $orm;
+        return $columns;
+    }
 
-        $ormColumns = new Columns($this->orm);
-        $ormColumns->fields = $this->orm->getAllDbFields();
-        $ormColumns->aliases = $this->orm->getAllAliases();
-        $ormColumns->objectName = $this->orm->getConfigObject();
+    public function getResultsWithChildsLoaded()
+    {
+        $rows = $this->getResultsInArray();
+
+        $ormColumns = $this->getColumnsClass($this->orm);
+        $ormColumns->loadData();
         $ormColumns->primary = true;
 
         $columns = array();
         foreach($this->additionalOrms As $key => $additionalOrm){
-            if($additionalOrm instanceof \ORM\Base){
-                $additionalOrmColumns = new Columns($additionalOrm);
-            } elseif($additionalOrm instanceof \Abstract_DataObjects) {
-                $additionalOrmColumns = new ColumnsOldOrm($additionalOrm);
-            } else {
-                throw new \Exception('Unknown ORM search');
-            }
+            $additionalOrmColumns = $this->getColumnsClass($additionalOrm);
+            $additionalOrmColumns->loadData();
             $additionalOrmColumns->name = $key;
-            $additionalOrmColumns->fields = $additionalOrm->getAllDbFields();
-            $additionalOrmColumns->aliases = $additionalOrm->getAllAliases();
-            $additionalOrmColumns->objectName = $additionalOrm->getConfigObject();
             $columns[] = $additionalOrmColumns;
         }
-        dump($columns);
 
         $results = array();
         foreach($rows As $row){
-            /** @var \ORM\Base $primaryOrm */
             $primaryOrm = new $ormColumns->object;
-            foreach($ormColumns->getColumns() AS $alias => $field){
-                $primaryOrm->$alias = $row[$primaryOrm->getConfigDbTable().'.'.$field];
+            $primaryValue = $row[$primaryOrm->getConfigDbTable().'.'.$primaryOrm->getConfigDbPrimaryKey()];
+            if(isset($results[$primaryValue])){
+                $primaryOrm = $results[$primaryValue];
+            } else {
+                $primaryOrm->loadFromRowUsingColumns($ormColumns, $row);
             }
-            $children = array();
+
             foreach($columns AS $column){
-                /** @var Columns|ColumnsOldOrm $column */
+                $childName = $column->name;
+                $children = $primaryOrm->$childName;
+
                 $orm = new $column->object;
-                foreach($column->getColumns() AS $alias => $field){
-                    $orm->$alias = $row[$orm->getConfigDbTable().'.'.$field];
-                }
+                $orm->loadFromRowUsingColumns($column, $row);
+
                 $children[] = $orm;
-                $primaryOrm->{$column->name} = $children;
+                $primaryOrm->$childName = $children;
             }
-            $results[] = $primaryOrm;
+            $results[$primaryValue] = $primaryOrm;
         }
-//        dump($results);
-//        dump($results[0]);
-//        dump($results[0]->zone);
-//        dump($results[0]->zone[0]);
-//        die();
-        return $results;
+
+        return array_values($results);
+    }
+
+    public function getResultsInArray()
+    {
+        $fetchType = \Query::FETCH_NUM;
+        $queryBuilder = $this->orm->getQueryBuilder();
+        return $this->renameFieldsFromFetchNum($queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType));
     }
 }
