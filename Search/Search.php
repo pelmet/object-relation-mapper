@@ -153,11 +153,14 @@ class Search extends ASearch
 	}
 
 	/**
-	 * Prida childa bez dalsich parametru
+	 * Prida childa s defaultnimi parametry
 	 * @param $childName
-	 * @return $this
-	 */
-	public function child($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
+     * @param string $joinType
+     * @param array $additionalCols
+     * @param string $matching
+     * @return $this
+     */
+    public function child($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
 	{
 		$this->addChild($childName, $joinType, $additionalCols, $matching);
 		return $this;

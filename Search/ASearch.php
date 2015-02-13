@@ -234,7 +234,7 @@ abstract class ASearch
         $return = Array();
 
         foreach ($this->selectCols as $cols) {
-            foreach ($cols as $key => &$col) {
+            foreach ($cols as &$col) {
                 if (isset($this->functionColumn[$col])) {
                     $col = $this->functionColumn[$col];
                 }
@@ -279,12 +279,10 @@ abstract class ASearch
      */
     protected function getColumnsClass($orm)
     {
-        if($orm instanceof \ORM\Base){
-            $columns = new Columns($orm);
-        } elseif($orm instanceof \Abstract_DataObjects) {
+        if($orm instanceof \ObjectRelationMapper\DataObjects) {
             $columns = new ColumnsOldOrm($orm);
         } else {
-            throw new \Exception('Unallowed ORM class: "'.$orm.'"');
+            $columns = new Columns($orm);
         }
         $columns->object = $orm;
         return $columns;
