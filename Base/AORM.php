@@ -556,6 +556,10 @@ abstract class AORM extends Iterator
 	 */
 	protected function addColumn($dbName, $phpAlias, $dbType = 'string', $length = '255', $additionalParams = Array())
 	{
+		if(property_exists($this, $phpAlias)){
+			throw new EORM('Alias se nesmi shodovat s jiz definovanou vnitrni ORM property');
+		}
+
 		$className = 'ObjectRelationMapper\ColumnType\\' . ucfirst($dbType);
 		if (!class_exists($className)) {
 			throw new EORM('Trida ' . $className . ' neexistuje. Typ ' . $dbType . ' nelze pouzit, dokud nebude nadefinovana');
