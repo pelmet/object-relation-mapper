@@ -297,9 +297,9 @@ class DB extends ABuilder
 	/**
 	 * @inheritdoc
 	 */
-	public function loadByQuery(AORM $orm, $query, $params, $fetchByAssoc = true)
+	public function loadByQuery(AORM $orm, $query, $params, $fetchType = \Query::FETCH_ASSOC)
 	{
-        $query = $this->connector->query($query, $params, $orm->getConfigDbServer(), $fetchByAssoc);
+        $query = $this->connector->query($query, $params, $orm->getConfigDbServer(), $fetchType);
 
 		if (isset($query)) {
 			return $query;
