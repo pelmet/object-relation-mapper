@@ -105,19 +105,30 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = 'five';
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
-		$testOrm->valBoolean = false;
-		$this->assertEquals(true, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = Array();
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = new ORMTestValidation();
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
-		$testOrm->valBoolean = 't';
+
+        $testOrm->valBoolean = false;
+        $this->assertEquals(true, $testOrm->validate('valBoolean'));
+        $testOrm->valBoolean = true;
+        $this->assertEquals(true, $testOrm->validate('valBoolean'));
+		$testOrm->valBoolean = 'on';
 		$this->assertEquals(true, $testOrm->validate('valBoolean'));
-		$testOrm->valBoolean = 'true';
+		$testOrm->valBoolean = 'off';
 		$this->assertEquals(true, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = 1;
 		$this->assertEquals(true, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = 0;
 		$this->assertEquals(true, $testOrm->validate('valBoolean'));
+        $testOrm->valBoolean = 'yes';
+        $this->assertEquals(true, $testOrm->validate('valBoolean'));
+        $testOrm->valBoolean = 'no';
+        $this->assertEquals(true, $testOrm->validate('valBoolean'));
+        $testOrm->valBoolean = '0';
+        $this->assertEquals(true, $testOrm->validate('valBoolean'));
+        $testOrm->valBoolean = '1';
+        $this->assertEquals(true, $testOrm->validate('valBoolean'));
 	}
 }

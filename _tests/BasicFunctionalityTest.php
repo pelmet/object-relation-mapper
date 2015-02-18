@@ -74,6 +74,14 @@ class BasicFunctionalityTest extends CommonTestClass
 	}
 
 	/**
+	 * @expectedException ObjectRelationMapper\Exception\ORM
+	 */
+	public function testAddColumnProtectedProperty()
+	{
+		$orm = new ORMBadProperty();
+	}
+
+	/**
 	 * @dataProvider providerBasic
 	 */
 	public function testPropertyHasChanged($testOrm)

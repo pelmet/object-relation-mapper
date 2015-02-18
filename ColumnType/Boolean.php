@@ -16,6 +16,6 @@ class Boolean extends AColumn implements IColumn
 	 */
 	public function validate($value)
 	{
-		return (is_bool($value) || (!is_array($value) && !is_object($value) && (boolean)preg_match('/(^(0|1)$)|(^(T|F)$)|(^(TRUE|FALSE)$)/i', (string)$value)));
+        return is_bool(filter_var($value,FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE));
 	}
 }
