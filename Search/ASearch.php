@@ -9,7 +9,7 @@ abstract class ASearch
 {
 
 	/**
-	 * @var ORM
+	 * @var AORM
 	 */
 	protected $orm;
 	protected $search = Array();
@@ -273,67 +273,59 @@ abstract class ASearch
     }
 
     /**
-     * @param $orm
-     * @return Columns|ColumnsOldOrm
-     * @throws \Exception
+     * @return array
      */
-    protected function getColumnsClass($orm)
-    {
-        if($orm instanceof \ObjectRelationMapper\DataObjects) {
-            $columns = new ColumnsOldOrm($orm);
-        } else {
-            $columns = new Columns($orm);
-        }
-        $columns->object = $orm;
-        return $columns;
-    }
-
     public function getResultsWithChildsLoaded()
     {
-        $rows = $this->getResultsInArray();
+        $rows = $this->getQueryBuilderResults();
 
-        $ormColumns = $this->getColumnsClass($this->orm);
-        $ormColumns->loadData();
-        $ormColumns->primary = true;
+        $primaryOrmAliases = new ResultProcess($this->orm);
+        $results = $additionalOrmsAliases = array();
 
-        $columns = array();
-        foreach($this->additionalOrms As $key => $additionalOrm){
-            $additionalOrmColumns = $this->getColumnsClass($additionalOrm);
-            $additionalOrmColumns->loadData();
-            $additionalOrmColumns->name = $key;
-            $columns[] = $additionalOrmColumns;
+        foreach ($this->additionalOrms As $key => $additionalOrm) {
+            $additionalOrmsAliases[$key] = new ResultProcess($additionalOrm);
         }
 
-        $results = array();
         foreach($rows As $row){
-            $primaryOrm = new $ormColumns->object;
-            $primaryValue = $row[$primaryOrm->getConfigDbTable().'.'.$primaryOrm->getConfigDbPrimaryKey()];
+            $processedRow = $row;
+            $primaryValue = $row[0];
+            $primarySliced = array_splice($processedRow, 0, $primaryOrmAliases->size);
             if(isset($results[$primaryValue])){
                 $primaryOrm = $results[$primaryValue];
             } else {
-                $primaryOrm->loadFromRowUsingColumns($ormColumns, $row);
+                $primaryOrm = new $primaryOrmAliases->orm;
+                $tempPrimaryValues = array_combine($primaryOrmAliases->aliases ,$primarySliced);
+                foreach($tempPrimaryValues As $alias => $value){
+                    $primaryOrm->$alias = $value;
+                }
             }
 
-            foreach($columns AS $column){
-                $childName = $column->name;
+            foreach ($additionalOrmsAliases As $childName => $additionalOrmAliases) {
+                /** @var ResultProcess $additionalOrmAliases */
                 $children = $primaryOrm->$childName;
 
-                $orm = new $column->object;
-                $orm->loadFromRowUsingColumns($column, $row);
-
+                $tempValue = array_combine($additionalOrmAliases->aliases ,array_splice($processedRow, 0, $additionalOrmAliases->size));
+                $orm = new $additionalOrmAliases->orm;
+                foreach($tempValue As $alias => $value){
+                    $orm->$alias = $value;
+                }
                 $children[] = $orm;
                 $primaryOrm->$childName = $children;
             }
             $results[$primaryValue] = $primaryOrm;
         }
-
         return array_values($results);
     }
 
     public function getResultsInArray()
     {
+        return $this->renameFieldsFromFetchNum($this->getQueryBuilderResults());
+    }
+
+    public function getQueryBuilderResults()
+    {
         $fetchType = \Query::FETCH_NUM;
         $queryBuilder = $this->orm->getQueryBuilder();
-        return $this->renameFieldsFromFetchNum($queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType));
+        return $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType);
     }
 }
