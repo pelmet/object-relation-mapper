@@ -275,7 +275,7 @@ abstract class ASearch
     /**
      * @return array
      */
-    public function getResultsWithChildsLoaded()
+    public function getResultsWithChildrenLoaded()
     {
         $rows = $this->getQueryBuilderResults();
 
