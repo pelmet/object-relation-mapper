@@ -21,19 +21,24 @@ class DbToOrm
 		'text' => 'string'
 	);
 
-	/**
-	 * Generator ORMka
-	 * @param IConnector $connector
-	 * @param string $dbTable
-	 * @param string $serverAlias
-	 * @param string $ormName
-	 * @param string $extendingOrm
-	 * @param string $path
-	 * @param string $colPrefix
-	 */
-	public function __construct(IConnector $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix)
+    /**
+     * Generator ORMka
+     * @param IConnector $connector
+     * @param string $dbTable
+     * @param string $serverAlias
+     * @param string $ormName
+     * @param string $extendingOrm
+     * @param string $path
+     * @param string $colPrefix
+     * @param string $namespace
+     * @throws \Exception
+     */
+	public function __construct(IConnector $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix,$namespace = null)
 	{
 		$describe = $connector->query('DESCRIBE ' . $dbTable, Array(), $serverAlias);
+        if(empty($describe)){
+            throw new \Exception('Table not exist!');
+        }
 
 		foreach ($describe as $column) {
 			preg_match('/^(.*?)(\((.*)\))?$/', $column['Type'], $matches);
@@ -42,6 +47,12 @@ class DbToOrm
 
 		$this->addOrmLine('<?php');
 		$this->addOrmLine('');
+
+        if(!empty($namespace)){
+            $this->addOrmLine('namespace '.$namespace.';');
+            $this->addOrmLine('');
+        }
+
 		$this->addOrmLine('/**');
 
 		foreach ($this->columns as $columnName => $columnInfo) {
@@ -63,7 +74,6 @@ class DbToOrm
 			$this->addOrmLine('        $this->addColumn(\'' . $columnName . '\', \'' . $this->toCamelCase($columnName, $colPrefix) . '\', \'' . $columnInfo['type'] . '\', \'' . $columnInfo['length'] . '\');');
 		}
 
-		$this->addOrmLine('');
 		$this->addOrmLine('');
 		$this->addOrmLine('        $this->setConfigDbPrimaryKey(\'' . $this->firstCol . '\');');
 		$this->addOrmLine('        $this->setConfigDbTable(\'' . $dbTable . '\');');
