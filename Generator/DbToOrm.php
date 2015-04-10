@@ -15,11 +15,28 @@ class DbToOrm
 	protected $ormText = Array();
 
 	protected $typeTrans = Array(
-		'int' => 'int',
-		'varchar' => 'string',
-		'char' => 'string',
-		'text' => 'string'
+        'char' => 'string',
+        'varchar' => 'string',
+        'tinytext' => 'string',
+        'text' => 'string',
+        'blob' => 'string',
+        'mediumtext' => 'string',
+        'mediumblob' => 'string',
+        'longtext' => 'string',
+        'longblob' => 'string',
+        'tinyint' => 'int',
+        'smallint' => 'int',
+        'mediumint' => 'int',
+        'int' => 'int',
+        'bigint' => 'int',
+        'float' => 'decimal',
+        'double' => 'decimal',
+        'decimal' => 'decimal'
 	);
+
+    protected $propertyTrans = Array(
+        'decimal' => 'float'
+    );
 
     /**
      * Generator ORMka
@@ -39,10 +56,15 @@ class DbToOrm
         if(empty($describe)){
             throw new \Exception('Table not exist!');
         }
-
 		foreach ($describe as $column) {
-			preg_match('/^(.*?)(\((.*)\))?$/', $column['Type'], $matches);
-			$this->addColumn($column['Field'], $matches[1], (isset($matches[3]) ? $matches[3] : 0));
+			preg_match('/^([^\(]*)?\(?([0-9]+)?,?([0-9]+)?\)?(.*)?$/i', $column['Type'], $matches);
+            if(isset($matches[3])){
+                $length = (isset($matches[2]) ? $matches[2] : 0).','.$matches[3];
+            }else{
+                $length = (isset($matches[2]) ? $matches[2] : 0);
+            }
+
+			$this->addColumn($column['Field'], strtolower($matches[1]), $length);
 		}
 
 		$this->addOrmLine('<?php');
@@ -56,7 +78,7 @@ class DbToOrm
 		$this->addOrmLine('/**');
 
 		foreach ($this->columns as $columnName => $columnInfo) {
-			$this->addOrmLine('* @property ' . $columnInfo['type'] . ' ' . $this->toCamelCase($columnName, $colPrefix));
+			$this->addOrmLine('* @property ' . $columnInfo['property'] . ' ' . $this->toCamelCase($columnName, $colPrefix));
 		}
 		$this->addOrmLine('**/');
 
@@ -87,7 +109,8 @@ class DbToOrm
 
 	protected function addColumn($columnName, $columnType, $columnLength)
 	{
-		$this->columns[$columnName] = Array('type' => $this->getColumnPhpType($columnType), 'length' => $columnLength);
+        $type = $this->getColumnPhpType($columnType);
+		$this->columns[$columnName] = Array('type' => $type, 'length' => $columnLength, 'property' => $this->getPhpPropertyType($type));
 	}
 
 	protected function getColumnPhpType($column)
@@ -98,6 +121,15 @@ class DbToOrm
 			return $column;
 		}
 	}
+
+    protected function getPhpPropertyType($column)
+    {
+        if (isset($this->propertyTrans[$column])) {
+            return $this->propertyTrans[$column];
+        } else {
+            return $column;
+        }
+    }
 
 	protected function toCamelCase($column, $tablePrefix)
 	{
