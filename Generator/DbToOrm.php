@@ -58,7 +58,7 @@ class DbToOrm
         }
 		foreach ($describe as $column) {
 			preg_match('/^([^\(]*)?\(?([0-9]+)?,?([0-9]+)?\)?(.*)?$/i', $column['Type'], $matches);
-            if(isset($matches[3])){
+            if(!empty($matches[3])){
                 $length = (isset($matches[2]) ? $matches[2] : 0).','.$matches[3];
             }else{
                 $length = (isset($matches[2]) ? $matches[2] : 0);
