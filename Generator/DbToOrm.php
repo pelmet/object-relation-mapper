@@ -35,7 +35,8 @@ class DbToOrm
 	);
 
     protected $propertyTrans = Array(
-        'decimal' => 'float'
+        'decimal' => 'float',
+        'date' => 'string'
     );
 
     /**
