@@ -170,6 +170,7 @@ class ORMTestValidation extends ObjectRelationMapper\ORM
 		$this->addColumn('qc_string', 'valString', 'string', '10');
 		$this->addColumn('qc_decimal', 'valDecimal', 'decimal', '5,2');
 		$this->addColumn('qc_boolean', 'valBoolean', 'boolean', '1');
+		$this->addColumn('qc_date', 'valDate', 'date');
 
 		$this->setConfigDbPrimaryKey('qc_int');
 		$this->setConfigDbServer('master');
