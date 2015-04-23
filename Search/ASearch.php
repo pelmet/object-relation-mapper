@@ -8,7 +8,7 @@ abstract class ASearch
 {
 
 	/**
-	 * @var ORM
+	 * @var AORM
 	 */
 	protected $orm;
 	protected $search = Array();
@@ -151,7 +151,7 @@ abstract class ASearch
 	 */
 	protected function composeCountQuery()
 	{
-		$query = 'SELECT count(' . $this->orm->getConfigDbPrimaryKey() . ') AS count FROM ' . $this->orm->getConfigDbTable() . ' ';
+		$query = 'SELECT count(' . $this->orm->getConfigDbTable() . '.' . $this->orm->getConfigDbPrimaryKey() . ') AS count FROM ' . $this->orm->getConfigDbTable() . ' ';
 
 		if (!empty($this->joinTables)) {
 			$query .= ' ' . implode(' ', $this->joinTables);
@@ -166,9 +166,9 @@ abstract class ASearch
 
 	/**
 	 * Vrati vsechny vysledky
-	 * @return Array
-	 */
-	public function getResults()
+     * @return Array
+     */
+    public function getResults()
 	{
 		if (empty($this->results)) {
 			$queryBuilder = $this->orm->getQueryBuilder();
@@ -176,35 +176,6 @@ abstract class ASearch
 		}
 
 		return $this->orm->loadMultiple($this->results);
-	}
-
-	/**
-	 * Vrati vysledky s childama podle master ORM
-	 * @return Array
-	 */
-	public function getResultsWithChildsLoaded()
-	{
-		$return = Array();
-
-
-		foreach ($this->getResults() as $orm) {
-			$return[$orm->primaryKey] = $orm;
-		}
-
-		foreach ($this->additionalOrms as $child => $load) {
-			$childs = Array();
-			$childConfig = $this->orm->{'getChild' . ucfirst($child) . 'Config'}();
-
-			foreach ($this->fillDifferentORM(new $childConfig->ormName()) as $orm) {
-				$childs[$orm->{$orm->getAlias($childConfig->foreignKey)}][$orm->primaryKey] = $orm;
-			}
-
-			foreach ($childs as $id => $value) {
-				$return[$id]->$child = $value;
-			}
-		}
-
-		return $return;
 	}
 
 	/**
@@ -252,23 +223,105 @@ abstract class ASearch
 
 	protected function getSelectCols()
 	{
-		$return = Array();
-
-		foreach ($this->selectCols as $cols) {
-			foreach ($cols as $key => &$col) {
-				if (isset($this->functionColumn[$col])) {
-					$col = $this->functionColumn[$col];
-				}
-			}
-			$return[] = implode(', ', $cols);
-		}
-
-		return implode(', ', $return);
+        return implode(', ', $this->getSelectColsInArray());
 	}
+
+    protected function getSelectColsInArray(){
+        $return = Array();
+
+        foreach ($this->selectCols as $cols) {
+            foreach ($cols as &$col) {
+                if (isset($this->functionColumn[$col])) {
+                    $col = $this->functionColumn[$col];
+                }
+            }
+            $return = array_merge($return, $cols);
+        }
+
+        return $return;
+    }
 
 	public function addPager(\Listing\Pager_IPager $pager)
 	{
 		$this->offset = $pager->getOffset();
 		$this->limit = $pager->getLimit();
 	}
+
+    /**
+     * if used \PDO::FETCH_NUM method rename columns from numbers to format table.column
+     * @param $results
+     * @return mixed
+     */
+    public function renameFieldsFromFetchNum($results)
+    {
+        $cols = $this->getSelectColsInArray();
+        $i = $j = 0;
+        $return = array();
+        foreach($results AS $result){
+            $j = 0;
+            foreach($result As $row){
+                $return[$i][$cols[$j]] = $row;
+                $j++;
+            }
+            $i++;
+        }
+        return $return;
+    }
+
+    /**
+     * @return array
+     */
+    public function getResultsWithChildrenLoaded()
+    {
+        $rows = $this->getQueryBuilderResults();
+
+        $primaryOrmAliases = new ResultProcess($this->orm);
+        $results = $additionalOrmsAliases = array();
+
+        foreach ($this->additionalOrms As $key => $additionalOrm) {
+            $additionalOrmsAliases[$key] = new ResultProcess($additionalOrm);
+        }
+
+        foreach($rows As $row){
+            $processedRow = $row;
+            $primaryValue = $row[0];
+            $primarySliced = array_splice($processedRow, 0, $primaryOrmAliases->size);
+            if(isset($results[$primaryValue])){
+                $primaryOrm = $results[$primaryValue];
+            } else {
+                $primaryOrm = new $primaryOrmAliases->orm;
+                $tempPrimaryValues = array_combine($primaryOrmAliases->aliases ,$primarySliced);
+                foreach($tempPrimaryValues As $alias => $value){
+                    $primaryOrm->$alias = $value;
+                }
+            }
+
+            foreach ($additionalOrmsAliases As $childName => $additionalOrmAliases) {
+                /** @var ResultProcess $additionalOrmAliases */
+                $children = $primaryOrm->$childName;
+
+                $tempValue = array_combine($additionalOrmAliases->aliases ,array_splice($processedRow, 0, $additionalOrmAliases->size));
+                $orm = new $additionalOrmAliases->orm;
+                foreach($tempValue As $alias => $value){
+                    $orm->$alias = $value;
+                }
+                $children[] = $orm;
+                $primaryOrm->$childName = $children;
+            }
+            $results[$primaryValue] = $primaryOrm;
+        }
+        return array_values($results);
+    }
+
+    public function getResultsInArray()
+    {
+        return $this->renameFieldsFromFetchNum($this->getQueryBuilderResults());
+    }
+
+    public function getQueryBuilderResults()
+    {
+        $fetchType = \PDO::FETCH_NUM;
+        $queryBuilder = $this->orm->getQueryBuilder();
+        return $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType);
+    }
 }

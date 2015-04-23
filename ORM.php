@@ -2,6 +2,7 @@
 
 namespace ObjectRelationMapper;
 
+use ObjectRelationMapper\Search\Columns;
 /**
  * Class ObjectRelationMapper
  *
@@ -283,4 +284,28 @@ abstract class ORM extends Common implements Base\IORM
 	}
 
 
+
+    /**
+     * Vrati tabulku kterou objekt vyuziva
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->getConfigDbTable();
+    }
+
+    /**
+     * @param Columns $columns
+     * @param array $row
+     */
+    public function loadFromRowUsingColumns(Columns $columns, Array $row)
+    {
+        $this->beforeLoad();
+        $dbTable = $this->getConfigDbTable();
+        $columnsList = $columns->getColumns();
+        foreach($columnsList AS $alias => $field){
+            $this->$alias = $row[$dbTable.'.'.$field];
+        }
+        $this->afterLoad();
+    }
 }

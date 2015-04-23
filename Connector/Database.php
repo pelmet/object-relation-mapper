@@ -12,10 +12,10 @@ class Database implements IConnector
 	/**
 	 * @inheritdoc
 	 */
-	public function query($query, $parameters, $server)
+	public function query($query, $parameters, $server, $fetchType = \PDO::FETCH_ASSOC)
 	{
-		$q = new \Query();
-		return $q->query($query)->par($parameters)->s($server)->fetch(\Query::FETCH_ASSOC)->ex();
+        $q = new \Query();
+        return $q->query($query)->par($parameters)->s($server)->fetch($fetchType)->ex();
 	}
 
 	/**
