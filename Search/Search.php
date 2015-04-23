@@ -20,7 +20,7 @@ class Search extends ASearch
 		return $this;
 	}
 
-    /**
+	/**
 	 * Hleda presnou schodu
 	 * @param $property
 	 * @param $value
@@ -155,12 +155,12 @@ class Search extends ASearch
 	/**
 	 * Prida childa s defaultnimi parametry
 	 * @param $childName
-     * @param string $joinType
-     * @param array $additionalCols
-     * @param string $matching
-     * @return $this
-     */
-    public function child($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
+	 * @param string $joinType
+	 * @param array $additionalCols
+	 * @param string $matching
+	 * @return $this
+	 */
+	public function child($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
 	{
 		$this->addChild($childName, $joinType, $additionalCols, $matching);
 		return $this;
@@ -186,8 +186,41 @@ class Search extends ASearch
 		return $this;
 	}
 
-    public function getParams()
-    {
-        return $this->params;
-    }
+	/**
+	 * Hleda presnou schodu pro sloupec v poli hodnot
+	 * @param $property
+	 * @param array $values
+	 * @return $this
+	 */
+	public function in($property, Array $values)
+	{
+		$this->search[] =$this->dbFieldName($property) . ' IN (' . implode(',', $this->prepareInValues($values)) .')';
+		return $this;
+	}
+
+	/**
+	 * Hleda vse co neni v poli hodnot pro sloupec
+	 * @param $property
+	 * @param array $values
+	 * @return $this
+	 */
+	public function notIn($property, Array $values)
+	{
+		$this->search[] = $this->dbFieldName($property) . ' NOT IN (' . implode(',', $this->prepareInValues($values)) .')';
+		return $this;
+	}
+
+	/**
+	 * pripravuje hodnoty pro PDO a vraci prepared nazvy
+	 * @param array $values
+	 * @return array
+	 */
+	private function prepareInValues(Array $values)
+	{
+		$preparedValues = array();
+		foreach($values AS $value){
+			$preparedValues[] = $this->addParameter($value);
+		}
+		return $preparedValues;
+	}
 }

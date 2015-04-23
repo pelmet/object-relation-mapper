@@ -3,7 +3,6 @@
 namespace ObjectRelationMapper\Search;
 
 use ObjectRelationMapper\Base\AORM;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 abstract class ASearch
 {
@@ -28,9 +27,6 @@ abstract class ASearch
 	protected $group = Array();
 	protected $functionColumn = Array();
 	protected $additionalOrms = Array();
-
-    const RESULTS_BY_FETCH_NUM = false;
-    const RESULTS_BY_FETCH_ASSOC = true;
 
 	/**
 	 * Standardni construct
@@ -174,9 +170,9 @@ abstract class ASearch
      */
     public function getResults()
 	{
-        if (empty($this->results)) {
+		if (empty($this->results)) {
 			$queryBuilder = $this->orm->getQueryBuilder();
-            $this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params);
+			$this->results = $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params);
 		}
 
 		return $this->orm->loadMultiple($this->results);
