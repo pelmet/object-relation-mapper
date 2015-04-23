@@ -30,7 +30,7 @@ class PDO implements IConnector
 	/**
 	 * @inheritdoc
 	 */
-	public function query($query, $parameters, $server)
+	public function query($query, $parameters, $server, $fetchType = \PDO::FETCH_ASSOC)
 	{
 		$query = $this->db->prepare($query);
 
@@ -40,7 +40,7 @@ class PDO implements IConnector
 
 		$query->execute();
 
-		return $query->fetchAll(\PDO::FETCH_ASSOC);
+		return $query->fetchAll($fetchType);
 	}
 
 	/**

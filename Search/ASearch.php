@@ -324,7 +324,7 @@ abstract class ASearch
 
     public function getQueryBuilderResults()
     {
-        $fetchType = \Query::FETCH_NUM;
+        $fetchType = \PDO::FETCH_NUM;
         $queryBuilder = $this->orm->getQueryBuilder();
         return $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType);
     }

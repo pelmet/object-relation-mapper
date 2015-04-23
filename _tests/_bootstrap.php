@@ -1,6 +1,6 @@
 <?php
 
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'mysql.ashemaletube.dev');
 define('DB_USER', 'ormtestuser');
 define('DB_PASS', 'testpass');
 define('DB_DB', 'orm_test_db');

@@ -299,7 +299,7 @@ class DB extends ABuilder
 	/**
 	 * @inheritdoc
 	 */
-	public function loadByQuery(AORM $orm, $query, $params, $fetchType = \Query::FETCH_ASSOC)
+	public function loadByQuery(AORM $orm, $query, $params, $fetchType = \PDO::FETCH_ASSOC)
 	{
         $query = $this->connector->query($query, $params, $orm->getConfigDbServer(), $fetchType);
 

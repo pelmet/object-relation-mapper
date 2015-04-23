@@ -60,7 +60,7 @@ abstract class AORM extends Iterator
 	/**
 	 * @var array
 	 */
-	protected $childsData = Array();
+	public $childsData = Array();
 
 	/**
 	 * @var Array
