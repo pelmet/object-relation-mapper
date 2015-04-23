@@ -131,4 +131,47 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $testOrm->valBoolean = '1';
         $this->assertEquals(true, $testOrm->validate('valBoolean'));
 	}
+
+    public function testValidateDate()
+    {
+        $testOrm = new ORMTestValidation();
+        $testOrm->valDate = 5;
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '5';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = 5.98;
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = 'five';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = Array();
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = new ORMTestValidation();
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = false;
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = true;
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-04-17';
+        $this->assertEquals(true, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-4-7';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-04-7';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-4-17';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '1000-01-01';
+        $this->assertEquals(true, $testOrm->validate('valDate'));
+        $testOrm->valDate = '9999-12-31';
+        $this->assertEquals(true, $testOrm->validate('valDate'));
+        $testOrm->valDate = '0015-04-17';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-00-17';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-04-00';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-13-17';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+        $testOrm->valDate = '2015-04-32';
+        $this->assertEquals(false, $testOrm->validate('valDate'));
+    }
 }
