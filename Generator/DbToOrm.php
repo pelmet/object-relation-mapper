@@ -31,12 +31,13 @@ class DbToOrm
         'bigint' => 'int',
         'float' => 'decimal',
         'double' => 'decimal',
-        'decimal' => 'decimal'
+        'decimal' => 'decimal',
 	);
 
     protected $propertyTrans = Array(
         'decimal' => 'float',
-        'date' => 'string'
+        'date' => 'string',
+        'enum' => 'string'
     );
 
     /**
@@ -59,9 +60,15 @@ class DbToOrm
         }
 		foreach ($describe as $column) {
 			preg_match('/^([^\(]*)?\(?([0-9]+)?,?([0-9]+)?\)?(.*)?$/i', $column['Type'], $matches);
-            if(isset($matches[3])){
+            if(!empty($matches[3])){
                 $length = (isset($matches[2]) ? $matches[2] : 0).','.$matches[3];
-            }else{
+            } elseif ($matches[1] == 'enum'){
+                $lgt = [];
+                preg_match_all('/\'(.*?)\'/i', $matches[4], $lgt);
+                $length = 'Array('.implode(', ', $lgt[0]).')';
+            } elseif (stripos($matches[1], 'text') !== false){
+                $length = 65536;
+            } else {
                 $length = (isset($matches[2]) ? $matches[2] : 0);
             }
 
@@ -94,7 +101,13 @@ class DbToOrm
 				$this->firstCol = $columnName;
 				$first = true;
 			}
-			$this->addOrmLine('        $this->addColumn(\'' . $columnName . '\', \'' . $this->toCamelCase($columnName, $colPrefix) . '\', \'' . $columnInfo['type'] . '\', \'' . $columnInfo['length'] . '\');');
+
+            if($columnInfo['type'] == 'enum'){
+                $this->addOrmLine('        $this->addColumn(\'' . $columnName . '\', \'' . $this->toCamelCase($columnName, $colPrefix) . '\', \'' . $columnInfo['type'] . '\', ' . $columnInfo['length'] . ');');
+            } else {
+                $this->addOrmLine('        $this->addColumn(\'' . $columnName . '\', \'' . $this->toCamelCase($columnName, $colPrefix) . '\', \'' . $columnInfo['type'] . '\', \'' . $columnInfo['length'] . '\');');
+            }
+
 		}
 
 		$this->addOrmLine('');
