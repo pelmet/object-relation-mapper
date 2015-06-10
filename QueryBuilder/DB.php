@@ -296,6 +296,15 @@ class DB extends ABuilder
 		return $this->connector->exec($query, $params, $orm->getConfigDbServer());
 	}
 
+    /**
+     * @inheritdoc
+     */
+    public function truncate(AORM $orm)
+    {
+        $query = 'TRUNCATE ' . $orm->getConfigDbTable() . ';';
+        return $this->connector->exec($query, Array(), $orm->getConfigDbServer());
+    }
+
 	/**
 	 * @inheritdoc
 	 */

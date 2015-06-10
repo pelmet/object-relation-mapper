@@ -71,4 +71,10 @@ abstract class ABuilder
 	 * @return int
 	 */
 	abstract public function insertMultiple(AORM $orm, Array $data);
+
+    /**
+     * @param AORM $orm
+     * @return int
+     */
+    abstract public function truncate(AORM $orma);
 }
