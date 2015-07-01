@@ -82,7 +82,7 @@ abstract class ORM extends Common implements Base\IORM
 	 */
 	public function loadByPrimaryKey()
 	{
-		if (!isset($this->primaryKey) || empty($this->primaryKey)) {
+		if (!isset($this->primaryKey)) {
 			throw new Exception\ORM('Nelze loadnout orm dle primarniho klice, protoze primarni klic neni nastaven.');
 		}
 
@@ -149,7 +149,7 @@ abstract class ORM extends Common implements Base\IORM
 			return false;
 		}
 
-		if ($forceInsert == true || empty($this->primaryKey)) {
+		if ($forceInsert == true || !isset($this->primaryKey)) {
 			$this->insert();
 		} else {
 			$this->update();

@@ -256,7 +256,7 @@ abstract class AORM extends Iterator
 			$storage::setConfiguration($finalClass, $config);
 		}
 
-		if ($primaryKey != NULL) {
+		if ($primaryKey !== NULL) {
 			$this->setPrimaryKey($primaryKey);
 			$this->loadByPrimaryKey();
 		}
