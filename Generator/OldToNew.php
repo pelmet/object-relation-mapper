@@ -69,7 +69,8 @@ class OldToNew
 		$orm = new $matches[1];
 		$extend = $matches[2];
 
-		$describe = $this->connector->query('DESCRIBE ' . $orm->getTable(), Array(), $orm->config('server'));
+		// info: $orm->getConfigDbTable() (AORM) lays much deeper than $orm->getTable() (DataObjects), so it's usable in wider range of cases.
+		$describe = $this->connector->query('DESCRIBE ' . $orm->getConfigDbTable(), Array(), $orm->config('server'));
 		$describe = array_column($describe, 'Type', 'Field');
 
 		foreach ($orm->getAllDbFields() as $column) {
@@ -93,7 +94,7 @@ class OldToNew
 		$this->addOrmLine('');
 		$this->addOrmLine('class ' . $orm->config('object') . ' extends ' . trim($extend));
 		$this->addOrmLine('{');
-		$this->addOrmLine('    function setUp()');
+		$this->addOrmLine('    protected function setUp()');
 		$this->addOrmLine('    {');
 
 		$first = false;
@@ -118,7 +119,7 @@ class OldToNew
 		$this->addOrmLine('');
 
 		$this->addOrmLine('        $this->setConfigDbPrimaryKey(\'' . $orm->config('primaryKey') . '\');');
-		$this->addOrmLine('        $this->setConfigDbTable(\'' . $orm->getTable() . '\');');
+		$this->addOrmLine('        $this->setConfigDbTable(\'' . $orm->getConfigDbTable() . '\');');
 		$this->addOrmLine('        $this->setConfigDbServer(\'' . $orm->config('server') . '\');');
 		$this->addOrmLine('        $this->setConfigObject(__CLASS__);');
 		$this->addOrmLine('    }');

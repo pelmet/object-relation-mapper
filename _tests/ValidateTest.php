@@ -174,4 +174,156 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $testOrm->valDate = '2015-04-32';
         $this->assertEquals(false, $testOrm->validate('valDate'));
     }
+
+    public function testValidateTime()
+    {
+        $testOrm = new ORMTestValidation();
+        $testOrm->valTime = 5;
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '5';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = 5.98;
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = 'five';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = Array();
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = new ORMTestValidation();
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = false;
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = true;
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-17';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-4-7';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-7';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-4-17';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '1000-01-01';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '9999-12-31';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '0015-04-17';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-00-17';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-00';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-13-17';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-32';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+
+        $testOrm->valTime = '3015-04-17 18/16';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-01-17 9:30';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-01H12:55:28';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-12-17 7,5';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+
+        $testOrm->valTime = '2015-04-15 12:00:00';
+        $this->assertEquals(true, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-13-17 23:59:59';
+        $this->assertEquals(true, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-11-11 24:00:00';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-32 00:00:00';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-01 37:44:12';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-12-17 14:67:34';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2015-04-22 18:56:70';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+
+        $testOrm->valTime = '2015-04-29 18:56:70';
+        $this->assertEquals(false, $testOrm->validate('valTime'));
+        $testOrm->valTime = '2016-04-29 18:56:70';
+        $this->assertEquals(true, $testOrm->validate('valTime'));
+    }
+
+    public function testValidateText()
+    {
+        $testOrm = new ORMTestValidation();
+        $testOrm->valText = 5;
+        $this->assertEquals(false, $testOrm->validate('valText'));
+        $testOrm->valText = '5';
+        $this->assertEquals(true, $testOrm->validate('valText'));
+        $testOrm->valText = 5.98;
+        $this->assertEquals(false, $testOrm->validate('valText'));
+        $testOrm->valText = 'five';
+        $this->assertEquals(true, $testOrm->validate('valText'));
+        $testOrm->valText = false;
+        $this->assertEquals(false, $testOrm->validate('valText'));
+        $testOrm->valText = Array();
+        $this->assertEquals(false, $testOrm->validate('valText'));
+        $testOrm->valText = new ORMTestValidation();
+        $this->assertEquals(false, $testOrm->validate('valText'));
+    }
+
+    public function testValidateChar()
+    {
+        $testOrm = new ORMTestValidation();
+        $testOrm->valChar = 5;
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = 5.;
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = '5';
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = 5.98;
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = 'five';
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = false;
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = Array();
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = new ORMTestValidation();
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+
+        $testOrm->valChar = 'ab';
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+        $testOrm->valChar = 'abc';
+        $this->assertEquals(true, $testOrm->validate('valChar'));
+        $testOrm->valChar = 'abcd';
+        $this->assertEquals(false, $testOrm->validate('valChar'));
+    }
+
+    public function testValidateEnum()
+    {
+        $testOrm = new ORMTestValidation();
+        $testOrm->valEnum = 5;
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 5.;
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = '5';
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 5.98;
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 'five';
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = false;
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = Array();
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = new ORMTestValidation();
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+
+        $testOrm->valEnum = 'ab';
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 'abc';
+        $this->assertEquals(true, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 'abcd';
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 'def';
+        $this->assertEquals(true, $testOrm->validate('valEnum'));
+        $testOrm->valEnum = 'cba';
+        $this->assertEquals(false, $testOrm->validate('valEnum'));
+    }
+
 }
