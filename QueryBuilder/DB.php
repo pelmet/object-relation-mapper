@@ -310,7 +310,7 @@ class DB extends ABuilder
 	 */
 	public function loadByQuery(AORM $orm, $query, $params, $fetchType = \PDO::FETCH_ASSOC)
 	{
-        $query = $this->connector->query($query, $params, $orm->getConfigDbServer(), $fetchType);
+		$query = $this->connector->query($query, $params, $orm->getConfigDbServer(), $fetchType);
 
 		if (isset($query)) {
 			return $query;

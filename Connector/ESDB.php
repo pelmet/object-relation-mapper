@@ -18,9 +18,9 @@ class ESDB implements IConnector
 	/**
 	 * @inheritdoc
 	 */
-	public function query($query, $parameters, $server)
+	public function query($query, $parameters, $server, $fetchType = \DB::FETCH_ASSOC)
 	{
-		return $this->db->query($query)->par($parameters)->s($server)->fetch(\Db::FETCH_ASSOC)->ex();
+		return $this->db->query($query)->par($parameters)->s($server)->fetch($fetchType)->ex();
 	}
 
 	/**

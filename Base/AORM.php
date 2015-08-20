@@ -560,14 +560,14 @@ abstract class AORM extends Iterator
 			throw new EORM('Alias se nesmi shodovat s jiz definovanou vnitrni ORM property');
 		}
 
-		$className = 'ObjectRelationMapper\ColumnType\\' . ucfirst($dbType);
+		$className = '\\ObjectRelationMapper\\ColumnType\\' . ucfirst($dbType);
 		if (!class_exists($className)) {
 			throw new EORM('Trida ' . $className . ' neexistuje. Typ ' . $dbType . ' nelze pouzit, dokud nebude nadefinovana');
 		} else {
 			$col = new $className($dbName, $phpAlias, $dbType, $length, $additionalParams);
 
 			if (!$col instanceof IColumn) {
-				throw new EORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\\ObjectRelationMapper\ColumnType\IColumn. Typ ' . $dbType . ' nelze pouzit, dokud toto nebude opraveno');
+				throw new EORM('Trida ' . $className . ' neimplementuje \\ObjectRelationMapper\\ObjectRelationMapper\\ColumnType\\IColumn. Typ ' . $dbType . ' nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 
@@ -593,7 +593,7 @@ abstract class AORM extends Iterator
 			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, $additionalParams);
 
 			if (!$this->childs[$phpAlias] instanceof IColumn) {
-				throw new EORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\\ObjectRelationMapper\ColumnType\IColumn. Typ child nelze pouzit, dokud toto nebude opraveno');
+				throw new EORM('Trida ' . $className . ' neimplementuje \\ObjectRelationMapper\\ObjectRelationMapper\\ColumnType\\IColumn. Typ child nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 	}

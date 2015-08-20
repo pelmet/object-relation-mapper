@@ -37,7 +37,7 @@ class ORMTest extends ObjectRelationMapper\ORM
 		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
-	function setUp()
+	protected function setUp()
 	{
 		$this->addColumn('qc_id', 'id', 'int', '10');
 		$this->addColumn('qc_time_start', 'startTime', 'int', '12');
@@ -124,7 +124,7 @@ class ORMTestChild extends ObjectRelationMapper\ORM
 		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
-	function setUp()
+	protected function setUp()
 	{
 		$this->addColumn('qcl_id', 'id', 'int', '10');
 		$this->addColumn('qc_id', 'queuedCommandId', 'int', '12');
@@ -145,6 +145,11 @@ class ORMTestChild extends ObjectRelationMapper\ORM
  * @property string valString
  * @property decimal valDecimal
  * @property boolean valBoolean
+ * @property string valDate
+ * @property string valTime
+ * @property string valText
+ * @property string valChar
+ * @property string valEnum
  */
 class ORMTestValidation extends ObjectRelationMapper\ORM
 {
@@ -156,12 +161,17 @@ class ORMTestValidation extends ObjectRelationMapper\ORM
 		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
 	}
 
-	function setUp()
+	protected function setUp()
 	{
 		$this->addColumn('qc_int', 'id', 'int', '10');
 		$this->addColumn('qc_string', 'valString', 'string', '10');
 		$this->addColumn('qc_decimal', 'valDecimal', 'decimal', '5,2');
 		$this->addColumn('qc_boolean', 'valBoolean', 'boolean', '1');
+		$this->addColumn('qc_date', 'valDate', 'date');
+		$this->addColumn('qc_time', 'valTime', 'timestamp');
+		$this->addColumn('qc_text', 'valText', 'text');
+		$this->addColumn('qc_char', 'valChar', 'char', 3);
+		$this->addColumn('qc_enum', 'valEnum', 'enum', ['abc','def','ghi','jkl']);
 
 		$this->setConfigDbPrimaryKey('qc_int');
 		$this->setConfigDbServer('master');

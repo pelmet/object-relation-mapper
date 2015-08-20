@@ -285,14 +285,14 @@ abstract class ORM extends Common implements Base\IORM
 
 
 
-    /**
-     * Vrati tabulku kterou objekt vyuziva
-     * @return string
-     */
-    public function getTable()
-    {
-        return $this->getConfigDbTable();
-    }
+	/**
+	 * Vrati tabulku kterou objekt vyuziva
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->getConfigDbTable();
+	}
 
     /**
      * @param Columns $columns
