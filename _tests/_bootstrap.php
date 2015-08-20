@@ -176,10 +176,10 @@ class ORMTestValidation extends ObjectRelationMapper\ORM
 		$this->addColumn('qc_decimal', 'valDecimal', 'decimal', '5,2');
 		$this->addColumn('qc_boolean', 'valBoolean', 'boolean', '1');
 		$this->addColumn('qc_date', 'valDate', 'date');
-		$this->addColumn('qc_time', 'valTime', 'time');
+		$this->addColumn('qc_time', 'valTime', 'timestamp');
 		$this->addColumn('qc_text', 'valText', 'text');
 		$this->addColumn('qc_char', 'valChar', 'char', 3);
-		$this->addColumn('qc_enum', 'valEnum', 'enum', 3, ['values' => ['abc','def','ghi','jkl']]);
+		$this->addColumn('qc_enum', 'valEnum', 'enum', ['abc','def','ghi','jkl']);
 
 		$this->setConfigDbPrimaryKey('qc_int');
 		$this->setConfigDbServer('master');

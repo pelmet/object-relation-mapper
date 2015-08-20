@@ -175,7 +175,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valDate'));
     }
 
-    public function testValidateTime()
+    public function testValidateTimestamp()
     {
         $testOrm = new ORMTestValidation();
         $testOrm->valTime = 5;
@@ -228,7 +228,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 
         $testOrm->valTime = '2015-04-15 12:00:00';
         $this->assertEquals(true, $testOrm->validate('valTime'));
-        $testOrm->valTime = '2015-13-17 23:59:59';
+        $testOrm->valTime = '2015-12-17 23:59:59';
         $this->assertEquals(true, $testOrm->validate('valTime'));
         $testOrm->valTime = '2015-11-11 24:00:00';
         $this->assertEquals(false, $testOrm->validate('valTime'));
@@ -240,10 +240,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valTime'));
         $testOrm->valTime = '2015-04-22 18:56:70';
         $this->assertEquals(false, $testOrm->validate('valTime'));
-
-        $testOrm->valTime = '2015-04-29 18:56:70';
-        $this->assertEquals(false, $testOrm->validate('valTime'));
-        $testOrm->valTime = '2016-04-29 18:56:70';
+        $testOrm->valTime = '2016-04-29 18:56:40';
         $this->assertEquals(true, $testOrm->validate('valTime'));
     }
 

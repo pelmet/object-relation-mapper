@@ -2,6 +2,11 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
+/**
+ * Class Char
+ * @package ObjectRelationMapper\ColumnType
+ * Column type Characters -> needs string length as exactly as defined (unlike usual string)
+ */
 class Char extends AColumn implements IColumn
 {
 	public function generateDbLine()
@@ -10,7 +15,6 @@ class Char extends AColumn implements IColumn
 	}
 
 	/**
-	 * Zvaliduje danou hodnotu a vrati true/false
 	 * @param $value
 	 * @return bool
 	 */

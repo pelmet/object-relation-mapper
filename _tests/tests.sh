@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/bash
 
 
 # predpokladejme testovani na testovaci databazi kterou si sami vytvorime
