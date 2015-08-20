@@ -36,7 +36,14 @@ abstract class Common extends Base\AORM
 		return $this->queryBuilder->count($this);
 	}
 
-
+    /**
+     * Truncatne danou tabulku, ke ktere je ORM prirazeno
+     * @return int
+     */
+    public function truncate()
+    {
+        return $this->queryBuilder->truncate($this);
+    }
 
 	/**
 	 * Vrati danou property prvniho childa ve formatu child.property[, ["$param1", "$paramx"]]

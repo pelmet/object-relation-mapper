@@ -256,7 +256,7 @@ abstract class AORM extends Iterator
 			$storage::setConfiguration($finalClass, $config);
 		}
 
-		if ($primaryKey != NULL) {
+		if ($primaryKey !== NULL) {
 			$this->setPrimaryKey($primaryKey);
 			$this->loadByPrimaryKey();
 		}
@@ -593,7 +593,7 @@ abstract class AORM extends Iterator
 			$this->childs[$phpAlias] = new $className($ormName, $phpAlias, $localKey, $foreignKey, $additionalParams);
 
 			if (!$this->childs[$phpAlias] instanceof IColumn) {
-				throw new EORM('Trida ' . $className . ' neimplementuje ObjectRelationMapper\\ObjectRelationMapper\ColumnType\IColumn. Typ child nelze pouzit, dokud toto nebude opraveno');
+				throw new EORM('Trida ' . $className . ' neimplementuje \\ObjectRelationMapper\\ObjectRelationMapper\\ColumnType\\IColumn. Typ child nelze pouzit, dokud toto nebude opraveno');
 			}
 		}
 	}

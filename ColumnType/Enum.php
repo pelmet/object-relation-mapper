@@ -8,45 +8,24 @@ namespace ObjectRelationMapper\ColumnType;
  * @package ObjectRelationMapper\ColumnType
  *
  * Usage:
-$this->addColumn('column_name', 'ormColumnName', 'enum', 'stringLength', ['values' => ['value1','value2','value3',...]]);
+$this->addColumn('column_name', 'ormColumnName', 'enum', ['value1','value2','value3',...]);
  * Example:
-$this->addColumn('m_status', 'status', 'enum', 255, ['values' => ['unknown','active','retired','deceased']]);
+$this->addColumn('m_status', 'status', 'enum', ['unknown','active','retired','deceased']);
  */
 class Enum extends AColumn implements IColumn
 {
-	public function generateDbLine()
-	{
-		$enumerated = implode("','", $this->getValues());
-		$enumerated = ($enumerated == '') ? '' : "'" . $enumerated . "'" ;
-		return $this->col . ' ENUM(' . $enumerated . ') ';
-	}
+    public function generateDbLine()
+    {
+        return $this->col . ' ENUM(' . implode(',', $this->length) . ') ';
+    }
 
-	/**
-	 * Zvaliduje danou hodnotu a vrati true/false
-	 * @param $value
-	 * @return bool
-	 */
-	public function validate($value)
-	{
-		return (is_string($value) && in_array($value, $this->getValues()));
-	}
-
-	/**
-	 * Get all allowed values
-	 * @return array of strings
-	 */
-	public function getValues()
-	{
-		return array_column($this->additionalParams, 'values');
-	}
-
-	/**
-	 * Set all allowed values at once
-	 * could also simply remove all values by set an empty array
-	 * @param $values array of strings
-	 */
-	public function setValues($values = array())
-	{
-		$this->additionalParams['values'] = $values;
-	}
+    /**
+     * Zvaliduje danou hodnotu a vrati true/false
+     * @param $value
+     * @return bool
+     */
+    public function validate($value)
+    {
+        return (in_array($value, $this->length));
+    }
 }
