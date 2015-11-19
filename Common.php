@@ -89,7 +89,7 @@ abstract class Common extends Base\AORM
 	 */
 	public function loadMultiple($loadData = NULL)
 	{
-		if ($this->getOrderingLimit() == 1) {
+		if ($this->limitOverride === false) {
 			$this->setOrderingLimit(9999999999);
 		}
 
