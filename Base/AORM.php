@@ -148,6 +148,11 @@ abstract class AORM extends Iterator
 	protected $mfuActive = false;
 
 	/**
+	 * @var bool zda bylo volano setOrderingLimit
+	 */
+	protected $limitOverride = false;
+
+	/**
 	 * Nastaveni ORM Tridy
 	 * @return mixed
 	 */
@@ -386,6 +391,7 @@ abstract class AORM extends Iterator
 
 	public function setOrderingLimit($limit)
 	{
+		$this->limitOverride = true;
 		$this->additionalOrdering['Limit'] = $limit;
 	}
 
