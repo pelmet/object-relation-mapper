@@ -416,7 +416,7 @@ abstract class AORM extends Iterator
 	{
 		if (preg_match('/^get(.*)$/', $function, $matches)) {
 			if (preg_match('/^get(.*)Config/', $function, $matches) && isset($this->aliases[lcfirst($matches[1])])) {
-				return $this->aliases[$matches[1]];
+				return $this->aliases[lcfirst($matches[1])];
 			}
 
 			if (preg_match('/^getChild(.*)Config$/', $function, $matches) && isset($this->childs[lcfirst($matches[1])])) {
