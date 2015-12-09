@@ -71,6 +71,18 @@ class Search extends ASearch
 	}
 
 	/**
+	 * Not like neco
+	 * @param $property
+	 * @param $value
+	 * @return $this
+	 */
+	public function notLike($property, $value)
+	{
+		$this->search[] = $this->dbFieldName($property) . ' NOT LIKE ' . $this->addParameter($value);
+		return $this;
+	}
+
+	/**
 	 * Field je nulovy
 	 * @param $property
 	 * @return $this
