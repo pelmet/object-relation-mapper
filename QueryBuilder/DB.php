@@ -33,7 +33,7 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$columns[] = $dbColumn . ' <=> :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
@@ -179,7 +179,7 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$columns[] = $dbColumn . ' <=> :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
@@ -202,7 +202,7 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$columns[] = $dbColumn . ' <=> :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
@@ -245,7 +245,7 @@ class DB extends ABuilder
 		$params = Array();
 		foreach ($orm as $propertyName => $propertyValue) {
 			$dbColumn = $orm->getDbField($propertyName);
-			$columns[] = $dbColumn . ' = :' . $dbColumn;
+			$columns[] = $dbColumn . ' <=> :' . $dbColumn;
 			$params[] = Array(':' . $dbColumn, $propertyValue);
 		}
 
