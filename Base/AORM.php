@@ -592,6 +592,10 @@ abstract class AORM extends Iterator
 	 */
 	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey, $additionalParams = Array())
 	{
+		if(property_exists($this, $phpAlias)){
+			throw new EORM('Alias se nesmi shodovat s jiz definovanou vnitrni ORM property');
+		}
+
 		$className = 'ObjectRelationMapper\ColumnType\Child';
 		if (!class_exists($className) || !class_exists($ormName)) {
 			throw new EORM('Trida ' . $className . ' nebo ' . $ormName . ' neexistuje.');

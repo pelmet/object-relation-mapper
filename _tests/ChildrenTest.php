@@ -60,4 +60,12 @@ class ChildrenTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ' '));
 	}
+
+	/**
+	 * @expectedException ObjectRelationMapper\Exception\ORM
+	 */
+	public function testAddColumnProtectedProperty()
+	{
+		$orm = new ORMBadChildProperty();
+	}
 }

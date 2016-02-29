@@ -216,3 +216,32 @@ class ORMBadProperty extends ObjectRelationMapper\ORM
 	}
 }
 
+/**
+ * Class ORMBadChildProperty
+ * @property int id
+ * @property string valString
+ * @property decimal valDecimal
+ * @property boolean valBoolean
+ */
+class ORMBadChildProperty extends ObjectRelationMapper\ORM
+{
+	protected function setORMStorages()
+	{
+		$this->configStorage = 'ObjectRelationMapper\ConfigStorage\Basic';
+
+		$connector = new ObjectRelationMapper\Connector\PDO(new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_DB, DB_USER, DB_PASS, Array(PDO::ATTR_PERSISTENT => true)));
+		$this->queryBuilder = new ObjectRelationMapper\QueryBuilder\DB($connector);
+	}
+
+	protected function setUp()
+	{
+		$this->addColumn('qc_int', 'iblah', 'int', '10');
+		$this->addChild('ORMTest', 'data', 'qc_id', 'qc_id');
+
+		$this->setConfigDbPrimaryKey('qc_int');
+		$this->setConfigDbServer('master');
+		$this->setConfigObject(__CLASS__);
+		$this->setConfigDbTable('d_validate_types');
+	}
+}
+
