@@ -76,5 +76,5 @@ abstract class ABuilder
      * @param AORM $orm
      * @return int
      */
-    abstract public function truncate(AORM $orma);
+    abstract public function truncate(AORM $orm);
 }

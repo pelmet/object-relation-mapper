@@ -97,6 +97,8 @@ abstract class ORM extends Common implements Base\IORM
 		if ($this->afterLoad() === false) {
 			return false;
 		}
+
+		return $this->isLoaded();
 	}
 
 	/**

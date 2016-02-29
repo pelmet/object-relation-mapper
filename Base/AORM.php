@@ -783,6 +783,7 @@ abstract class AORM extends Iterator
 	/**
 	 * Nahraje data do tridy z pole
 	 * @param array $loadData
+     * @return boolean
 	 */
 	protected function loadClassFromArray(Array $loadData)
 	{
@@ -796,6 +797,8 @@ abstract class AORM extends Iterator
 		} else {
 			$this->isLoaded = false;
 		}
+
+        return $this->isLoaded;
 	}
 
 	/**
