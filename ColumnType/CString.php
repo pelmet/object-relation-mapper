@@ -2,11 +2,11 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
-class Int extends AColumn implements IColumn
+class CString extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' INT(' . $this->length . ') ';
+		return $this->col . ' VARCHAR(' . $this->length . ') ';
 	}
 
 	/**
@@ -16,7 +16,6 @@ class Int extends AColumn implements IColumn
 	 */
 	public function validate($value)
 	{
-		$regexp = '/^\d{0,' . $this->length . '}$/';
-		return (is_numeric($value) && (boolean)preg_match($regexp, (string)$value));
+		return ((is_string($value)) && (mb_strlen($value) <= $this->length));
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
-class Decimal extends AColumn implements IColumn
+class CDecimal extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{

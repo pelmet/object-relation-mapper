@@ -7,7 +7,7 @@ namespace ObjectRelationMapper\ColumnType;
  * @package ObjectRelationMapper\ColumnType
  * Column type Characters -> needs string length as exactly as defined (unlike usual string)
  */
-class Char extends AColumn implements IColumn
+class CChar extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{

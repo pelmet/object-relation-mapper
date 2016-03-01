@@ -2,11 +2,11 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
-class Boolean extends AColumn implements IColumn
+class CText extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' INT(1) ';
+		return $this->col . ' TEXT ';
 	}
 
 	/**
@@ -16,6 +16,6 @@ class Boolean extends AColumn implements IColumn
 	 */
 	public function validate($value)
 	{
-        return is_bool(filter_var($value,FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE));
+		return (is_string($value));
 	}
 }

@@ -7,7 +7,7 @@ namespace ObjectRelationMapper\ColumnType;
  * Time column, not integer timestamp
  * @package ObjectRelationMapper\ColumnType
  */
-class Timestamp extends AColumn implements IColumn
+class CTimestamp extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{

@@ -2,11 +2,11 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
-class Datetime extends AColumn implements IColumn
+class CBoolean extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' DATETIME(' . $this->length . ') ';
+		return $this->col . ' INT(1) ';
 	}
 
 	/**
@@ -16,7 +16,6 @@ class Datetime extends AColumn implements IColumn
 	 */
 	public function validate($value)
 	{
-		$regexp = '/^\d{0,' . $this->length . '}$/';
-		return (is_numeric($value) && (boolean)preg_match($regexp, (string)$value));
+        return is_bool(filter_var($value,FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE));
 	}
 }

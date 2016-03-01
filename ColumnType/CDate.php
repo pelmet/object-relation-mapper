@@ -2,7 +2,7 @@
 
 namespace ObjectRelationMapper\ColumnType;
 
-class Date extends AColumn implements IColumn
+class CDate extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{

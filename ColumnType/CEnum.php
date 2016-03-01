@@ -12,7 +12,7 @@ $this->addColumn('column_name', 'ormColumnName', 'enum', ['value1','value2','val
  * Example:
 $this->addColumn('m_status', 'status', 'enum', ['unknown','active','retired','deceased']);
  */
-class Enum extends AColumn implements IColumn
+class CEnum extends AColumn implements IColumn
 {
     public function generateDbLine()
     {
