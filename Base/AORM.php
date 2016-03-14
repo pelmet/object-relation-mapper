@@ -14,10 +14,10 @@ use ObjectRelationMapper\QueryBuilder\ABuilder;
  * Obsluzne a pomocne funkce jsou rozdelene zde pro lepsi prehlednost
  *
  * @property mixed primaryKey
- * @method setConfigDbTable
- * @method setConfigDbServer
- * @method setConfigObject
- * @method setConfigDbPrimaryKey
+ * @method setConfigDbTable($name)
+ * @method setConfigDbServer($master)
+ * @method setConfigObject($__CLASS__)
+ * @method setConfigDbPrimaryKey($key)
  * @method primaryKeyIsChanged
  * @method (.*)IsChanged
  * @method getIdConfig
