@@ -28,7 +28,7 @@ class Search extends ASearch
 	 */
 	public function exact($property, $value)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' = ' . $this->addParameter($value);
+		$this->search[] = $this->dbFieldName($property) . ' <=> ' . $this->addParameter($value);
 		return $this;
 	}
 
@@ -79,6 +79,32 @@ class Search extends ASearch
 	public function notLike($property, $value)
 	{
 		$this->search[] = $this->dbFieldName($property) . ' NOT LIKE ' . $this->addParameter($value);
+		return $this;
+	}
+
+	/**
+	 * Hodnota sloupce BETWEEN min AND max (min <= expr AND expr <= max)
+	 * @param $property
+	 * @param $min
+	 * @param $max
+	 * @return $this
+	 */
+	public function propertyBetween($property, $min, $max)
+	{
+		$this->search[] = $this->dbFieldName($property) . ' BETWEEN ' . $this->addParameter($min) . ' AND ' . $this->addParameter($max);
+		return $this;
+	}
+
+	/**
+	 * Hodnota BETWEEN col_1 AND col_2 (min <= expr AND expr <= max)
+	 * @param $value
+	 * @param $propertyFrom
+	 * @param $propertyTo
+	 * @return $this
+	 */
+	public function valueBetween($value, $propertyFrom, $propertyTo)
+	{
+		$this->search[] = $this->addParameter($value) . ' BETWEEN ' . $this->dbFieldName($propertyFrom) . ' AND ' . $this->dbFieldName($propertyTo);
 		return $this;
 	}
 
