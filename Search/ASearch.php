@@ -282,30 +282,28 @@ abstract class ASearch
             $additionalOrmsAliases[$key] = new ResultProcess($additionalOrm);
         }
 
+		$primaryKeyIndex = array_search($primaryOrmAliases->orm->getConfigDbPrimaryKey(), $primaryOrmAliases->dbFields);
+
         foreach($rows As $row){
             $processedRow = $row;
-            $primaryValue = $row[0];
+			$primaryValue = $row[$primaryKeyIndex];
             $primarySliced = array_splice($processedRow, 0, $primaryOrmAliases->size);
-            if(isset($results[$primaryValue])){
+            if (isset($results[$primaryValue])) {
                 $primaryOrm = $results[$primaryValue];
             } else {
                 $primaryOrm = new $primaryOrmAliases->orm;
-                $tempPrimaryValues = array_combine($primaryOrmAliases->aliases ,$primarySliced);
-                foreach($tempPrimaryValues As $alias => $value){
-                    $primaryOrm->$alias = $value;
-                }
+                $tempPrimaryValues = array_combine($primaryOrmAliases->dbFields ,$primarySliced);
+				$primaryOrm->load($tempPrimaryValues);
             }
 
             foreach ($additionalOrmsAliases As $childName => $additionalOrmAliases) {
                 /** @var ResultProcess $additionalOrmAliases */
                 $children = $primaryOrm->$childName;
 
-                $tempValue = array_combine($additionalOrmAliases->aliases ,array_splice($processedRow, 0, $additionalOrmAliases->size));
+                $tempValue = array_combine($additionalOrmAliases->dbFields ,array_splice($processedRow, 0, $additionalOrmAliases->size));
                 $orm = new $additionalOrmAliases->orm;
-                foreach($tempValue As $alias => $value){
-                    $orm->$alias = $value;
-                }
-                $children[] = $orm;
+				$orm->load($tempValue);
+				$children[] = $orm;
                 $primaryOrm->$childName = $children;
             }
             $results[$primaryValue] = $primaryOrm;

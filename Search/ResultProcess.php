@@ -11,7 +11,7 @@ namespace ObjectRelationMapper\Search;
 
 class ResultProcess {
     public $orm;
-    public $aliases;
+    public $dbFields;
     public $size;
 
     /**
@@ -20,7 +20,7 @@ class ResultProcess {
     public function __construct($orm)
     {
         $this->orm = $orm;
-        $this->aliases = $orm->getAllAliases();
-        $this->size = sizeof($this->aliases);
+        $this->dbFields = $orm->getAllDbFields();
+        $this->size = sizeof($this->dbFields);
     }
 } 
