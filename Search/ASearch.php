@@ -241,7 +241,7 @@ abstract class ASearch
         return $return;
     }
 
-	public function addPager(\Listing\Pager_IPager $pager)
+	public function addPager($pager)
 	{
 		$this->offset = $pager->getOffset();
 		$this->limit = $pager->getLimit();
