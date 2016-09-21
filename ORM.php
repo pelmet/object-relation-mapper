@@ -78,7 +78,7 @@ abstract class ORM extends Common implements Base\IORM
 	/**
 	 * Nahraje objekt z daneho storage
 	 * @throws Exception\ORM
-	 * @return boolean|mixed
+	 * @return boolean
 	 */
 	public function loadByPrimaryKey()
 	{
@@ -113,7 +113,7 @@ abstract class ORM extends Common implements Base\IORM
 	/**
 	 * Nahraje objekt z daneho storage
 	 * @param Array $loadData
-	 * @return boolean|mixed
+	 * @return boolean
 	 */
 	public function load($loadData = NULL)
 	{
