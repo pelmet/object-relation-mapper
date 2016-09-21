@@ -122,9 +122,9 @@ abstract class ORM extends Common implements Base\IORM
 		}
 
 		if (!is_null($loadData)) {
-			$this->loadClassFromArray($loadData);
+			$return = $this->loadClassFromArray($loadData);
 		} else {
-			$this->loadClassFromArray($this->queryBuilder->load($this));
+			$return = $this->loadClassFromArray($this->queryBuilder->load($this));
 		}
 
 		$this->changedVariables = Array();
@@ -133,7 +133,7 @@ abstract class ORM extends Common implements Base\IORM
 			return false;
 		}
 
-		return true;
+		return $return;
 	}
 
 	/**
