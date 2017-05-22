@@ -8,9 +8,24 @@ use ObjectRelationMapper\Exception\QueryBuilder;
 
 class Yaml extends ABuilder
 {
+    /**
+     * @var array
+     */
+    protected $connectors = Array();
+
+    public function __construct(\ObjectRelationMapper\Connector\Yaml $connector)
+    {
+        $this->addConnector($connector);
+    }
+
+    public function addConnector(\ObjectRelationMapper\Connector\Yaml $connector)
+    {
+        $this->connectors[$connector->connectionAlias] = $connector;
+    }
+
     protected function getFilename(AORM $orm)
     {
-        return $orm->getConfigDbServer().$orm->getConfigDbTable();
+        return $this->connectors[$orm->getConfigDbServer()]->storagePath.$orm->getConfigDbTable().$this->connectors[$orm->getConfigDbServer()]->fileExtension;
     }
 
     protected function checkFile(AORM $orm)
@@ -35,21 +50,25 @@ class Yaml extends ABuilder
 
         $fileData = yaml_parse_file($this->getFilename($orm));
 
-        $keys = Array();
-        foreach ($orm as $propertyName => $propertyValue) {
-            $keys[$propertyName] = array_search($propertyValue, array_column($fileData['values'], $orm->getDbField($propertyName)));
-        }
+        if(!empty($fileData['values'])){
+            $keys = Array();
+            foreach ($orm as $propertyName => $propertyValue) {
+                $keys[$propertyName] = array_search($propertyValue, array_column($fileData['values'], $orm->getDbField($propertyName)));
+            }
 
-        $key = false;
-        if(in_array(false, $keys, true)){
             $key = false;
-        } else {
-            foreach(array_count_values($keys) as $keyIndex => $count){
-                if($count == count($keys)){
-                    $key = $keyIndex;
-                    break;
+            if(in_array(false, $keys, true)){
+                $key = false;
+            } else {
+                foreach(array_count_values($keys) as $keyIndex => $count){
+                    if($count == count($keys)){
+                        $key = $keyIndex;
+                        break;
+                    }
                 }
             }
+        } else {
+            $key = false;
         }
 
         if($key === false){
@@ -68,7 +87,12 @@ class Yaml extends ABuilder
             throw new QueryBuilder('Cant open the file for writing');
         }
         $fileData = yaml_parse_file($this->getFilename($orm));
-        $key = array_search($orm->primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()));
+
+        if(!empty($fileData['values'])){
+            $key = array_search($orm->primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()));
+        } else {
+            $key = false;
+        }
 
         if($key === false){
             return Array();
@@ -140,8 +164,15 @@ class Yaml extends ABuilder
         }
 
         $fileData = yaml_parse_file($this->getFilename($orm));
-        $primaryKey = array_search($orm->primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()));
-        unset($fileData['values'][$primaryKey]);
+
+        if(!empty($fileData['values'])){
+            $primaryKey = array_search($orm->primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()));
+
+            if(isset($fileData['values'][$primaryKey])){
+                unset($fileData['values'][$primaryKey]);
+            }
+        }
+
         yaml_emit_file($this->getFilename($orm), $fileData);
     }
 
