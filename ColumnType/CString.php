@@ -6,7 +6,7 @@ class CString extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' VARCHAR(' . $this->length . ') ';
+		return 'string';
 	}
 
 	/**

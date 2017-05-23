@@ -6,7 +6,7 @@ class CBoolean extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' INT(1) ';
+		return 'integer';
 	}
 
 	/**

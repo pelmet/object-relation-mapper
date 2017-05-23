@@ -16,7 +16,7 @@ class CEnum extends AColumn implements IColumn
 {
     public function generateDbLine()
     {
-        return $this->col . ' ENUM(' . implode(',', $this->length) . ') ';
+        return 'enum';
     }
 
     /**

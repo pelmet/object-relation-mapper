@@ -6,7 +6,7 @@ class CDecimal extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' DECIMAL(' . $this->length . ') ';
+		return 'decimal';
 	}
 
 	/**

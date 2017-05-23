@@ -71,4 +71,20 @@ class Status extends \ORM\Base
 }
 ```
 
+MIGRATIONS
+==========
+```php
+<?php
+$migration = new \ObjectRelationMapper\Migration\Builder();
+$migration->addORMToWatch(new \ORM\Service\Status());
+$migration->addORMToWatch(new \ORM\Graphite\Check());
+$migration->addORMToWatch(new \ORM\Service\Server());
+$migration->addORMToWatch(new \ORM\Service\Group());
+$migration->addORMToWatch(new \ORM\Service\Contact());
+$migration->addORMToWatch(new \ORM\Service\OfflineCase());
+if($migration->areDifferent()){
+    echo $migration->getDiff();
+}
+```
+
 

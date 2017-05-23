@@ -318,4 +318,35 @@ class DB extends ABuilder
 			return Array();
 		}
 	}
+
+    /**
+     * @inheritdoc
+     */
+    public function describe(AORM $orm)
+    {
+        $query = 'DESCRIBE '.$orm->getConfigDbTable();
+
+        try{
+            $query = $this->connector->query($query, Array(), $orm->getConfigDbServer());
+        } catch (\PDOException $e){
+            if($e->getCode() != '42S02'){
+                throw $e;
+            }
+            $query = Array();
+        }
+
+        if (isset($query)) {
+            $return = Array();
+            foreach($query as $value){
+                $return[$value['Field']] = Array(
+                    'name' => $value['Field'],
+                    'type' => $value['Type'],
+                    'primary_key' => (($value['Key'] == 'PRI') ? 1 : 0)
+                );
+            }
+            return $return;
+        } else {
+            return Array();
+        }
+    }
 }

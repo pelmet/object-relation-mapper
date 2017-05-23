@@ -11,7 +11,7 @@ class CTimestamp extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' TIMESTAMP ';
+		return 'timestamp';
 	}
 
 	/**

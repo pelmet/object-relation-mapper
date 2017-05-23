@@ -11,7 +11,7 @@ class CChar extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' CHAR(' . $this->length . ') ';
+		return 'string';
 	}
 
 	/**

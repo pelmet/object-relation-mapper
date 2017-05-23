@@ -6,7 +6,7 @@ class CInt extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' INT(' . $this->length . ') ';
+		return 'integer';
 	}
 
 	/**

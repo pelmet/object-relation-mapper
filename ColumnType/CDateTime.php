@@ -6,7 +6,7 @@ class CDatetime extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' DATETIME(' . $this->length . ') ';
+		return 'datetime';
 	}
 
 	/**

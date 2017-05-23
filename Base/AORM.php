@@ -780,6 +780,11 @@ abstract class AORM extends Iterator
 		}
 	}
 
+	public function getColumns()
+    {
+        return $this->columns;
+    }
+
 	/**
 	 * Nahraje data do tridy z pole
 	 * @param array $loadData

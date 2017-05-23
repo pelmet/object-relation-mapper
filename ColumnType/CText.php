@@ -6,7 +6,7 @@ class CText extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' TEXT ';
+		return 'text';
 	}
 
 	/**

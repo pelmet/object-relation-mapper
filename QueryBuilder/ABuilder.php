@@ -8,13 +8,13 @@ abstract class ABuilder
 {
 	/**
 	 * @param AORM $orm
-	 * @return Array
+	 * @return array
 	 */
 	abstract public function load(AORM $orm);
 
 	/**
 	 * @param AORM $orm
-	 * @return Array
+	 * @return array
 	 */
 	abstract public function loadMultiple(AORM $orm);
 
@@ -22,7 +22,7 @@ abstract class ABuilder
 	 * @param AORM $orm
 	 * @param $query
 	 * @param $params
-	 * @return Array
+	 * @return array
 	 */
 	abstract public function loadByQuery(AORM $orm, $query, $params, $fetchType = \PDO::FETCH_ASSOC);
 
@@ -30,7 +30,7 @@ abstract class ABuilder
 	 * @param AORM $orm
 	 * @param $query
 	 * @param $params
-	 * @return Array
+	 * @return array
 	 */
 	abstract public function countByQuery(AORM $orm, $query, $params);
 
@@ -67,7 +67,7 @@ abstract class ABuilder
 
 	/**
 	 * @param AORM $orm
-	 * @param Array $data
+	 * @param array $data
 	 * @return int
 	 */
 	abstract public function insertMultiple(AORM $orm, Array $data);
@@ -77,4 +77,10 @@ abstract class ABuilder
      * @return int
      */
     abstract public function truncate(AORM $orm);
+
+    /**
+     * @param AORM $orm
+     * @return array
+     */
+    abstract public function describe(AORM $orm);
 }

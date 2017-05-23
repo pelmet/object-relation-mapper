@@ -163,4 +163,28 @@ class SQLite extends DB
             return false;
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function describe(AORM $orm)
+    {
+        $query = 'PRAGMA table_info('.$orm->getConfigDbTable().')';
+
+        $query = $this->connector->query($query, Array(), $orm->getConfigDbServer());
+
+        if (isset($query)) {
+            $return = Array();
+            foreach($query as $value){
+                $return[$value['name']] = Array(
+                    'name' => $value['name'],
+                    'type' => $value['type'],
+                    'primary_key' => $value['pk']
+                );
+            }
+            return $return;
+        } else {
+            return Array();
+        }
+    }
 }

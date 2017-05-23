@@ -6,7 +6,7 @@ class CDate extends AColumn implements IColumn
 {
 	public function generateDbLine()
 	{
-		return $this->col . ' DATE';
+		return 'date';
 	}
 
 	/**
