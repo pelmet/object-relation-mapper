@@ -11,7 +11,6 @@ use ObjectRelationMapper\Connector\IConnector;
 class DbToOrm
 {
 	protected $columns;
-	protected $firstCol;
 	protected $ormText = Array();
 
 	protected $typeTrans = Array(
@@ -52,12 +51,13 @@ class DbToOrm
      * @param string $namespace
      * @throws \Exception
      */
-	public function __construct(IConnector $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix,$namespace = null)
+	public function __construct(IConnector $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix = null,$namespace = null)
 	{
 		$describe = $connector->query('DESCRIBE ' . $dbTable, Array(), $serverAlias);
         if(empty($describe)){
             throw new \Exception('Table not exist!');
         }
+        $primary = null;
 		foreach ($describe as $column) {
 			preg_match('/^([^\(]*)?\(?([0-9]+)?,?([0-9]+)?\)?(.*)?$/i', $column['Type'], $matches);
             if(!empty($matches[3])){
@@ -71,7 +71,12 @@ class DbToOrm
             } else {
                 $length = (isset($matches[2]) ? $matches[2] : 0);
             }
-
+            if($column['Key'] == 'PRI'){
+                $primary = $column['Field'];
+                if(is_null($colPrefix) && preg_match('/^([a-z]+_).*/',$primary,$prefixMatch)){
+                    $colPrefix = $prefixMatch[1];
+                }
+            }
 			$this->addColumn($column['Field'], strtolower($matches[1]), $length);
 		}
 
@@ -95,11 +100,9 @@ class DbToOrm
 		$this->addOrmLine('{');
 		$this->addOrmLine('    function setUp()');
 		$this->addOrmLine('    {');
-		$first = false;
 		foreach ($this->columns as $columnName => $columnInfo) {
-			if ($first == false) {
-				$this->firstCol = $columnName;
-				$first = true;
+			if (empty($primary)) {
+                $primary = $columnName;
 			}
 
             if($columnInfo['type'] == 'enum'){
@@ -111,7 +114,7 @@ class DbToOrm
 		}
 
 		$this->addOrmLine('');
-		$this->addOrmLine('        $this->setConfigDbPrimaryKey(\'' . $this->firstCol . '\');');
+		$this->addOrmLine('        $this->setConfigDbPrimaryKey(\'' . $primary . '\');');
 		$this->addOrmLine('        $this->setConfigDbTable(\'' . $dbTable . '\');');
 		$this->addOrmLine('        $this->setConfigDbServer(\'' . $serverAlias . '\');');
 		$this->addOrmLine('        $this->setConfigObject(__CLASS__);');
