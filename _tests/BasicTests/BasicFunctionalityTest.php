@@ -5,7 +5,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testBasic($testOrm)
+	public function testBasic($connector, $testOrm)
 	{
 		$this->assertInstanceOf('ObjectRelationMapper\Base\AORM', $testOrm);
 	}
@@ -13,7 +13,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testSetPrimaryKey($testOrm)
+	public function testSetPrimaryKey($connector, $testOrm)
 	{
 		$testOrm->primaryKey = 125;
 
@@ -24,7 +24,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testSetterAndGetter($testOrm)
+	public function testSetterAndGetter($connector, $testOrm)
 	{
 		$testOrm->status = 5;
 		$testOrm->command = 'ls -la';
@@ -39,7 +39,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	 * @expectedException ObjectRelationMapper\Exception\ORM
 	 * @dataProvider providerBasic
 	 */
-	public function testSetterToBadColumn($testOrm)
+	public function testSetterToBadColumn($connector, $testOrm)
 	{
 		$testOrm->iblah = 5;
 	}
@@ -48,7 +48,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	 * @expectedException ObjectRelationMapper\Exception\ORM
 	 * @dataProvider providerBasic
 	 */
-	public function testGetterToBadColumn($testOrm)
+	public function testGetterToBadColumn($connector, $testOrm)
 	{
 		$testOrm->iblah;
 	}
@@ -56,7 +56,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testCallMethod($testOrm)
+	public function testCallMethod($connector, $testOrm)
 	{
 		$this->assertEquals('qc_id', $testOrm->getConfigDbPrimaryKey());
 		$this->assertEquals('master', $testOrm->getConfigDbServer());
@@ -68,7 +68,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	 * @expectedException ObjectRelationMapper\Exception\ORM
 	 * @dataProvider providerBasic
 	 */
-	public function testDynamicNotDefinedFunction($testOrm)
+	public function testDynamicNotDefinedFunction($connector, $testOrm)
 	{
 		$testOrm->iblahIsChanged();
 	}
@@ -78,13 +78,15 @@ class BasicFunctionalityTest extends CommonTestClass
 	 */
 	public function testAddColumnProtectedProperty()
 	{
-		$orm = new ORMBadProperty();
+		foreach($this->queryBuilders as $type =>  $qb){
+            $orm = new \ObjectRelationMapper\Tests\ORMBadProperty(NULL, $qb);
+        }
 	}
 
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testPropertyHasChanged($testOrm)
+	public function testPropertyHasChanged($connector, $testOrm)
 	{
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 
@@ -100,7 +102,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testFieldNameAsCallFunction($testOrm)
+	public function testFieldNameAsCallFunction($connector, $testOrm)
 	{
 		$this->assertEquals('qc_id', $testOrm->id());
 		$this->assertEquals('qc_time_end', $testOrm->endTime());
@@ -111,7 +113,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testFieldNameWithTableAsCallFunction($testOrm)
+	public function testFieldNameWithTableAsCallFunction($connector, $testOrm)
 	{
 		$this->assertEquals('d_queued_commands.qc_id', $testOrm->idFull());
 		$this->assertEquals('d_queued_commands.qc_time_end', $testOrm->endTimeFull());
@@ -123,7 +125,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	 * @expectedException ObjectRelationMapper\Exception\ORM
 	 * @dataProvider providerBasic
 	 */
-	public function testDynamicFieldNameAsCallFunctionNotDefined($testOrm)
+	public function testDynamicFieldNameAsCallFunctionNotDefined($connector, $testOrm)
 	{
 		$testOrm->iblahfield();
 	}
@@ -131,7 +133,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testDataAliasClosure($testOrm)
+	public function testDataAliasClosure($connector, $testOrm)
 	{
 		$testOrm->status = 5;
 		$testOrm->command = 'ls -la';
@@ -144,7 +146,7 @@ class BasicFunctionalityTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testDataAliasDelimiterString($testOrm)
+	public function testDataAliasDelimiterString($connector, $testOrm)
 	{
 		$testOrm->status = 5;
 		$testOrm->command = 'ls -la';

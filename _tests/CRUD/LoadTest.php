@@ -4,30 +4,17 @@ class LoadTest extends CommonTestClass
 {
 	protected $connection;
 
-	public function setUp()
-	{
-		$insert = 'INSERT INTO d_queued_commands SET
-					qc_id = 5,
-					qc_time_start = 123456,
-					qc_time_end = 12345678,
-					qc_status = 5,
-					qc_command = "ls -laf"';
 
-		$this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
-		mysqli_select_db($this->connection, DB_DB);
-		mysqli_query($this->connection, $insert);
-	}
+    public function setUp()
+    {
+        parent::setUp();
 
-	public function tearDown()
-	{
-		$delete = 'TRUNCATE TABLE d_queued_commands';
-		mysqli_query($this->connection, $delete);
-	}
+    }
 
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadByData($testOrm)
+	public function testLoadByData($connector, $testOrm)
 	{
 		$testOrm->status = 5;
 		$testOrm->load();
@@ -41,7 +28,7 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadByPrimaryKey($testOrm)
+	public function testLoadByPrimaryKey($connector, $testOrm)
 	{
 		$testOrm->primaryKey = 5;
 		$testOrm->loadByPrimaryKey();
@@ -55,10 +42,12 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadByConstructor($testOrm)
+	public function testLoadByConstructor($connector, $testOrm)
 	{
+	    $qb = $testOrm->getQueryBuilder();
+
 		$testOrm = get_class($testOrm);
-		$testOrm = new $testOrm(5);
+		$testOrm = new $testOrm(5, $qb);
 
 		$this->assertEquals(5, $testOrm->status);
 		$this->assertEquals(123456, $testOrm->startTime);
@@ -69,21 +58,12 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadMultipleFromDb($testOrm)
+	public function testLoadMultipleFromDb($connector, $testOrm)
 	{
-		$insert = 'INSERT INTO d_queued_commands SET
-					qc_id = 6,
-					qc_time_start = 123456,
-					qc_time_end = 12345678,
-					qc_status = 5,
-					qc_command = "ls -laf"';
-
-		mysqli_query($this->connection, $insert);
-
 		$testOrm->status = 5;
 		$collection = $testOrm->loadMultiple();
 
-		$this->assertEquals(2, count($collection));
+		$this->assertEquals(3, count($collection));
 		foreach ($collection as $singleOrm) {
 			$this->assertInstanceOf(get_class($testOrm), $singleOrm);
 			$this->assertEquals(5, $singleOrm->status);
@@ -93,27 +73,14 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadMultipleFromArrayResult($testOrm)
+	public function testLoadMultipleFromArrayResult($connector, $testOrm)
 	{
-		$insert = 'INSERT INTO d_queued_commands SET
-					qc_id = 6,
-					qc_time_start = 123456,
-					qc_time_end = 12345678,
-					qc_status = 5,
-					qc_command = "ls -laf"';
-
-		mysqli_query($this->connection, $insert);
-
-		$query = mysqli_query($this->connection, 'SELECT * FROM d_queued_commands WHERE qc_status = 5');
-
-		$result = Array();
-		while ($row = mysqli_fetch_assoc($query)) {
-			$result[] = $row;
-		}
+        $db = $this->getConnection($connector);
+        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 5', \PDO::FETCH_ASSOC)->fetchAll();
 
 		$collection = $testOrm->loadMultiple($result);
 
-		$this->assertEquals(2, count($collection));
+		$this->assertEquals(3, count($collection));
 		foreach ($collection as $singleOrm) {
 			$this->assertInstanceOf(get_class($testOrm), $singleOrm);
 			$this->assertEquals(5, $singleOrm->status);
@@ -123,7 +90,7 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadFromArrayWithIncompatibleProperties($testOrm)
+	public function testLoadFromArrayWithIncompatibleProperties($connector, $testOrm)
 	{
 		$testData = Array('qc_id' => 6,
 			'qc_time_start' => 123456,
@@ -149,7 +116,7 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadWithEmptyArray($testOrm)
+	public function testLoadWithEmptyArray($connector, $testOrm)
 	{
 		$testData = Array();
 
@@ -161,7 +128,7 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadMultipleWithEmptyArray($testOrm)
+	public function testLoadMultipleWithEmptyArray($connector, $testOrm)
 	{
 		$testData = Array();
 
@@ -173,7 +140,7 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadMFU($testOrm)
+	public function testLoadMFU($connector, $testOrm)
 	{
 		$testOrm->loadMFU('test-data');
 
@@ -186,7 +153,7 @@ class LoadTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testLoadMultipleMFU($testOrm)
+	public function testLoadMultipleMFU($connector, $testOrm)
 	{
 		$results = $testOrm->loadMultipleMFU('test-data');
 

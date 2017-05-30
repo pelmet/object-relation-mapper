@@ -138,7 +138,7 @@ class Yaml extends ABuilder
         }
 
         $fileData = yaml_parse_file($this->getFilename($orm));
-        $primaryKey = array_search($orm->primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()));
+        $primaryKey = array_search($orm->primaryKey, array_column(($fileData['values'] == NULL) ? Array() : $fileData['values'], $orm->getConfigDbPrimaryKey()));
 
         $add = Array();
         foreach ($orm as $propertyName => $propertyValue) {
@@ -193,8 +193,7 @@ class Yaml extends ABuilder
             throw new QueryBuilder('Cant open the file for writing');
         }
 
-        $fileData = yaml_parse_file($this->getFilename($orm));
-        return count($fileData['values']);
+        return count($this->loadMultiple($orm));
     }
 
     /**

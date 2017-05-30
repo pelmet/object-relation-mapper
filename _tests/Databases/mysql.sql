@@ -1,3 +1,5 @@
+
+DROP TABLE IF EXISTS d_queued_commands;
 CREATE TABLE IF NOT EXISTS `d_queued_commands` (
   `qc_id` int(11) NOT NULL AUTO_INCREMENT,
   `qc_time_start` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
@@ -7,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands` (
   PRIMARY KEY (`qc_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
+DROP TABLE IF EXISTS d_queued_commands_logs;
 CREATE TABLE IF NOT EXISTS `d_queued_commands_logs` (
   `qcl_id` int(11) NOT NULL AUTO_INCREMENT,
   `qc_id` varchar(20) COLLATE utf8_unicode_ci NOT NULL,

@@ -5,7 +5,7 @@ class DataExchangeTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testArrayExchangeLoad($testOrm)
+	public function testArrayExchangeLoad($connector, $testOrm)
 	{
 		$mergeArray = Array(
 			'id' => '1',
@@ -24,7 +24,7 @@ class DataExchangeTest extends CommonTestClass
 	/**
 	 * @dataProvider providerBasic
 	 */
-	public function testArrayExchangeExport($testOrm)
+	public function testArrayExchangeExport($connector, $testOrm)
 	{
 		$testOrm->command = 'iblah';
 		$testOrm->endTime = '123456';

@@ -1,43 +1,34 @@
 <?php
 
-class ValidateTest extends PHPUnit_Framework_TestCase
+class ValidateTest extends CommonTestClass
 {
-	protected $connection;
-
-	public function setUp()
+    /**
+     * @dataProvider providerBasic
+     */
+	public function testValidateFalse($connector, $testOrm)
 	{
-		$this->connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
-		mysqli_select_db($this->connection, DB_DB);
-		$this->tearDown();
-	}
-
-	public function tearDown()
-	{
-		$delete = 'TRUNCATE TABLE d_queued_commands; TRUNCATE TABLE d_validate_types;';
-		mysqli_query($this->connection, $delete);
-	}
-
-	public function testValidateFalse()
-	{
-		$testOrm = new ORMTest();
 		$testOrm->id = 5;
 		$testOrm->status = 'iblah';
 
 		$this->assertEquals(false, $testOrm->validate());
 	}
 
-	public function testValidateTrue()
+    /**
+     * @dataProvider providerBasic
+     */
+	public function testValidateTrue($connector, $testOrm)
 	{
-		$testOrm = new ORMTest();
 		$testOrm->id = 5;
 		$testOrm->status = 5;
 
 		$this->assertEquals(true, $testOrm->validate());
 	}
 
-	public function testValidateInt()
+    /**
+     * @dataProvider providerValidation
+     */
+	public function testValidateInt($connector, $testOrm)
 	{
-		$testOrm = new ORMTestValidation();
 		$testOrm->id = 5;
 		$this->assertEquals(true, $testOrm->validate('id'));
 		$testOrm->id = '5';
@@ -50,13 +41,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(false, $testOrm->validate('id'));
 		$testOrm->id = Array();
 		$this->assertEquals(false, $testOrm->validate('id'));
-		$testOrm->id = new ORMTestValidation();
+		$testOrm->id = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
 		$this->assertEquals(false, $testOrm->validate('id'));
 	}
 
-	public function testValidateString()
+    /**
+     * @dataProvider providerValidation
+     */
+	public function testValidateString($connector, $testOrm)
 	{
-		$testOrm = new ORMTestValidation();
 		$testOrm->valString = 5;
 		$this->assertEquals(false, $testOrm->validate('valString'));
 		$testOrm->valString = '5';
@@ -69,13 +62,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(false, $testOrm->validate('valString'));
 		$testOrm->valString = Array();
 		$this->assertEquals(false, $testOrm->validate('valString'));
-		$testOrm->valString = new ORMTestValidation();
+		$testOrm->valString = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
 		$this->assertEquals(false, $testOrm->validate('valString'));
 	}
 
-	public function testValidateDecimal()
+    /**
+     * @dataProvider providerValidation
+     */
+	public function testValidateDecimal($connector, $testOrm)
 	{
-		$testOrm = new ORMTestValidation();
 		$testOrm->valDecimal = 5;
 		$this->assertEquals(true, $testOrm->validate('valDecimal'));
 		$testOrm->valDecimal = 5.;
@@ -90,13 +85,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(false, $testOrm->validate('valDecimal'));
 		$testOrm->valDecimal = Array();
 		$this->assertEquals(false, $testOrm->validate('valDecimal'));
-		$testOrm->valDecimal = new ORMTestValidation();
+		$testOrm->valDecimal = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
 		$this->assertEquals(false, $testOrm->validate('valDecimal'));
 	}
 
-	public function testValidateBoolean()
+    /**
+     * @dataProvider providerValidation
+     */
+	public function testValidateBoolean($connector, $testOrm)
 	{
-		$testOrm = new ORMTestValidation();
 		$testOrm->valBoolean = 5;
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = '5';
@@ -107,7 +104,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = Array();
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
-		$testOrm->valBoolean = new ORMTestValidation();
+		$testOrm->valBoolean = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 
         $testOrm->valBoolean = false;
@@ -132,9 +129,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $testOrm->validate('valBoolean'));
 	}
 
-    public function testValidateDate()
+    /**
+     * @dataProvider providerValidation
+     */
+    public function testValidateDate($connector, $testOrm)
     {
-        $testOrm = new ORMTestValidation();
         $testOrm->valDate = 5;
         $this->assertEquals(false, $testOrm->validate('valDate'));
         $testOrm->valDate = '5';
@@ -145,7 +144,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valDate'));
         $testOrm->valDate = Array();
         $this->assertEquals(false, $testOrm->validate('valDate'));
-        $testOrm->valDate = new ORMTestValidation();
+        $testOrm->valDate = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
         $this->assertEquals(false, $testOrm->validate('valDate'));
         $testOrm->valDate = false;
         $this->assertEquals(false, $testOrm->validate('valDate'));
@@ -175,9 +174,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valDate'));
     }
 
-    public function testValidateTimestamp()
+    /**
+     * @dataProvider providerValidation
+     */
+    public function testValidateTimestamp($connector, $testOrm)
     {
-        $testOrm = new ORMTestValidation();
         $testOrm->valTime = 5;
         $this->assertEquals(false, $testOrm->validate('valTime'));
         $testOrm->valTime = '5';
@@ -188,7 +189,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valTime'));
         $testOrm->valTime = Array();
         $this->assertEquals(false, $testOrm->validate('valTime'));
-        $testOrm->valTime = new ORMTestValidation();
+        $testOrm->valTime = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
         $this->assertEquals(false, $testOrm->validate('valTime'));
         $testOrm->valTime = false;
         $this->assertEquals(false, $testOrm->validate('valTime'));
@@ -244,9 +245,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $testOrm->validate('valTime'));
     }
 
-    public function testValidateText()
+    /**
+     * @dataProvider providerValidation
+     */
+    public function testValidateText($connector, $testOrm)
     {
-        $testOrm = new ORMTestValidation();
         $testOrm->valText = 5;
         $this->assertEquals(false, $testOrm->validate('valText'));
         $testOrm->valText = '5';
@@ -259,13 +262,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valText'));
         $testOrm->valText = Array();
         $this->assertEquals(false, $testOrm->validate('valText'));
-        $testOrm->valText = new ORMTestValidation();
+        $testOrm->valText = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
         $this->assertEquals(false, $testOrm->validate('valText'));
     }
 
-    public function testValidateChar()
+    /**
+     * @dataProvider providerValidation
+     */
+    public function testValidateChar($connector, $testOrm)
     {
-        $testOrm = new ORMTestValidation();
         $testOrm->valChar = 5;
         $this->assertEquals(false, $testOrm->validate('valChar'));
         $testOrm->valChar = 5.;
@@ -280,7 +285,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valChar'));
         $testOrm->valChar = Array();
         $this->assertEquals(false, $testOrm->validate('valChar'));
-        $testOrm->valChar = new ORMTestValidation();
+        $testOrm->valChar = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
         $this->assertEquals(false, $testOrm->validate('valChar'));
 
         $testOrm->valChar = 'ab';
@@ -291,9 +296,11 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valChar'));
     }
 
-    public function testValidateEnum()
+    /**
+     * @dataProvider providerValidation
+     */
+    public function testValidateEnum($connector, $testOrm)
     {
-        $testOrm = new ORMTestValidation();
         $testOrm->valEnum = 5;
         $this->assertEquals(false, $testOrm->validate('valEnum'));
         $testOrm->valEnum = 5.;
@@ -308,7 +315,7 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(false, $testOrm->validate('valEnum'));
         $testOrm->valEnum = Array();
         $this->assertEquals(false, $testOrm->validate('valEnum'));
-        $testOrm->valEnum = new ORMTestValidation();
+        $testOrm->valEnum = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
         $this->assertEquals(false, $testOrm->validate('valEnum'));
 
         $testOrm->valEnum = 'ab';
