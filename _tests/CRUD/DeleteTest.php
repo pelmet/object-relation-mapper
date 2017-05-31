@@ -2,11 +2,6 @@
 
 class DeleteTest extends CommonTestClass
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-    }
 
 	/**
 	 * @dataProvider providerBasic
@@ -21,18 +16,27 @@ class DeleteTest extends CommonTestClass
         $testOrm->load();
 		$testOrm->delete();
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_id = 5', \PDO::FETCH_ASSOC)->fetchAll();
+		if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_id = 5', \PDO::FETCH_ASSOC)->fetchAll();
+        }
+
         $result = $result[0];
 
-		$this->assertEquals('ls -laf', $result['qc_command']);
+        $this->assertEquals('ls -laf', $result['qc_command']);
 		$this->assertEquals('5', $result['qc_status']);
 		$this->assertEquals(123456, $result['qc_time_start']);
 		$this->assertEquals(12345678, $result['qc_time_end']);
 
 		$testOrm->__destruct();
 
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_id = 5', \PDO::FETCH_ASSOC)->fetchAll();
+		if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+        } else {
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_id = 5', \PDO::FETCH_ASSOC)->fetchAll();
+        }
 
 		$this->assertEmpty($result);
 	}
@@ -46,8 +50,12 @@ class DeleteTest extends CommonTestClass
 		$testOrm->load();
 		$testOrm->delete(true);
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_id = 5', \PDO::FETCH_ASSOC)->fetchAll();
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_id = 5', \PDO::FETCH_ASSOC)->fetchAll();
+        }
 
 		$this->assertEmpty($result);
 	}

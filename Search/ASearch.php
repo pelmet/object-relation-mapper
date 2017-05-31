@@ -15,11 +15,6 @@ abstract class ASearch
      * @var Connector\IConnector
      */
 	protected $connector;
-	protected $availableConnectors = Array(
-	    'ObjectRelationMapper\QueryBuilder\DB' => Connector\DB::class,
-        'ObjectRelationMapper\QueryBuilder\SQLite' => Connector\SQLite::class
-    );
-
 	protected $results = Array();
 
     /**
@@ -31,11 +26,14 @@ abstract class ASearch
 	{
 		$this->orm = $orm;
 
-		if(isset($this->availableConnectors[get_class($orm->getQueryBuilder())])){
-            $this->connector = new $this->availableConnectors[get_class($orm->getQueryBuilder())]($orm);
-        } else {
-		    throw new \ObjectRelationMapper\Search\Exception\SearchException('Connector for this querybuilder is unavailable');
+		$classNameShort = (new \ReflectionClass($orm->getQueryBuilder()))->getShortName();
+		$className = '\ObjectRelationMapper\Search\Connector\\'.$classNameShort;
+
+		if(!class_exists($className)) {
+		    throw new \ObjectRelationMapper\Search\Exception\SearchException('No connector available '.$classNameShort);
         }
+
+        $this->connector = new $className($orm);
 	}
 
 	/**

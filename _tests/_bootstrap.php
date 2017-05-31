@@ -1,5 +1,7 @@
 <?php
 
+ini_set("xdebug.overload_var_dump", "off");
+
 $GLOBALS['databases'] = Array(
     'mysql' => Array(
         'dsn' => 'mysql:host=localhost;dbname=test',

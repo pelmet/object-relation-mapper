@@ -41,7 +41,7 @@ class ValidateTest extends CommonTestClass
 		$this->assertEquals(false, $testOrm->validate('id'));
 		$testOrm->id = Array();
 		$this->assertEquals(false, $testOrm->validate('id'));
-		$testOrm->id = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+		$testOrm->id = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
 		$this->assertEquals(false, $testOrm->validate('id'));
 	}
 
@@ -62,7 +62,7 @@ class ValidateTest extends CommonTestClass
 		$this->assertEquals(false, $testOrm->validate('valString'));
 		$testOrm->valString = Array();
 		$this->assertEquals(false, $testOrm->validate('valString'));
-		$testOrm->valString = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+		$testOrm->valString = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
 		$this->assertEquals(false, $testOrm->validate('valString'));
 	}
 
@@ -85,7 +85,7 @@ class ValidateTest extends CommonTestClass
 		$this->assertEquals(false, $testOrm->validate('valDecimal'));
 		$testOrm->valDecimal = Array();
 		$this->assertEquals(false, $testOrm->validate('valDecimal'));
-		$testOrm->valDecimal = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+		$testOrm->valDecimal = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
 		$this->assertEquals(false, $testOrm->validate('valDecimal'));
 	}
 
@@ -104,7 +104,7 @@ class ValidateTest extends CommonTestClass
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 		$testOrm->valBoolean = Array();
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
-		$testOrm->valBoolean = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+		$testOrm->valBoolean = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
 		$this->assertEquals(false, $testOrm->validate('valBoolean'));
 
         $testOrm->valBoolean = false;
@@ -144,7 +144,7 @@ class ValidateTest extends CommonTestClass
         $this->assertEquals(false, $testOrm->validate('valDate'));
         $testOrm->valDate = Array();
         $this->assertEquals(false, $testOrm->validate('valDate'));
-        $testOrm->valDate = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+        $testOrm->valDate = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
         $this->assertEquals(false, $testOrm->validate('valDate'));
         $testOrm->valDate = false;
         $this->assertEquals(false, $testOrm->validate('valDate'));
@@ -189,7 +189,7 @@ class ValidateTest extends CommonTestClass
         $this->assertEquals(false, $testOrm->validate('valTime'));
         $testOrm->valTime = Array();
         $this->assertEquals(false, $testOrm->validate('valTime'));
-        $testOrm->valTime = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+        $testOrm->valTime = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
         $this->assertEquals(false, $testOrm->validate('valTime'));
         $testOrm->valTime = false;
         $this->assertEquals(false, $testOrm->validate('valTime'));
@@ -262,7 +262,7 @@ class ValidateTest extends CommonTestClass
         $this->assertEquals(false, $testOrm->validate('valText'));
         $testOrm->valText = Array();
         $this->assertEquals(false, $testOrm->validate('valText'));
-        $testOrm->valText = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+        $testOrm->valText = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
         $this->assertEquals(false, $testOrm->validate('valText'));
     }
 
@@ -285,7 +285,7 @@ class ValidateTest extends CommonTestClass
         $this->assertEquals(false, $testOrm->validate('valChar'));
         $testOrm->valChar = Array();
         $this->assertEquals(false, $testOrm->validate('valChar'));
-        $testOrm->valChar = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+        $testOrm->valChar = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
         $this->assertEquals(false, $testOrm->validate('valChar'));
 
         $testOrm->valChar = 'ab';
@@ -315,7 +315,7 @@ class ValidateTest extends CommonTestClass
         $this->assertEquals(false, $testOrm->validate('valEnum'));
         $testOrm->valEnum = Array();
         $this->assertEquals(false, $testOrm->validate('valEnum'));
-        $testOrm->valEnum = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'));
+        $testOrm->valEnum = new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders[$connector]);
         $this->assertEquals(false, $testOrm->validate('valEnum'));
 
         $testOrm->valEnum = 'ab';

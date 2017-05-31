@@ -2,11 +2,6 @@
 
 class SaveTest extends CommonTestClass
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-    }
 
 	/**
 	 * @dataProvider providerBasic
@@ -17,9 +12,14 @@ class SaveTest extends CommonTestClass
 		$testOrm->command = 'ls -l';
 		$testOrm->save();
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 5 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
-        $result = $result[0];
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+            $result = $result[1];
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 5 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
+            $result = $result[0];
+        }
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('5', $result['qc_status']);
@@ -40,9 +40,14 @@ class SaveTest extends CommonTestClass
 		$testOrm->command = 'ls -l';
 		$testOrm->save();
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
-        $result = $result[0];
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+            $result = $result[0];
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
+            $result = $result[0];
+        }
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('10', $result['qc_status']);
@@ -60,9 +65,14 @@ class SaveTest extends CommonTestClass
 		$testOrm->command = 'ls -l';
 		$testOrm->save(true);
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
-        $result = $result[0];
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+            $result = $result[1];
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
+            $result = $result[0];
+        }
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('10', $result['qc_status']);
@@ -81,10 +91,15 @@ class SaveTest extends CommonTestClass
 		$testOrm->command = 'ls -l';
 		$testOrm->save(true);
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
-
-		$this->assertEmpty($result);
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+            $result = $result[0];
+            $this->assertArrayNotHasKey(1, $result);
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
+            $this->assertEmpty($result);
+        }
 	}
 
 	/**
@@ -101,9 +116,14 @@ class SaveTest extends CommonTestClass
 		$testOrm->id = 15;
 		$testOrm->save();
 
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
-        $result = $result[0];
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+            $result = $result[0];
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 10 AND qc_command = "ls -l"', \PDO::FETCH_ASSOC)->fetchAll();
+            $result = $result[0];
+        }
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('10', $result['qc_status']);

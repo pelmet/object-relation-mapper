@@ -2,14 +2,6 @@
 
 class ChildrenTest extends CommonTestClass
 {
-	protected $connection;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-    }
-
     /**
      * @dataProvider providerBasic
      */

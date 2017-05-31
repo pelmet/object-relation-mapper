@@ -67,6 +67,10 @@ abstract class Common extends Base\AORM
 			$this->children($matches[1]);
 		}
 
+		if (!is_array($this->childsData[$matches[1]])){
+            throw new Exception\ORM('For cProperty to work, childsData['.$matches[1].'] needs to be an array');
+        }
+
 		if (isset($this->childsData[$matches[1]][0]->{$matches[2]})) {
 			return $this->childsData[$matches[1]][0]->{$matches[2]};
 		} elseif (isset($this->childsData[$matches[1]][0]) && method_exists($this->childsData[$matches[1]][0], $matches[2])) {

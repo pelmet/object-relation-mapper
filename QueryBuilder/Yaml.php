@@ -23,7 +23,7 @@ class Yaml extends ABuilder
         $this->connectors[$connector->connectionAlias] = $connector;
     }
 
-    protected function getFilename(AORM $orm)
+    public function getFilename(AORM $orm)
     {
         return $this->connectors[$orm->getConfigDbServer()]->storagePath.$orm->getConfigDbTable().$this->connectors[$orm->getConfigDbServer()]->fileExtension;
     }
@@ -59,6 +59,8 @@ class Yaml extends ABuilder
             $key = false;
             if(in_array(false, $keys, true)){
                 $key = false;
+            } elseif(empty($keys)){
+                $key = key($fileData['values']);
             } else {
                 foreach(array_count_values($keys) as $keyIndex => $count){
                     if($count == count($keys)){
@@ -74,7 +76,7 @@ class Yaml extends ABuilder
         if($key === false){
             return Array();
         } else {
-            return $fileData['values'][$key];
+            return array_intersect_key ($fileData['values'][$key], array_flip($orm->getAllDbFieldsInternal()));
         }
     }
 
@@ -97,7 +99,7 @@ class Yaml extends ABuilder
         if($key === false){
             return Array();
         } else {
-            return $fileData['values'][$key];
+            return array_intersect_key ($fileData['values'][$key], array_flip($orm->getAllDbFieldsInternal()));
         }
     }
 
@@ -181,7 +183,20 @@ class Yaml extends ABuilder
      */
     public function deleteByOrm(AORM $orm)
     {
-        throw new \ObjectRelationMapper\Exception\QueryBuilder("Cant be implemented");
+        if(!$this->checkFile($orm)){
+            throw new QueryBuilder('Cant open the file for writing');
+        }
+        $fileData = yaml_parse_file($this->getFilename($orm));
+
+        foreach($this->loadMultiple($orm) as $ormToDelete){
+            $primaryKey = array_search($ormToDelete[$orm->getConfigDbPrimaryKey()], array_column($fileData['values'], $orm->getConfigDbPrimaryKey()));
+
+            if(isset($fileData['values'][$primaryKey])){
+                unset($fileData['values'][$primaryKey]);
+            }
+        }
+
+        yaml_emit_file($this->getFilename($orm), $fileData);
     }
 
     /**
@@ -221,22 +236,26 @@ class Yaml extends ABuilder
         }
 
         if (empty($keys)){
-            return $fileData['values'];
+            $return = $fileData['values'];
         } elseif (count($keys) == 1) {
             foreach($keys as $search){
                 $return = Array();
                 foreach($search as $primaryKey){
                     $return[] = $fileData['values'][array_search($primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()))];
                 }
-                return $return;
             }
         } else {
             $return =  Array();
             foreach(call_user_func_array('array_intersect', $keys) as $primaryKey){
                 $return[] = $fileData['values'][array_search($primaryKey, array_column($fileData['values'], $orm->getConfigDbPrimaryKey()))];
             }
-            return $return;
         }
+
+        foreach($return as &$value){
+            $value = array_intersect_key ($value, array_flip($orm->getAllDbFieldsInternal()));
+        }
+
+        return $return;
     }
 
     /**

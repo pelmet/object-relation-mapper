@@ -2,15 +2,6 @@
 
 class LoadTest extends CommonTestClass
 {
-	protected $connection;
-
-
-    public function setUp()
-    {
-        parent::setUp();
-
-    }
-
 	/**
 	 * @dataProvider providerBasic
 	 */
@@ -75,8 +66,12 @@ class LoadTest extends CommonTestClass
 	 */
 	public function testLoadMultipleFromArrayResult($connector, $testOrm)
 	{
-        $db = $this->getConnection($connector);
-        $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 5', \PDO::FETCH_ASSOC)->fetchAll();
+        if($this->isFileConnector($connector)){
+            $result = $this->fileConnectorGetFileData($connector, $testOrm->getQueryBuilder()->getFilename($testOrm));
+        } else {
+            $db = $this->getConnection($connector);
+            $result = $db->query('SELECT * FROM d_queued_commands WHERE qc_status = 5', \PDO::FETCH_ASSOC)->fetchAll();
+        }
 
 		$collection = $testOrm->loadMultiple($result);
 
