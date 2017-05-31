@@ -1,0 +1,3 @@
+test:app:
+  script:
+  - (cd _tests && phpunit)
