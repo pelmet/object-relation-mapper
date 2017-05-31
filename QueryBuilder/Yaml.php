@@ -235,6 +235,7 @@ class Yaml extends ABuilder
             $keys[$propertyName] = array_keys(array_column($fileData['values'], $orm->getDbField($propertyName), $orm->getConfigDbPrimaryKey()), $propertyValue);
         }
 
+        $return = Array();
         if (empty($keys)){
             $return = $fileData['values'];
         } elseif (count($keys) == 1) {
