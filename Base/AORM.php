@@ -164,6 +164,8 @@ abstract class AORM extends Iterator
 
 	abstract protected function setORMStorages();
 
+	abstract public function children($child, $order = NULL, $direction = NULL, $limit = NULL, $offset = NULL);
+
 	/**
 	 * Vrati Storage
 	 * @return IStorage

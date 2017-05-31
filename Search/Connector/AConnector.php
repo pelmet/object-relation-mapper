@@ -30,6 +30,9 @@ abstract class AConnector
     protected $functionColumn = Array();
     protected $additionalOrms = Array();
 
+    abstract public function composeLoadQuery();
+    abstract public function composeCountQuery();
+
     public function __construct(ORM $orm)
     {
         $this->orm = $orm;

@@ -5,7 +5,7 @@ namespace ObjectRelationMapper\DataMiner;
 class ArrayColumn
 {
 	/**
-	 * @var ORM
+	 * @var \ObjectRelationMapper\ORM
 	 **/
 	protected $orm;
 
