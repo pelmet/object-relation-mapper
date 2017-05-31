@@ -30,7 +30,7 @@ abstract class ABuilder
 	 * @param AORM $orm
 	 * @param $query
 	 * @param $params
-	 * @return array
+	 * @return int
 	 */
 	abstract public function countByQuery(AORM $orm, $query, $params);
 

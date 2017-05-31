@@ -42,9 +42,9 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
             /**
              * @var $database \PDO
              */
-            $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$type.'.sql'));
-            if(file_exists(BASE_DIR . '/Databases/'.$type.'-'.get_called_class().'.sql')){
-                $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$type.'-'.get_called_class().'.sql'));
+            $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$type.'/base.sql'));
+            if(file_exists(BASE_DIR . '/Databases/'.$type.'/'.get_called_class().'.sql')){
+                $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$type.'/'.get_called_class().'.sql'));
             }
         }
     }
@@ -53,7 +53,7 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
 	{
 		return Array(
 			'mysql' => Array('mysql', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('mysql'))),
-            //'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('sqlite'))),
+            'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('sqlite'))),
             //'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('yml'))),
 		);
     }
@@ -62,8 +62,17 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
     {
         return Array(
             'mysql' => Array('mysql', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('mysql'))),
-            //'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('sqlite'))),
-            //'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('yml'))),
+            'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('sqlite'))),
+            'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->getQueryBuilder('yml'))),
+        );
+    }
+
+    public function providerSearch()
+    {
+        return Array(
+            'mysql' => Array('mysql', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('mysql'))),
+            'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('sqlite'))),
+            //'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->getQueryBuilder('yml'))),
         );
     }
 }

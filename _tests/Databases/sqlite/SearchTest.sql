@@ -9,5 +9,5 @@ INSERT INTO `d_queued_commands`
 INSERT INTO `d_queued_commands_logs`
 (qc_id, qcl_id, qcl_text) VALUES
   (7,2,"ls -laf"),
-  (7,3,"ls -laf")
-  (8,4,"ls -laf")
+  (7,3,"ls -laf"),
+  (8,4,"ls -laf");

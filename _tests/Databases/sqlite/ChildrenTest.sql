@@ -4,4 +4,4 @@ INSERT INTO `d_queued_commands`
 
 INSERT INTO `d_queued_commands_logs`
 (qc_id, qcl_id, qcl_text) VALUES
-(5,2,"ls -laf");
+  (5,2,"ls -laf");

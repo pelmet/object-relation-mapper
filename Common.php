@@ -176,7 +176,7 @@ abstract class Common extends Base\AORM
 	 * Nahraje count pres danou query
 	 * @param $query
 	 * @param $params
-	 * @return array
+	 * @return int
 	 * @throws Exception\ORM
 	 */
 	public function countByQuery($query, $params)

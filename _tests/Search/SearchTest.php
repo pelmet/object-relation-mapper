@@ -10,7 +10,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchExact($connector, $testOrm)
 	{
@@ -25,7 +25,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchNotExact($connector, $testOrm)
 	{
@@ -39,7 +39,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchEmpty($connector, $testOrm)
 	{
@@ -52,7 +52,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchFrom($connector, $testOrm)
 	{
@@ -66,7 +66,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchTo($connector, $testOrm)
 	{
@@ -80,7 +80,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchLike($connector, $testOrm)
 	{
@@ -94,7 +94,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchNotNull($connector, $testOrm)
 	{
@@ -108,7 +108,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testSearchNull($connector, $testOrm)
 	{
@@ -120,7 +120,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testCountNothing($connector, $testOrm)
 	{
@@ -133,7 +133,7 @@ class SearchTest extends CommonTestClass
 	}
 
 	/**
-	 * @dataProvider providerBasic
+	 * @dataProvider providerSearch
 	 */
 	public function testCount($connector, $testOrm)
 	{
@@ -147,7 +147,7 @@ class SearchTest extends CommonTestClass
 
 
     /**
-     * @dataProvider providerBasic
+     * @dataProvider providerSearch
      */
 	public function testSearchWithChildrenWithoutSearchChild($connector, $testOrm)
 	{
@@ -164,30 +164,27 @@ class SearchTest extends CommonTestClass
 	}
 
     /**
-     * @dataProvider providerBasic
+     * @dataProvider providerSearch
      */
 	public function testSearchWithChildrenWithSearchChild($connector, $testOrm)
 	{
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
 		$search = new ObjectRelationMapper\Search\Search($testOrm);
 		$search->exact('status', 11);
-		$search->child('logs', "INNER");
+		$search->child('logs', 'INNER');
 		$results = $search->getResultsWithChildrenLoaded();
 
 		$this->assertNotEmpty($results);
-		$this->assertEquals(9, $results[0]->id);
-		$this->assertEquals(10, $results[1]->id);
+		$this->assertEquals(7, $results[0]->id);
+		$this->assertEquals(8, $results[1]->id);
 
-		$this->assertEquals(14, $results[0]->logs[0]->id);
-		$this->assertEquals(16, $results[0]->logs[1]->id);
-		$this->assertEquals(15, $results[1]->logs[0]->id);
+		$this->assertEquals(2, $results[0]->logs[0]->id);
+		$this->assertEquals(3, $results[0]->logs[1]->id);
+		$this->assertEquals(4, $results[1]->logs[0]->id);
 		$this->assertFalse(isset($results[1]->logs[1]));
 	}
 
     /**
-     * @dataProvider providerBasic
+     * @dataProvider providerSearch
      */
 	public function testSearchIn($connector, $testOrm)
 	{
@@ -208,7 +205,7 @@ class SearchTest extends CommonTestClass
 	}
 
     /**
-     * @dataProvider providerBasic
+     * @dataProvider providerSearch
      */
 	public function testSearchNotIn($connector, $testOrm)
 	{

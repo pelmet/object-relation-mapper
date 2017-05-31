@@ -16,7 +16,7 @@ class Search extends ASearch
 	 */
 	public function notExact($property, $value)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' != ' . $this->addParameter($value);
+		$this->connector->notExact($property, $value);
 		return $this;
 	}
 
@@ -28,7 +28,7 @@ class Search extends ASearch
 	 */
 	public function exact($property, $value)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' <=> ' . $this->addParameter($value);
+	    $this->connector->exact($property, $value);
 		return $this;
 	}
 
@@ -41,7 +41,7 @@ class Search extends ASearch
 	 */
 	public function from($property, $value, $equals = true)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' >' . ($equals ? '=' : '') . ' ' . $this->addParameter($value);
+		$this->connector->from($property, $value, $equals);
 		return $this;
 	}
 
@@ -54,7 +54,7 @@ class Search extends ASearch
 	 */
 	public function to($property, $value, $equals = true)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' <' . ($equals ? '=' : '') . ' ' . $this->addParameter($value);
+	    $this->connector->to($property, $value, $equals);
 		return $this;
 	}
 
@@ -66,7 +66,7 @@ class Search extends ASearch
 	 */
 	public function like($property, $value)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' LIKE ' . $this->addParameter($value);
+	    $this->connector->like($property, $value);
 		return $this;
 	}
 
@@ -78,7 +78,7 @@ class Search extends ASearch
 	 */
 	public function notLike($property, $value)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' NOT LIKE ' . $this->addParameter($value);
+	    $this->connector->notLike($property, $value);
 		return $this;
 	}
 
@@ -91,7 +91,7 @@ class Search extends ASearch
 	 */
 	public function propertyBetween($property, $min, $max)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' BETWEEN ' . $this->addParameter($min) . ' AND ' . $this->addParameter($max);
+	    $this->connector->propertyBetween($property, $min, $max);
 		return $this;
 	}
 
@@ -104,7 +104,7 @@ class Search extends ASearch
 	 */
 	public function valueBetween($value, $propertyFrom, $propertyTo)
 	{
-		$this->search[] = $this->addParameter($value) . ' BETWEEN ' . $this->dbFieldName($propertyFrom) . ' AND ' . $this->dbFieldName($propertyTo);
+	    $this->connector->valueBetween($value, $propertyFrom, $propertyTo);
 		return $this;
 	}
 
@@ -115,7 +115,7 @@ class Search extends ASearch
 	 */
 	public function null($property)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' IS NULL';
+	    $this->connector->null($property);
 		return $this;
 	}
 
@@ -126,7 +126,7 @@ class Search extends ASearch
 	 */
 	public function notNull($property)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' IS NOT NULL';
+	    $this->connector->notNull($property);
 		return $this;
 	}
 
@@ -136,7 +136,7 @@ class Search extends ASearch
 	 */
 	public function useOr()
 	{
-		$this->imploder = ' OR ';
+	    $this->connector->useOr();
 		return $this;
 	}
 
@@ -147,7 +147,7 @@ class Search extends ASearch
 	 */
 	public function limit($limit)
 	{
-		$this->limit = $limit;
+	    $this->connector->limit($limit);
 		return $this;
 	}
 
@@ -158,7 +158,7 @@ class Search extends ASearch
 	 */
 	public function offset($offset)
 	{
-		$this->offset = $offset;
+	    $this->connector->offset($offset);
 		return $this;
 	}
 
@@ -170,13 +170,18 @@ class Search extends ASearch
 	 */
 	public function addOrdering($ordering, $direction = self::ORDERING_ASCENDING)
 	{
-		$this->ordering[] = $this->dbFieldName($ordering) . ' ' . $direction;
+	    $this->connector->addOrdering($ordering, $direction);
 		return $this;
 	}
 
+    /**
+     * Prida random Ordering
+     * @return $this
+     */
 	public function addRandomOrdering()
 	{
-		$this->ordering[] = ' RAND() ';
+	    $this->connector->addRandomOrdering();
+	    return $this;
 	}
 
 	/**
@@ -186,7 +191,7 @@ class Search extends ASearch
 	 */
 	public function groupBy($property)
 	{
-		$this->group[] = $this->dbFieldName($property);
+	    $this->connector->groupBy($property);
 		return $this;
 	}
 
@@ -200,7 +205,7 @@ class Search extends ASearch
 	 */
 	public function child($childName, $joinType = 'LEFT', $additionalCols = Array(), $matching = '=')
 	{
-		$this->addChild($childName, $joinType, $additionalCols, $matching);
+	    $this->connector->child($childName, $joinType, $additionalCols, $matching);
 		return $this;
 	}
 
@@ -214,13 +219,7 @@ class Search extends ASearch
 	 */
 	public function notExist($child, $property, $value = NULL, $matching = '=')
 	{
-		if ($value != NULL) {
-			$this->addChild($child, 'LEFT OUTER', Array($property => $value), $matching);
-		} else {
-			$this->addChild($child, 'LEFT OUTER');
-		}
-
-		$this->search[] = $this->dbFieldName($child . '.' . $property) . ' IS NULL';
+	    $this->connector->notExist($child, $property, $value, $matching);
 		return $this;
 	}
 
@@ -232,7 +231,7 @@ class Search extends ASearch
 	 */
 	public function in($property, Array $values)
 	{
-		$this->search[] =$this->dbFieldName($property) . ' IN (' . implode(',', $this->prepareInValues($values)) .')';
+	    $this->connector->in($property, $values);
 		return $this;
 	}
 
@@ -244,21 +243,9 @@ class Search extends ASearch
 	 */
 	public function notIn($property, Array $values)
 	{
-		$this->search[] = $this->dbFieldName($property) . ' NOT IN (' . implode(',', $this->prepareInValues($values)) .')';
+	    $this->connector->notIn($property, $values);
 		return $this;
 	}
 
-	/**
-	 * pripravuje hodnoty pro PDO a vraci prepared nazvy
-	 * @param array $values
-	 * @return array
-	 */
-	private function prepareInValues(Array $values)
-	{
-		$preparedValues = array();
-		foreach($values AS $value){
-			$preparedValues[] = $this->addParameter($value);
-		}
-		return $preparedValues;
-	}
+
 }
