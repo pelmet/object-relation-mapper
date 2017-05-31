@@ -18,10 +18,10 @@ abstract class AColumn
 
 	/**
 	 * Construct
-	 * @param $col
-	 * @param $alias
-	 * @param string $type
-	 * @param string $length
+	 * @param mixed $col
+	 * @param mixed $alias
+	 * @param mixed $type
+	 * @param mixed $length
 	 * @param array $additionalParams
 	 */
 	public function __construct($col, $alias, $type = 'string', $length = '255', $additionalParams = Array())

@@ -721,7 +721,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vrati vsechna DB POLE bud v poli nebo spojene pres glue
-	 * @param null $glue
+	 * @param mixed $glue
 	 * @param bool $includeTableName
 	 * @param array $exclude
 	 * @return string|array
