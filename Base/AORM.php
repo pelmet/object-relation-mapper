@@ -876,4 +876,13 @@ abstract class AORM extends Iterator
 		$this->mfuConfig[$alias][$parameter] = true;
 	}
 
+    /**
+     * Vrati data ormka primo v poli
+     * @return Array
+     */
+	public function getData()
+    {
+        return $this->data;
+    }
+
 }

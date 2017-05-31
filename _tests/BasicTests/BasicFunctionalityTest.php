@@ -21,6 +21,20 @@ class BasicFunctionalityTest extends CommonTestClass
 		$this->assertEquals($testOrm->primaryKey, $testOrm->id);
 	}
 
+    /**
+     * @dataProvider providerBasic
+     */
+    public function testGetORMDataAsArray($connector, $testOrm)
+    {
+        $testOrm->primaryKey = 125;
+
+        $rawData = $testOrm->getData();
+
+        $this->assertTrue(is_array($rawData));
+        $this->assertEquals(125, $rawData['id']);
+        $this->assertEquals($testOrm->primaryKey, $rawData['id']);
+    }
+
 	/**
 	 * @dataProvider providerBasic
 	 */
