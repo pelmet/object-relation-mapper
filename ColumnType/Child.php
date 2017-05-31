@@ -20,11 +20,10 @@ class Child extends AColumn implements IColumn
 	 */
 	public function __construct($ormName, $alias, $localKey, $foreignKey, $additionalParams = Array())
 	{
+	    parent::__construct(NULL, $alias, NULL, NULL, $additionalParams);
 		$this->ormName = $ormName;
-		$this->alias = $alias;
 		$this->localKey = $localKey;
 		$this->foreignKey = $foreignKey;
-		$this->additionalParams = $additionalParams;
 	}
 
 	public function generateDbLine()

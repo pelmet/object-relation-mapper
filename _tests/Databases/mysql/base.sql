@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands` (
   `qc_status` int(1) NOT NULL,
   `qc_command` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`qc_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
 DROP TABLE IF EXISTS d_queued_commands_logs;
 CREATE TABLE IF NOT EXISTS `d_queued_commands_logs` (
@@ -15,4 +15,4 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands_logs` (
   `qc_id` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `qcl_text` varchar(2000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`qcl_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
