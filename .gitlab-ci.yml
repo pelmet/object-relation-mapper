@@ -2,3 +2,4 @@ test:app:
   script:
   - find ./ -type f -name '*.php' -exec php -l {} \;
   - (cd _tests && phpunit)
+  - whoami
