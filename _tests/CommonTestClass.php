@@ -86,7 +86,7 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
                 return $result['values'];
                 break;
             default:
-                throw new \Exception('No such connector configured: '.$connector);
+                throw new \Exception('No such connector configured: '.$type);
             }
     }
 
