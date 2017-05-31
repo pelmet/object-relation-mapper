@@ -7,7 +7,7 @@ use ObjectRelationMapper\Base\AORM;
 abstract class AExchange
 {
 	/**
-	 * @var ORM
+	 * @var AORM
 	 **/
 	protected $orm;
 

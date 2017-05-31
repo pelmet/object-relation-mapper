@@ -27,7 +27,7 @@ class DB extends ABuilder
 	public function load(AORM $orm)
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
-		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
+		$query = 'SELECT ' . $orm->getAllDbFieldsInternal(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
 		$columns = Array();
 		$params = Array();
@@ -65,7 +65,7 @@ class DB extends ABuilder
 	{
 		//ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
 		// SELECT columns FROM table WHERE
-		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable() . ' WHERE ';
+		$query = 'SELECT ' . $orm->getAllDbFieldsInternal(', ', true) . ' FROM ' . $orm->getConfigDbTable() . ' WHERE ';
 		// primaryKey = :primaryKey
 		$query .= $orm->getConfigDbPrimaryKey() . ' = :primaryKey ';
 
@@ -239,7 +239,7 @@ class DB extends ABuilder
 	public function loadMultiple(AORM $orm)
 	{
         //ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
-		$query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
+		$query = 'SELECT ' . $orm->getAllDbFieldsInternal(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
 		$columns = Array();
 		$params = Array();
@@ -274,7 +274,7 @@ class DB extends ABuilder
 	 */
 	public function insertMultiple(AORM $orm, Array $data)
 	{
-		$columns = array_diff($orm->getAllDbFields(), Array($orm->getConfigDbPrimaryKey()));
+		$columns = array_diff($orm->getAllDbFieldsInternal(), Array($orm->getConfigDbPrimaryKey()));
 		$query = 'INSERT INTO ' . $orm->getConfigDbTable() . '  ';
 		$query .= '(' . implode(',', $columns) . ')';
 

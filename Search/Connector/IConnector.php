@@ -183,4 +183,16 @@ interface IConnector
      * @return Array
      */
     public function getParams();
+
+    /**
+     * Return results in objects with children
+     * @return array
+     */
+    public function getResultsWithChildrenLoaded();
+
+    /**
+     * Return results in array
+     * @return array
+     */
+    public function getResultsInArray();
 }

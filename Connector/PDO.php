@@ -8,7 +8,7 @@ use ObjectRelationMapper\Exception\QueryBuilder as EQueryBuilder;
 class PDO implements IConnector
 {
 	/**
-	 * @var PDO
+	 * @var \PDO
 	 */
 	protected $db;
 

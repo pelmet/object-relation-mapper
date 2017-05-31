@@ -13,7 +13,7 @@ class SQLite extends DB
     public function load(AORM $orm)
     {
         //ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
-        $query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
+        $query = 'SELECT ' . $orm->getAllDbFieldsInternal(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
         $columns = Array();
         $params = Array();
@@ -103,7 +103,7 @@ class SQLite extends DB
     public function loadMultiple(AORM $orm)
     {
         //ted uz vime ze se jedna o select je tedy nutne ho spravne poskladat
-        $query = 'SELECT ' . $orm->getAllDbFields(', ', true) . ' FROM ' . $orm->getConfigDbTable();
+        $query = 'SELECT ' . $orm->getAllDbFieldsInternal(', ', true) . ' FROM ' . $orm->getConfigDbTable();
 
         $columns = Array();
         $params = Array();
