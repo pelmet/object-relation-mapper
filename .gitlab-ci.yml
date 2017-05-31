@@ -2,4 +2,4 @@ test:app:
   script:
   - find ./ -type f -name '*.php' -exec php -l {} \;
   - (cd _tests && phpunit)
-  - whoami
+  - (cd _tests && phpstan analyze -l 5 --autoload-file=_ps-autoload.php ./../Base ./../QueryBuilder ./../ColumnType ./../ConfigStorage ./../Connector ./../DataExchange ./../DataMiner ./../Exception ./../Search)
