@@ -63,17 +63,17 @@ abstract class AORM extends Iterator
 	protected $childsData = Array();
 
 	/**
-	 * @var Array
+	 * @var array
 	 */
 	protected $data = Array();
 
 	/**
-	 * @var Array
+	 * @var array
 	 */
 	protected $dataAliases = Array();
 
 	/**
-	 * @var Array
+	 * @var array
 	 */
 	protected $additionalConfiguration = Array();
 
@@ -837,7 +837,7 @@ abstract class AORM extends Iterator
 	/**
 	 * Return orm properties
 	 * @param null $glue
-	 * @return Array|string
+	 * @return array|string
 	 */
 	public function ormPropertyGenerator($glue = NULL)
 	{
@@ -880,7 +880,7 @@ abstract class AORM extends Iterator
 
     /**
      * Vrati data ormka primo v poli
-     * @return Array
+     * @return array
      */
 	public function getData()
     {
