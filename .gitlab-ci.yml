@@ -1,5 +1,8 @@
 test:app:
+  tags:
+    - php71
+    - shell
   script:
   - find ./ -type f -name '*.php' | xargs -I {} php -l {}
   - (cd _tests && phpunit)
-  - (cd _tests && phpstan analyze -l 4 --autoload-file=_ps-autoload.php ./../Base ./../QueryBuilder ./../ColumnType ./../ConfigStorage ./../Connector ./../DataExchange ./../DataMiner ./../Exception ./../Search)
+  #- (cd _tests && phpstan analyze -l 4 --autoload-file=_ps-autoload.php ./../Base ./../QueryBuilder ./../ColumnType ./../ConfigStorage ./../Connector ./../DataExchange ./../DataMiner ./../Exception ./../Search)
