@@ -91,7 +91,7 @@ class DbToOrm
 		$this->addOrmLine('/**');
 
 		foreach ($this->columns as $columnName => $columnInfo) {
-			$this->addOrmLine('* @property ' . $columnInfo['property'] . ' ' . $this->toCamelCase($columnName, $colPrefix));
+			$this->addOrmLine('* @property ' . $columnInfo['property'] . ' $' . $this->toCamelCase($columnName, $colPrefix));
 		}
 		$this->addOrmLine('**/');
 
