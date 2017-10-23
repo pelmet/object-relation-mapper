@@ -1,0 +1,68 @@
+php-55:
+  image: docker.xcroco.com/docker/centos-7/php-55-composer
+  container_name: php-55
+  links:
+    - mariadb55
+    - mariadb100
+    - mariadb101
+    - mariadb102
+    - mariadb103
+  ports:
+    - "8000:80"
+  volumes:
+    - ./:/var/www/object-relation-mapper
+  working_dir: /var/www/object-relation-mapper
+php-71:
+  container_name: php-71
+  image: docker.xcroco.com/docker/centos-7/php-71-composer
+  links:
+    - mariadb55
+    - mariadb100
+    - mariadb101
+    - mariadb102
+    - mariadb103
+  ports:
+    - "8001:80"
+  volumes:
+    - ./:/var/www/object-relation-mapper
+  working_dir: /var/www/object-relation-mapper
+mariadb55:
+  image: mariadb:5.5
+  container_name: mariadb55
+  environment:
+    MYSQL_ROOT_PASSWORD: "testpass"
+    MYSQL_USER: dbtestuser
+    MYSQL_PASSWORD: testpass
+    MYSQL_DATABASE: db_test_db
+mariadb100:
+  image: mariadb:10.0
+  container_name: mariadb100
+  environment:
+    MYSQL_ROOT_PASSWORD: "testpass"
+    MYSQL_USER: dbtestuser
+    MYSQL_PASSWORD: testpass
+    MYSQL_DATABASE: db_test_db
+mariadb101:
+  image: mariadb:10.1
+  container_name: mariadb101
+  environment:
+    MYSQL_ROOT_PASSWORD: "testpass"
+    MYSQL_USER: dbtestuser
+    MYSQL_PASSWORD: testpass
+    MYSQL_DATABASE: db_test_db
+mariadb102:
+  image: mariadb:10.2
+  container_name: mariadb102
+  environment:
+    MYSQL_ROOT_PASSWORD: "testpass"
+    MYSQL_USER: dbtestuser
+    MYSQL_PASSWORD: testpass
+    MYSQL_DATABASE: db_test_db
+mariadb103:
+  image: mariadb:10.3
+  container_name: mariadb103
+  environment:
+    MYSQL_ROOT_PASSWORD: "testpass"
+    MYSQL_USER: dbtestuser
+    MYSQL_PASSWORD: testpass
+    MYSQL_DATABASE: db_test_db

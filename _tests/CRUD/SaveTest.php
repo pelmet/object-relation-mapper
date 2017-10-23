@@ -23,8 +23,8 @@ class SaveTest extends CommonTestClass
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('5', $result['qc_status']);
-		$this->assertEquals(NULL, $result['qc_time_start']);
-		$this->assertEquals(NULL, $result['qc_time_end']);
+		$this->assertEquals(0, $result['qc_time_start']);
+		$this->assertEquals(0, $result['qc_time_end']);
 	}
 
 	/**
@@ -76,8 +76,8 @@ class SaveTest extends CommonTestClass
 
 		$this->assertEquals('ls -l', $result['qc_command']);
 		$this->assertEquals('10', $result['qc_status']);
-		$this->assertEquals(NULL, $result['qc_time_start']);
-		$this->assertEquals(NULL, $result['qc_time_end']);
+		$this->assertEquals(0, $result['qc_time_start']);
+		$this->assertEquals(0, $result['qc_time_end']);
 	}
 
 	/**

@@ -13,36 +13,50 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $this->queryBuilders['mysql'] = new \ObjectRelationMapper\QueryBuilder\DB(new \ObjectRelationMapper\Connector\PDO($this->getConnection('mysql')));
-        $this->queryBuilders['sqlite'] = new \ObjectRelationMapper\QueryBuilder\SQLite(new \ObjectRelationMapper\Connector\PDO($this->getConnection('sqlite')));
-        $this->queryBuilders['yml'] = new \ObjectRelationMapper\QueryBuilder\Yaml(new \ObjectRelationMapper\Connector\Yaml('/tmp/'));
+        foreach($GLOBALS['databases'] as $databaseName => $database){
+            if($database['test_data'] == 'mysql'){
+                $this->queryBuilders[$databaseName] = new \ObjectRelationMapper\QueryBuilder\DB(new \ObjectRelationMapper\Connector\PDO($this->getConnection($databaseName)));
+            } elseif($database['test_data'] == 'sqlite'){
+                $this->queryBuilders[$databaseName] = new \ObjectRelationMapper\QueryBuilder\SQLite(new \ObjectRelationMapper\Connector\PDO($this->getConnection($databaseName)));
+            } elseif($database['test_data'] == 'yml'){
+                $this->queryBuilders[$databaseName] = new \ObjectRelationMapper\QueryBuilder\Yaml(new \ObjectRelationMapper\Connector\Yaml('/tmp/'));
+            } else {
+                throw new \Exception('Unknown databse format');
+            }
+        }
     }
 
     public function providerBasic()
     {
-        return Array(
-            'mysql' => Array('mysql', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->queryBuilders['mysql'])),
-            'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->queryBuilders['sqlite'])),
-            'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->queryBuilders['yml'])),
-        );
+        $orms = Array();
+
+        foreach($this->queryBuilders as $builderType => $builder){
+            $orms[$builderType] = Array($builderType, new \ObjectRelationMapper\Tests\ORMTest(NULL, $builder));
+        }
+
+        return $orms;
     }
 
     public function providerValidation()
     {
-        return Array(
-            'mysql' => Array('mysql', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders['mysql'])),
-            'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders['sqlite'])),
-            'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $this->queryBuilders['yml'])),
-        );
+        $orms = Array();
+
+        foreach($this->queryBuilders as $builderType => $builder){
+            $orms[$builderType] = Array($builderType, new \ObjectRelationMapper\Tests\ORMTestValidation(NULL, $builder));
+        }
+
+        return $orms;
     }
 
     public function providerSearch()
     {
-        return Array(
-            'mysql' => Array('mysql', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->queryBuilders['mysql'])),
-            'sqlite' => Array('sqlite', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->queryBuilders['sqlite'])),
-            //'yml' => Array('yml', new \ObjectRelationMapper\Tests\ORMTest(NULL, $this->queryBuilders['yml'])),
-        );
+        $orms = Array();
+
+        foreach($this->queryBuilders as $builderType => $builder){
+            $orms[$builderType] = Array($builderType, new \ObjectRelationMapper\Tests\ORMTest(NULL, $builder));
+        }
+
+        return array_diff_key($orms, Array('yml' => 0));
     }
 
     /**
@@ -105,23 +119,23 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
             /**
              * @var $database \PDO
              */
-            $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$type.'/base.sql'));
-            if(file_exists(BASE_DIR . '/Databases/'.$type.'/'.get_called_class().'.sql')){
-                $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$type.'/'.get_called_class().'.sql'));
+            $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$this->getConnectorConfiguration($type)['test_data'].'/base.sql'));
+            if(file_exists(BASE_DIR . '/Databases/'.$this->getConnectorConfiguration($type)['test_data'].'/'.get_called_class().'.sql')){
+                $database->exec(file_get_contents(BASE_DIR . '/Databases/'.$this->getConnectorConfiguration($type)['test_data'].'/'.get_called_class().'.sql'));
             }
         }
 
         foreach(array_diff_key($this->queryBuilders, $this->connections) as $type => $connector){
             $destination = $this->getConnectorConfiguration($type)['dsn'];
             // Upload base files into their location
-            $source = BASE_DIR . '/Databases/'.$type.'/base';
+            $source = BASE_DIR . '/Databases/'.$this->getConnectorConfiguration($type)['test_data'].'/base';
             if(is_dir($source)){
                 foreach(array_diff(scandir($source), $this->excludedFiles) as $file){
                     file_put_contents($destination . $file, file_get_contents($source . '/' . $file));
                 }
             }
 
-            $source = BASE_DIR . '/Databases/'.$type.'/'.get_called_class();
+            $source = BASE_DIR . '/Databases/'.$this->getConnectorConfiguration($type)['test_data'].'/'.get_called_class();
             // Upload specific test files (if any) into their location
             if(is_dir($source)){
                 foreach(array_diff(scandir($source), $this->excludedFiles) as $file){
