@@ -1,6 +1,6 @@
 <?php
 
-if(is_file("/.dockerenv")){
+if(is_file("/.dockerenv")) {
     $GLOBALS['databases'] = Array(
         'mariadb55' => Array(
             'dsn' => 'mysql:host=mariadb55;dbname=db_test_db',
@@ -34,6 +34,30 @@ if(is_file("/.dockerenv")){
             'dsn' => 'mysql:host=mariadb103;dbname=db_test_db',
             'user' => "dbtestuser",
             'pass' => "testpass",
+            'type' => 'db',
+            'test_data' => 'mysql'
+        ),
+        'sqlite' => Array(
+            'dsn' => 'sqlite::memory:',
+            'user' => NULL,
+            'pass' => NULL,
+            'type' => 'db',
+            'test_data' => 'sqlite'
+        ),
+        'yml' => Array(
+            'dsn' => '/tmp/',
+            'user' => NULL,
+            'pass' => NULL,
+            'type' => 'file',
+            'test_data' => 'yml'
+        )
+    );
+} elseif (getenv('GITLAB_CI') !== false) {
+    $GLOBALS['databases'] = Array(
+        'mysql' => Array(
+            'dsn' => 'mysql:host=localhost;dbname=test',
+            'user' => NULL,
+            'pass' => NULL,
             'type' => 'db',
             'test_data' => 'mysql'
         ),
