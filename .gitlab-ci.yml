@@ -24,6 +24,7 @@ test:
     - shell
   stage: test
   script:
+    - pwd
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN docker.xcroco.com
     - docker-compose up -d
     - sleep 3

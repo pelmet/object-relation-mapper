@@ -10,8 +10,8 @@ php-55:
   ports:
     - "8000:80"
   volumes:
-    - ./:/var/www/object-relation-mapper
-  working_dir: /var/www/object-relation-mapper
+    - ./:/var/www/orm
+  working_dir: /var/www/orm
 php-71:
   container_name: php-71
   image: docker.xcroco.com/docker/centos-7/php-71-composer
@@ -24,8 +24,8 @@ php-71:
   ports:
     - "8001:80"
   volumes:
-    - ./:/var/www/object-relation-mapper
-  working_dir: /var/www/object-relation-mapper
+    - ./:/var/www/orm
+  working_dir: /var/www/orm
 mariadb55:
   image: mariadb:5.5
   container_name: mariadb55
