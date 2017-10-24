@@ -1,7 +1,7 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.5/phpunit.xsd"
-        bootstrap="_bootstrap.php"
+        bootstrap="_tests/_bootstrap.php"
         backupGlobals="false"
         backupStaticAttributes="false"
         cacheTokens="false"
@@ -24,11 +24,10 @@
 
     <testsuites>
         <testsuite name="ALL">
-            <directory>BasicTests</directory>
-            <directory>DataExchange</directory>
-            <directory>CRUD</directory>
-            <directory>Search</directory>
+            <directory>_tests/BasicTests</directory>
+            <directory>_tests/DataExchange</directory>
+            <directory>_tests/CRUD</directory>
+            <directory>_tests/Search</directory>
         </testsuite>
     </testsuites>
-
 </phpunit>
