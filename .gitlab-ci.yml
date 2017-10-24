@@ -26,6 +26,9 @@ test:
   script:
     - pwd
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN docker.xcroco.com
+    - docker-compose stop
+    - docker-compose rm -f
+    - docker volume rm `docker volume ls -q -f dangling=true` > /dev/null
     - docker-compose up -d
     - sleep 10
     - docker exec -t php-55 phpunit
