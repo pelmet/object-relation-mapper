@@ -1,5 +1,5 @@
 php-55:
-  image: docker.xcroco.com/docker/centos-7/php-55-composer
+  image: docker.xcroco.com/docker/centos-7/php-55-testing
   container_name: php-55
   links:
     - mariadb55
@@ -7,22 +7,30 @@ php-55:
     - mariadb101
     - mariadb102
     - mariadb103
-  ports:
-    - "8000:80"
   volumes:
     - ./:/var/www/orm
   working_dir: /var/www/orm
-php-71:
-  container_name: php-71
-  image: docker.xcroco.com/docker/centos-7/php-71-composer
+php-70:
+  container_name: php-70
+  image: docker.xcroco.com/docker/centos-7/php-70-testing
   links:
     - mariadb55
     - mariadb100
     - mariadb101
     - mariadb102
     - mariadb103
-  ports:
-    - "8001:80"
+  volumes:
+    - ./:/var/www/orm
+  working_dir: /var/www/orm
+php-71:
+  container_name: php-71
+  image: docker.xcroco.com/docker/centos-7/php-71-testing
+  links:
+    - mariadb55
+    - mariadb100
+    - mariadb101
+    - mariadb102
+    - mariadb103
   volumes:
     - ./:/var/www/orm
   working_dir: /var/www/orm
