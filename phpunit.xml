@@ -21,6 +21,19 @@
         timeoutForMediumTests="10"
         timeoutForLargeTests="60"
         verbose="false">
+    <logging>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+    </logging>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">Base/</directory>
+            <directory suffix=".php">ColumnType/</directory>
+            <directory suffix=".php">ConfigStorage/</directory>
+            <directory suffix=".php">DataExchange/</directory>
+            <directory suffix=".php">QueryBuilder/</directory>
+            <directory suffix=".php">Search/</directory>
+        </whitelist>
+    </filter>
 
     <testsuites>
         <testsuite name="ALL">
