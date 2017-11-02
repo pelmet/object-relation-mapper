@@ -1,36 +1,100 @@
-stages:
-  - code-check
-  - test
+variables:
+  MYSQL_DATABASE: db_test_db
+  MYSQL_ROOT_PASSWORD: testpass
+  MYSQL_USER: dbtestuser
+  MYSQL_PASSWORD: testpass
 
-lint:
+stages:
+  - lint
+  - test
+  - phpstan
+
+lint-php55:
+  image: docker.xcroco.com/docker/centos-7/php-55-testing
   tags:
-    - php71
-    - shell
-  stage: code-check
+    - docker
+  stage: lint
   script:
     - find ./ -type f -name '*.php' | xargs -I {} php -l {}
 
-phpstan:
+lint-php70:
+  image: docker.xcroco.com/docker/centos-7/php-70-testing
   tags:
-    - php71
-    - shell
-  stage: code-check
+    - docker
+  stage: lint
   script:
-    - phpstan analyze -l 4 --autoload-file=_tests/_ps-autoload.php Base QueryBuilder ColumnType ConfigStorage Connector DataExchange DataMiner Exception Search
+    - find ./ -type f -name '*.php' | xargs -I {} php -l {}
 
-test:
+lint-php71:
+  image: docker.xcroco.com/docker/centos-7/php-71-testing
   tags:
-    - php71
-    - shell
+    - docker
+  stage: lint
+  script:
+    - find ./ -type f -name '*.php' | xargs -I {} php -l {}
+
+
+test-php55:
+  image: docker.xcroco.com/docker/centos-7/php-55-testing
+  tags:
+    - docker
+  services:
+    - name: mariadb:5.5
+      alias: mariadb55
+    - name: mariadb:10.0
+      alias: mariadb100
+    - name: mariadb:10.1
+      alias: mariadb101
+    - name: mariadb:10.2
+      alias: mariadb102
+    - name: mariadb:10.3
+      alias: mariadb103
   stage: test
   script:
-    - pwd
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN docker.xcroco.com
-    - docker-compose stop
-    - docker-compose rm -f
-    - docker-compose up -d
-    - sleep 20
-    - docker exec -t php-55 phpunit
-    - docker exec -t php-71 phpunit
-    - docker-compose stop
-    - docker-compose rm -f
+    - phpunit
+
+test-php70:
+  image: docker.xcroco.com/docker/centos-7/php-70-testing
+  tags:
+    - docker
+  services:
+    - name: mariadb:5.5
+      alias: mariadb55
+    - name: mariadb:10.0
+      alias: mariadb100
+    - name: mariadb:10.1
+      alias: mariadb101
+    - name: mariadb:10.2
+      alias: mariadb102
+    - name: mariadb:10.3
+      alias: mariadb103
+  stage: test
+  script:
+    - phpunit
+
+test-php71:
+  image: docker.xcroco.com/docker/centos-7/php-71-testing
+  tags:
+    - docker
+  services:
+    - name: mariadb:5.5
+      alias: mariadb55
+    - name: mariadb:10.0
+      alias: mariadb100
+    - name: mariadb:10.1
+      alias: mariadb101
+    - name: mariadb:10.2
+      alias: mariadb102
+    - name: mariadb:10.3
+      alias: mariadb103
+  stage: test
+  script:
+    - phpunit
+
+phpstan:
+  image: docker.xcroco.com/docker/centos-7/php-71-testing
+  tags:
+    - docker
+  stage: phpstan
+  script:
+    - phpstan analyze -l 4 --autoload-file=_tests/_ps-autoload.php Base QueryBuilder ColumnType ConfigStorage Connector DataExchange DataMiner Exception Search

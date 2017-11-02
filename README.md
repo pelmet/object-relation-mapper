@@ -2,6 +2,7 @@ TESTS
 =====
 
 [![build status](https://git.xcroco.com/frameworks/orm/badges/master/build.svg)](https://git.xcroco.com/frameworks/orm/commits/master)
+[![coverage report](https://git.xcroco.com/frameworks/orm/badges/master/coverage.svg)](https://git.xcroco.com/frameworks/orm/commits/master)
 
 OBJECT RELATION MAPPER
 ======================
