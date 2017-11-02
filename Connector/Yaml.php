@@ -26,6 +26,14 @@ class Yaml implements IConnector
     /**
      * @inheritdoc
      */
+    public function queryWrite($query, $parameters, $server, $fetchType = \PDO::FETCH_ASSOC)
+    {
+        throw new \Exception('Cant be implemented');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function exec($query, $parameters, $server)
     {
         throw new \Exception('Cant be implemented');

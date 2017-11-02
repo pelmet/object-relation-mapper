@@ -154,7 +154,7 @@ class SQLite extends DB
         $query .= '( ' . implode(', ', $values) . ' ) ';
         if (!empty($columns)) {
             $query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
-            $id = $this->connector->query('SELECT last_insert_rowid() as id', Array(), $orm->getConfigDbServer());
+            $id = $this->connector->queryWrite('SELECT last_insert_rowid() as id', Array(), $orm->getConfigDbServer());
             if($id[0]['id'] != 0){
                 $orm->primaryKey = $id[0]['id'];
             }

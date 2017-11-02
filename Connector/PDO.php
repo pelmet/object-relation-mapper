@@ -43,7 +43,12 @@ class PDO implements IConnector
 		return $query->fetchAll($fetchType);
 	}
 
-	/**
+	public function queryWrite($query, $parameters, $server, $fetchType = \PDO::FETCH_ASSOC)
+    {
+        return $this->query($query, $parameters, $server, $fetchType);
+    }
+
+    /**
 	 * @inheritdoc
 	 */
 	public function exec($query, $parameters, $server)
@@ -58,4 +63,9 @@ class PDO implements IConnector
 
 		return true;
 	}
+
+	public function getLastInsertId()
+    {
+
+    }
 }

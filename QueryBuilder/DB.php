@@ -106,7 +106,7 @@ class DB extends ABuilder
 		$query .= implode(', ', $columns);
 		if (!empty($columns)) {
 			$query = $this->connector->exec($query, $params, $orm->getConfigDbServer());
-			$id = $this->connector->query('SELECT LAST_INSERT_ID() as id', Array(), $orm->getConfigDbServer());
+			$id = $this->connector->queryWrite('SELECT LAST_INSERT_ID() as id', Array(), $orm->getConfigDbServer());
 			if($id[0]['id'] != 0){
 				$orm->primaryKey = $id[0]['id'];
 			}

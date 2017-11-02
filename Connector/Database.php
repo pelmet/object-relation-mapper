@@ -18,6 +18,15 @@ class Database implements IConnector
         return $q->query($query)->par($parameters)->s($server)->fetch($fetchType)->ex();
 	}
 
+    /**
+     * @inheritdoc
+     */
+	public function queryWrite($query, $parameters, $server, $fetchType = \PDO::FETCH_ASSOC)
+    {
+        $q = new \Query();
+        return $q->query($query)->par($parameters)->s($server)->fromWrite()->fetch($fetchType)->ex();
+    }
+
 	/**
 	 * @inheritdoc
 	 */

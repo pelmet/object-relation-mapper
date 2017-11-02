@@ -13,6 +13,15 @@ interface IConnector
 	 */
 	public function query($query, $parameters, $server);
 
+    /**
+     * Runne query z write serveru a vypise vysledek
+     * @param $query
+     * @param $parameters
+     * @param $server
+     * @return mixed
+     */
+    public function queryWrite($query, $parameters, $server);
+
 	/**
 	 * Runne query a nevrati vysledek
 	 * @param $query
