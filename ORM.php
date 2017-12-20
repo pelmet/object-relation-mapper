@@ -127,7 +127,9 @@ abstract class ORM extends Common implements Base\IORM
 			$this->loadClassFromArray($this->queryBuilder->load($this));
 		}
 
-		$this->changedVariables = Array();
+		if($this->isLoaded()){
+            $this->changedVariables = Array();
+        }
 
 		if ($this->afterLoad() === false) {
 			return false;
