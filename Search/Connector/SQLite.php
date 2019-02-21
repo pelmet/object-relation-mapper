@@ -14,4 +14,18 @@ class SQLite extends DB
     {
         $this->search[] = $this->dbFieldName($property) . ' IS ' . $this->addParameter($value);
     }
+
+    /**
+     * Prida Field ordering
+     * @param string $ordering
+     * @param array $orderedValues
+     */
+    public function addFieldOrdering($ordering, array $orderedValues)
+    {
+        $params = [];
+        foreach ($orderedValues as $index => $value) {
+            $params[] = ' WHEN ' . $this->addParameter($value) . ' THEN ' . $index;
+        }
+        $this->ordering[] = ' CASE '.$this->dbFieldName($ordering)." " . implode(" ", $params)." END";
+    }
 }

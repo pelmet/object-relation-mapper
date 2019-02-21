@@ -225,4 +225,19 @@ class SearchTest extends CommonTestClass
 		$this->assertFalse(isset($toCheck[7]));
 		$this->assertTrue(isset($toCheck[8]));
 	}
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchOrderByField($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->in('id', array(5,6,7));
+        $search->addFieldOrdering('id', array(6,7,5));
+        $results = $search->getResults();
+
+        $this->assertEquals(6, $results[0]->id);
+        $this->assertEquals(7, $results[1]->id);
+        $this->assertEquals(5, $results[2]->id);
+    }
 }
