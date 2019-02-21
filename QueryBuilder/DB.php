@@ -131,7 +131,9 @@ class DB extends ABuilder
 				$columns[] = $dbColumn . ' = :' . $dbColumn;
 				$params[] = Array(':' . $dbColumn, $propertyValue);
 			} else {
-				if ($dbColumn != $orm->getConfigDbPrimaryKey()) {
+				// save only changed columns
+				$columnIsChanged = $propertyName . 'IsChanged';
+				if (($dbColumn != $orm->getConfigDbPrimaryKey()) && $orm->$columnIsChanged()) {
 					$columns[] = $dbColumn . ' = :' . $dbColumn;
 					$params[] = Array(':' . $dbColumn, $propertyValue);
 				}
