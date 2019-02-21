@@ -124,6 +124,14 @@ interface IConnector
     public function addRandomOrdering();
 
     /**
+     * Prida Field ordering
+     * @param string $ordering
+     * @param array $orderedValues
+     * @return void
+     */
+    public function addFieldOrdering($ordering, array $orderedValues);
+
+    /**
      * Prida column pro group by
      * @param $property
      * @return void

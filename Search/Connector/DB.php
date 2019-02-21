@@ -206,6 +206,20 @@ class DB extends AConnector implements IConnector
     }
 
     /**
+     * Prida Field ordering
+     * @param string $ordering
+     * @param array $orderedValues
+     */
+    public function addFieldOrdering($ordering, array $orderedValues)
+    {
+        $params = [];
+        foreach ($orderedValues as $value) {
+            $params[] = $this->addParameter($value);
+        }
+        $this->ordering[] = ' FIELD('.$this->dbFieldName($ordering).','.implode(',', $params).')';
+    }
+
+    /**
      * Prida column pro group by
      * @param $property
      * @return void

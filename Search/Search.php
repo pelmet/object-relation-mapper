@@ -184,6 +184,18 @@ class Search extends ASearch
 	    return $this;
 	}
 
+    /**
+     * Prida Field ordering
+     * @param string $ordering
+     * @param array $orderedValues
+     * @return $this
+     */
+    public function addFieldOrdering($ordering, array $orderedValues)
+    {
+        $this->connector->addFieldOrdering($ordering, $orderedValues);
+        return $this;
+    }
+
 	/**
 	 * Prida column pro group by
 	 * @param $property
