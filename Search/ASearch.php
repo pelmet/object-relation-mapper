@@ -45,6 +45,26 @@ abstract class ASearch
 		return $this->connector->composeLoadQuery();
 	}
 
+    /**
+     * Vrati Query s parametry, vhodne spise na testovani
+     * @return string
+     */
+    public function getQueryString()
+    {
+        $query = $this->connector->composeLoadQuery();
+        $params = $this->connector->getParams();
+        krsort($params);
+        foreach ($params as $param) {
+            list($key, $value) = $param;
+            if (is_numeric($value)) {
+                $query = str_replace($key, $value, $query);
+            } else {
+                $query = str_replace($key, "'" . is_string($value) ? $value : json_encode($value) . "'", $query);
+            }
+        }
+        return $query;
+    }
+
 	/**
 	 * Vrati count query
 	 * @return mixed
