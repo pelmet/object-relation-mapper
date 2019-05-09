@@ -82,6 +82,19 @@ class Search extends ASearch
 		return $this;
 	}
 
+    /**
+     * REGEXP pattern
+     * @param string $property
+     * @param string $pattern
+     * @param bool $binary
+     * @return $this
+     */
+    public function regexp($property, $pattern, $binary = false)
+    {
+        $this->connector->regexp($property, $pattern, $binary);
+        return $this;
+    }
+
 	/**
 	 * Hodnota sloupce BETWEEN min AND max (min <= expr AND expr <= max)
 	 * @param $property

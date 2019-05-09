@@ -58,6 +58,15 @@ interface IConnector
     public function notLike($property, $value);
 
     /**
+     * REGEXP pattern
+     * @param string $property
+     * @param string $pattern
+     * @param bool $binary
+     * @return void
+     */
+    public function regexp($property, $pattern, $binary = false);
+
+    /**
      * Hodnota sloupce BETWEEN min AND max (min <= expr AND expr <= max)
      * @param $property
      * @param $min

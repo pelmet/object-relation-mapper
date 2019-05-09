@@ -93,6 +93,104 @@ class SearchTest extends CommonTestClass
 		$this->assertEquals(5, $results[0]->id);
 	}
 
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testCountNothing($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->null('status');
+
+        $results = $search->getCount();
+
+        $this->assertEquals(0, $results);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testCount($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->notNull('command');
+
+        $results = $search->getCount();
+
+        $this->assertEquals(5, $results);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchLikeReal($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->like('command', 'ls -al%');
+
+        $results = $search->getResults();
+
+        $this->assertNotEmpty($results);
+        $this->assertEquals(9, $results[0]->id);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchNotLike($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->notLike('command', 'ls -la%');
+
+        $results = $search->getResults();
+
+        $this->assertNotEmpty($results);
+        $this->assertEquals(9, $results[0]->id);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchBetween($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->valueBetween(9, 'id', 'status');
+
+        $results = $search->getCount();
+
+        $this->assertEquals(3, $results);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchPropertyBetween($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Search\Search($testOrm);
+        $search->propertyBetween('status', 11, 12);
+
+        $results = $search->getCount();
+
+        $this->assertEquals(3, $results);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchRegexp($connector, $testOrm)
+    {
+        if ($connector === 'sqlite') {
+            $this->markTestSkipped('regexp is not implemented on sqlite by default');
+        } else {
+            $search = new ObjectRelationMapper\Search\Search($testOrm);
+            $search->regexp('command', 'alF$');
+
+            $results = $search->getResults();
+
+            $this->assertNotEmpty($results);
+            $this->assertEquals(9, $results[0]->id);
+        }
+    }
+
 	/**
 	 * @dataProvider providerSearch
 	 */
@@ -101,10 +199,9 @@ class SearchTest extends CommonTestClass
 		$search = new ObjectRelationMapper\Search\Search($testOrm);
 		$search->notNull('command');
 
-		$results = $search->getResults();
+		$results = $search->getCount();
 
-		$this->assertNotEmpty($results);
-		$this->assertEquals(5, $results[0]->id);
+		$this->assertEquals(5, $results);
 	}
 
 	/**
@@ -116,35 +213,9 @@ class SearchTest extends CommonTestClass
 		$search->null('command');
 
 		$results = $search->getResults();
-		$this->assertEmpty($results);
+        $this->assertNotEmpty($results);
+        $this->assertEquals(10, $results[0]->id);
 	}
-
-	/**
-	 * @dataProvider providerSearch
-	 */
-	public function testCountNothing($connector, $testOrm)
-	{
-		$search = new ObjectRelationMapper\Search\Search($testOrm);
-		$search->null('command');
-
-		$results = $search->getCount();
-
-		$this->assertEquals(0, $results);
-	}
-
-	/**
-	 * @dataProvider providerSearch
-	 */
-	public function testCount($connector, $testOrm)
-	{
-		$search = new ObjectRelationMapper\Search\Search($testOrm);
-		$search->notNull('command');
-
-		$results = $search->getCount();
-
-		$this->assertEquals(4, $results);
-	}
-
 
     /**
      * @dataProvider providerSearch

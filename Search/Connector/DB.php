@@ -117,6 +117,19 @@ class DB extends AConnector implements IConnector
     }
 
     /**
+     * REGEXP pattern
+     * @param string $property
+     * @param string $pattern
+     * @param bool $binary
+     * @return void
+     */
+    public function regexp($property, $pattern, $binary = false)
+    {
+        $binary = $binary ? 'BINARY ' : '';
+        $this->search[] = $this->dbFieldName($property) . ' REGEXP ' . $binary . $this->addParameter($pattern);
+    }
+
+    /**
      * Hodnota sloupce BETWEEN min AND max (min <= expr AND expr <= max)
      * @param $property
      * @param $min

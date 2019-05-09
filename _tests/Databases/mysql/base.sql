@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands` (
   `qc_time_start` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT 0,
   `qc_time_end` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT 0,
   `qc_status` int(1) NOT NULL,
-  `qc_command` varchar(2000) COLLATE utf8_unicode_ci NOT NULL DEFAULT "",
+  `qc_command` varchar(2000) COLLATE utf8_unicode_ci NULL DEFAULT "",
   PRIMARY KEY (`qc_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 

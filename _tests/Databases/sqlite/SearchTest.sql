@@ -2,6 +2,8 @@ INSERT INTO `d_queued_commands` (qc_id, qc_time_start, qc_time_end, qc_status, q
 INSERT INTO `d_queued_commands` (qc_id, qc_time_start, qc_time_end, qc_status, qc_command) VALUES (6,1234567,12345678,5,"ls -laf");
 INSERT INTO `d_queued_commands` (qc_id, qc_time_start, qc_time_end, qc_status, qc_command) VALUES (7,123456,12345678,11,"ls -laf");
 INSERT INTO `d_queued_commands` (qc_id, qc_time_start, qc_time_end, qc_status, qc_command) VALUES (8,123456,12345678,11,"ls -laf");
+INSERT INTO `d_queued_commands` (qc_id, qc_time_start, qc_time_end, qc_status, qc_command) VALUES (9,123456,12345678,12,"ls -alF");
+INSERT INTO `d_queued_commands` (qc_id, qc_time_start, qc_time_end, qc_status, qc_command) VALUES (10,123456,12345678,14,null);
 
 INSERT INTO `d_queued_commands_logs` (qc_id, qcl_id, qcl_text) VALUES (7,2,"ls -laf");
 INSERT INTO `d_queued_commands_logs` (qc_id, qcl_id, qcl_text) VALUES (7,3,"ls -laf");
