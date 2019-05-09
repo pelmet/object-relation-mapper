@@ -1,0 +1,3 @@
+parameters:
+	ignoreErrors:
+		- '#Instanceof between null and PDO will always evaluate to false.#'

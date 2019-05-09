@@ -18,10 +18,10 @@ use ObjectRelationMapper\QueryBuilder\ABuilder;
  * @method setConfigDbServer($master)
  * @method setConfigObject($__CLASS__)
  * @method setConfigDbPrimaryKey($key)
- * @method primaryKeyIsChanged
- * @method (.*)IsChanged
- * @method getIdConfig
- * @method getChildUserConfig
+ * @method primaryKeyIsChanged()
+ * @method IsChanged()
+ * @method getIdConfig()
+ * @method getChildUserConfig()
  */
 abstract class AORM extends Iterator
 {
