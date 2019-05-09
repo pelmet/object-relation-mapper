@@ -222,8 +222,8 @@ abstract class ORM extends Common implements Base\IORM
 
 	/**
 	 * Nahraje objekt pres zadanou query, vykona ji a vrati pole objektu, podle toho kolik toho query vratila
-	 * @param $query
-	 * @param $params
+	 * @param string $query
+	 * @param array $params
 	 * @return array
 	 * @throws Exception\ORM
 	 */

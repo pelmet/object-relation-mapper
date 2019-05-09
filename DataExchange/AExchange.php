@@ -23,7 +23,7 @@ abstract class AExchange
 
 	/**
 	 * Prida Excluded promennou
-	 * @param $property
+	 * @param string $property
 	 */
 	public function addExclude($property)
 	{
@@ -32,7 +32,7 @@ abstract class AExchange
 
 	/**
 	 * Je promenna excluded?
-	 * @param $property
+	 * @param string $property
 	 * @return bool
 	 */
 	protected function isExcluded($property)

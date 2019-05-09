@@ -9,12 +9,8 @@ class Basic extends AStorage implements IStorage
 
 	/**
 	 * Nastavi Konfiguraci ORMka
-	 * @param $orm
-	 * @param array $basicConfiguration
-	 * @param array $dbCols
-	 * @param array $phpAliases
-	 * @param array $childs
-	 * @param array $dataAliases
+	 * @param string $orm
+	 * @param array $configuration
 	 */
 	public static function setConfiguration($orm, Array $configuration)
 	{
@@ -35,7 +31,7 @@ class Basic extends AStorage implements IStorage
 
 	/**
 	 * Vrati true/false podle toho zda existuje ulozena konfigurace
-	 * @param $orm
+	 * @param string $orm
 	 * @return bool
 	 */
 	public static function configurationExists($orm)
@@ -49,8 +45,8 @@ class Basic extends AStorage implements IStorage
 
 	/**
 	 * Vrati pouze urcittou cast konfigurace
-	 * @param $orm
-	 * @param $configType
+	 * @param string $orm
+	 * @param string $configType
 	 * @return mixed
 	 */
 	public static function &getSpecificConfiguration($orm, $configType)

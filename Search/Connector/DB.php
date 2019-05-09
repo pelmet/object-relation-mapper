@@ -50,8 +50,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Hleda presnou neshodu
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @return void
      */
     public function notExact($property, $value)
@@ -61,8 +61,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Hleda presnou schodu
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @return void
      */
     public function exact($property, $value)
@@ -72,8 +72,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Vyhleda vse od
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @param bool $equals
      * @return void
      */
@@ -84,8 +84,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Vyhleda vse do
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @param bool $equals
      * @return void
      */
@@ -96,8 +96,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Like neco
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @return void
      */
     public function like($property, $value)
@@ -107,8 +107,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Not like neco
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @return void
      */
     public function notLike($property, $value)
@@ -131,9 +131,9 @@ class DB extends AConnector implements IConnector
 
     /**
      * Hodnota sloupce BETWEEN min AND max (min <= expr AND expr <= max)
-     * @param $property
-     * @param $min
-     * @param $max
+     * @param string $property
+     * @param string $min
+     * @param string $max
      * @return void
      */
     public function propertyBetween($property, $min, $max)
@@ -143,9 +143,9 @@ class DB extends AConnector implements IConnector
 
     /**
      * Hodnota BETWEEN col_1 AND col_2 (min <= expr AND expr <= max)
-     * @param $value
-     * @param $propertyFrom
-     * @param $propertyTo
+     * @param string $value
+     * @param string $propertyFrom
+     * @param string $propertyTo
      * @return void
      */
     public function valueBetween($value, $propertyFrom, $propertyTo)
@@ -155,7 +155,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Field je nulovy
-     * @param $property
+     * @param string $property
      * @return void
      */
     public function null($property)
@@ -165,7 +165,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Field je nenulovy
-     * @param $property
+     * @param string $property
      * @return void
      */
     public function notNull($property)
@@ -184,7 +184,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Upravi Limit
-     * @param $limit
+     * @param string $limit
      * @return void
      */
     public function limit($limit)
@@ -194,7 +194,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Upravi offset
-     * @param $offset
+     * @param string $offset
      * @return void
      */
     public function offset($offset)
@@ -204,7 +204,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Prida Ordering
-     * @param $ordering
+     * @param string $ordering
      * @param string $direction
      * @return void
      */
@@ -234,7 +234,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Prida column pro group by
-     * @param $property
+     * @param string $property
      * @return void
      */
     public function groupBy($property)
@@ -244,7 +244,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Prida childa s defaultnimi parametry
-     * @param $childName
+     * @param string $childName
      * @param string $joinType
      * @param array $additionalCols
      * @param string $matching
@@ -257,8 +257,8 @@ class DB extends AConnector implements IConnector
 
     /**
      * Vybere vsechny zaznamy ke kterym neexistuje child se zadanymi parametry nebo dany child obecne
-     * @param $child
-     * @param $property
+     * @param string $child
+     * @param string $property
      * @param null $value
      * @param string $matching
      * @return void
@@ -276,7 +276,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Hleda presnou schodu pro sloupec v poli hodnot
-     * @param $property
+     * @param string $property
      * @param array $values
      * @return void
      */
@@ -287,7 +287,7 @@ class DB extends AConnector implements IConnector
 
     /**
      * Hleda vse co neni v poli hodnot pro sloupec
-     * @param $property
+     * @param string $property
      * @param array $values
      * @return void
      */

@@ -15,7 +15,7 @@ class ResultProcess {
     public $size;
 
     /**
-     * @param \ObjectRelationMapper\DataObjects|\ObjectRelationMapper\Base\AORM $orm
+     * @param \ObjectRelationMapper\DataObjects|\ObjectRelationMapper\ORM $orm
      */
     public function __construct($orm)
     {

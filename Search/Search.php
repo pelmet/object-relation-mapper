@@ -10,8 +10,8 @@ class Search extends ASearch
 
 	/**
 	 * Hleda presnou neshodu
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param string $value
 	 * @return $this
 	 */
 	public function notExact($property, $value)
@@ -22,8 +22,8 @@ class Search extends ASearch
 
 	/**
 	 * Hleda presnou schodu
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param string $value
 	 * @return $this
 	 */
 	public function exact($property, $value)
@@ -34,8 +34,8 @@ class Search extends ASearch
 
 	/**
 	 * Vyhleda vse od
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param string $value
 	 * @param bool $equals
 	 * @return $this
 	 */
@@ -47,8 +47,8 @@ class Search extends ASearch
 
 	/**
 	 * Vyhleda vse do
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param string $value
 	 * @param bool $equals
 	 * @return $this
 	 */
@@ -60,8 +60,8 @@ class Search extends ASearch
 
 	/**
 	 * Like neco
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param string $value
 	 * @return $this
 	 */
 	public function like($property, $value)
@@ -72,8 +72,8 @@ class Search extends ASearch
 
 	/**
 	 * Not like neco
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param string $value
 	 * @return $this
 	 */
 	public function notLike($property, $value)
@@ -97,9 +97,9 @@ class Search extends ASearch
 
 	/**
 	 * Hodnota sloupce BETWEEN min AND max (min <= expr AND expr <= max)
-	 * @param $property
-	 * @param $min
-	 * @param $max
+	 * @param string $property
+	 * @param string $min
+	 * @param string $max
 	 * @return $this
 	 */
 	public function propertyBetween($property, $min, $max)
@@ -110,9 +110,9 @@ class Search extends ASearch
 
 	/**
 	 * Hodnota BETWEEN col_1 AND col_2 (min <= expr AND expr <= max)
-	 * @param $value
-	 * @param $propertyFrom
-	 * @param $propertyTo
+	 * @param string $value
+	 * @param string $propertyFrom
+	 * @param string $propertyTo
 	 * @return $this
 	 */
 	public function valueBetween($value, $propertyFrom, $propertyTo)
@@ -123,7 +123,7 @@ class Search extends ASearch
 
 	/**
 	 * Field je nulovy
-	 * @param $property
+	 * @param string $property
 	 * @return $this
 	 */
 	public function null($property)
@@ -134,7 +134,7 @@ class Search extends ASearch
 
 	/**
 	 * Field je nenulovy
-	 * @param $property
+	 * @param string $property
 	 * @return $this
 	 */
 	public function notNull($property)
@@ -155,7 +155,7 @@ class Search extends ASearch
 
 	/**
 	 * Upravi Limit
-	 * @param $limit
+	 * @param string $limit
 	 * @return $this
 	 */
 	public function limit($limit)
@@ -166,7 +166,7 @@ class Search extends ASearch
 
 	/**
 	 * Upravi offset
-	 * @param $offset
+	 * @param string $offset
 	 * @return $this
 	 */
 	public function offset($offset)
@@ -177,7 +177,7 @@ class Search extends ASearch
 
 	/**
 	 * Prida Ordering
-	 * @param $ordering
+	 * @param string $ordering
 	 * @param string $direction
 	 * @return $this
 	 */
@@ -211,7 +211,7 @@ class Search extends ASearch
 
 	/**
 	 * Prida column pro group by
-	 * @param $property
+	 * @param string $property
 	 * @return $this
 	 */
 	public function groupBy($property)
@@ -222,7 +222,7 @@ class Search extends ASearch
 
 	/**
 	 * Prida childa s defaultnimi parametry
-	 * @param $childName
+	 * @param string $childName
 	 * @param string $joinType
 	 * @param array $additionalCols
 	 * @param string $matching
@@ -236,8 +236,8 @@ class Search extends ASearch
 
 	/**
 	 * Vybere vsechny zaznamy ke kterym neexistuje child se zadanymi parametry nebo dany child obecne
-	 * @param $child
-	 * @param $property
+	 * @param string $child
+	 * @param string $property
 	 * @param null $value
 	 * @param string $matching
 	 * @return $this
@@ -250,7 +250,7 @@ class Search extends ASearch
 
 	/**
 	 * Hleda presnou schodu pro sloupec v poli hodnot
-	 * @param $property
+	 * @param string $property
 	 * @param array $values
 	 * @return $this
 	 */
@@ -262,7 +262,7 @@ class Search extends ASearch
 
 	/**
 	 * Hleda vse co neni v poli hodnot pro sloupec
-	 * @param $property
+	 * @param string $property
 	 * @param array $values
 	 * @return $this
 	 */

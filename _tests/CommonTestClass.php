@@ -60,7 +60,7 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @return \PDO
      */
     public function getConnection($type)
@@ -78,7 +78,7 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $connector
+     * @param string $connector
      * @return bool
      */
     protected function isFileConnector($connector)
@@ -87,8 +87,8 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $type
-     * @param $file
+     * @param string $type
+     * @param string $file
      * @return string
      * @throws Exception
      */
@@ -105,7 +105,7 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $connector
+     * @param string $connector
      * return array
      */
     protected function getConnectorConfiguration($connector)

@@ -281,7 +281,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastavi Persistenci parametru, moznost volat i v setupu
-	 * @param $param
+	 * @param string $param
 	 *
 	 */
 	protected function persistParam($param)
@@ -299,7 +299,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vrati hodnotu property nebo NULL, pokud neni k dispozici
-	 * @param $property
+	 * @param string $property
 	 * @throws EORM
 	 * @return mixed|null
 	 */
@@ -341,8 +341,8 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastavi hodnotu property
-	 * @param $property
-	 * @param $value
+	 * @param string $property
+	 * @param mixed $value
 	 * @throws EORM
 	 */
 	public function __set($property, $value)
@@ -409,7 +409,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Obecny caller pro urctite typy metod
-	 * @param $function
+	 * @param string $function
 	 * @param array $arguments
 	 * @throws EORM
 	 * @return mixed
@@ -465,7 +465,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Magic Method __isset
-	 * @param $property
+	 * @param string $property
 	 * @return bool
 	 */
 	public function __isset($property)
@@ -479,7 +479,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Magic Method __empty
-	 * @param $property
+	 * @param string $property
 	 * @return bool
 	 */
 	public function __empty($property)
@@ -528,7 +528,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastavi primarni klic
-	 * @param $primaryKey
+	 * @param string $primaryKey
 	 */
 	protected function setPrimaryKey($primaryKey)
 	{
@@ -546,7 +546,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vypne kontrolu konfigurace ORMka
-	 * @param $check boolean
+	 * @param bool $check
 	 */
 	protected function setConfigurationCheck($check = false)
 	{
@@ -555,8 +555,8 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Prida Sloupecek
-	 * @param $dbName
-	 * @param $phpAlias
+	 * @param string $dbName
+	 * @param string $phpAlias
 	 * @param string $dbType
 	 * @param string $length
 	 * @param array $additionalParams
@@ -585,10 +585,10 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Prida childa podle propojovacich klicu
-	 * @param $ormName
-	 * @param $phpAlias
-	 * @param $localKey
-	 * @param $foreignKey
+	 * @param string $ormName
+	 * @param string $phpAlias
+	 * @param string $localKey
+	 * @param string $foreignKey
 	 * @param array $additionalParams
 	 * @throws \ObjectRelationMapper\Exception\ORM
 	 */
@@ -647,7 +647,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastavi order
-	 * @param $column
+	 * @param string $column
 	 * @param string $direction
 	 * @throws \ObjectRelationMapper\Exception\ORM
 	 */
@@ -686,7 +686,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vrati nazev policka dle aliasu v php
-	 * @param $fieldName
+	 * @param string $fieldName
 	 * @param bool $includeTableName
 	 * @throws EORM
 	 * @return string
@@ -706,7 +706,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vrati PHP Alias dle nazvu sloupecku v DB
-	 * @param $fieldName
+	 * @param string $fieldName
 	 * @throws EORM
 	 * @return string
 	 */
@@ -818,7 +818,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Rekne zda, existuje property
-	 * @param $property
+	 * @param string $property
 	 * @return bool
 	 */
 	public function propertyExists($property)
@@ -870,8 +870,8 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastavi parametr jako MFU Alias
-	 * @param $parameter
-	 * @param $alias
+	 * @param string $parameter
+	 * @param string $alias
 	 */
 	protected function setupMFU($parameter, $alias)
 	{

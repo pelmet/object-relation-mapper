@@ -49,7 +49,7 @@ abstract class Common extends Base\AORM
 	 * Vrati danou property prvniho childa ve formatu child.property[, ["$param1", "$paramx"]]
 	 * @example $orm->cProperty('user.name')
 	 * @example $orm->cProperty('user.getAllRights, [", ", "//", "adsfdsaf"]')
-	 * @param $string
+	 * @param string $string
 	 * @throws Exception\ORM
 	 * @return string
 	 */
@@ -117,7 +117,7 @@ abstract class Common extends Base\AORM
 
 	/**
 	 * Nahraje z ORMka pouze properties, ktere jsme nastavili v aliasu
-	 * @param $alias
+	 * @param string $alias
 	 */
 	public function loadMFU($alias, $loadData = NULL)
 	{
@@ -129,7 +129,7 @@ abstract class Common extends Base\AORM
 
 	/**
 	 * Nahraje z ORMka pouze properties, ktere jsme nastavili v aliasu
-	 * @param $alias
+	 * @param string $alias
 	 * @return array
 	 */
 	public function loadMultipleMFU($alias, $loadData = NULL)
@@ -144,7 +144,7 @@ abstract class Common extends Base\AORM
 	/**
 	 * Vrati danou property vsech childu ve formatu child.property
 	 * @example $orm->cProperties('report.time')
-	 * @param $string
+	 * @param string $string
 	 * @param null $glue
 	 * @throws Exception\ORM
 	 * @return string
@@ -178,8 +178,8 @@ abstract class Common extends Base\AORM
 
 	/**
 	 * Nahraje count pres danou query
-	 * @param $query
-	 * @param $params
+	 * @param string $query
+	 * @param array $params
 	 * @return int
 	 * @throws Exception\ORM
 	 */

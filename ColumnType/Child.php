@@ -12,8 +12,8 @@ class Child extends AColumn implements IColumn
 
 	/**
 	 * Construct
-	 * @param $ormName
-	 * @param $alias
+	 * @param string $ormName
+	 * @param string $alias
 	 * @param string $localKey
 	 * @param string $foreignKey
 	 * @param array $additionalParams
@@ -33,7 +33,7 @@ class Child extends AColumn implements IColumn
 
 	/**
 	 * Zvaliduje danou hodnotu a vrati true/false
-	 * @param $value
+	 * @param string $value
 	 * @return bool
 	 */
 	public function validate($value)

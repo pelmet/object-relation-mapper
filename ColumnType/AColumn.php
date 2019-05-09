@@ -35,7 +35,7 @@ abstract class AColumn
 
 	/**
 	 * Vrati hodnotu policka
-	 * @param $propertyName
+	 * @param string $propertyName
 	 * @throws EColumnType
 	 */
 	public function &__get($propertyName)

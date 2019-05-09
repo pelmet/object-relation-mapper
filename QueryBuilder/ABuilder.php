@@ -20,16 +20,16 @@ abstract class ABuilder
 
 	/**
 	 * @param AORM $orm
-	 * @param $query
-	 * @param $params
+	 * @param string $query
+	 * @param array $params
 	 * @return array
 	 */
 	abstract public function loadByQuery(AORM $orm, $query, $params, $fetchType = \PDO::FETCH_ASSOC);
 
 	/**
 	 * @param AORM $orm
-	 * @param $query
-	 * @param $params
+	 * @param string $query
+	 * @param array $params
 	 * @return int
 	 */
 	abstract public function countByQuery(AORM $orm, $query, $params);

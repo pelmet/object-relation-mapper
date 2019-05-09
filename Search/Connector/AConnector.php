@@ -50,7 +50,7 @@ abstract class AConnector
 
     /**
      * Prida childa, kdyz nechceme vyhledavat podle parametru
-     * @param $childName
+     * @param string $childName
      * @param string $joinType
      * @param array $additionalCols
      * @param string $matching
@@ -79,7 +79,7 @@ abstract class AConnector
 
     /**
      * Prida DbField
-     * @param $field
+     * @param string $field
      * @return string
      */
     protected function dbFieldName($field)
@@ -95,7 +95,7 @@ abstract class AConnector
     /**
      * Vrati column z childa
      * @param \ObjectRelationMapper\Base\AORM $orm
-     * @param $alias
+     * @param string $alias
      * @return string
      */
     protected function getOrmDbColumn(\ObjectRelationMapper\Base\AORM $orm, $alias)
@@ -105,7 +105,7 @@ abstract class AConnector
 
     /**
      * Vrati, zda na ORM existuje Alias
-     * @param $property
+     * @param string $property
      * @throws \ObjectRelationMapper\Exception\ORM
      */
     protected function aliasExists($property)
@@ -131,7 +131,7 @@ abstract class AConnector
 
     /**
      * Prida Parametr
-     * @param $value
+     * @param string $value
      * @return string
      */
     protected function addParameter($value)
@@ -165,7 +165,7 @@ abstract class AConnector
 
     /**
      * if used \PDO::FETCH_NUM method rename columns from numbers to format table.column
-     * @param $results
+     * @param array $results
      * @return mixed
      */
     protected function renameFieldsFromFetchNum($results)

@@ -6,8 +6,8 @@ class SQLite extends DB
 {
     /**
      * Hleda presnou schodu
-     * @param $property
-     * @param $value
+     * @param string $property
+     * @param string $value
      * @return void
      */
     public function exact($property, $value)

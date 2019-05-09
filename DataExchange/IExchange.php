@@ -14,7 +14,7 @@ interface IExchange
 
 	/**
 	 * Naplni ormko daty
-	 * @param $data
+	 * @param array $data
 	 * @return mixed
 	 */
 	public function load($data);

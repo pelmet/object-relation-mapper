@@ -11,7 +11,7 @@ class CInt extends AColumn implements IColumn
 
 	/**
 	 * Zvaliduje danou hodnotu a vrati true/false
-	 * @param $value
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public function validate($value)
