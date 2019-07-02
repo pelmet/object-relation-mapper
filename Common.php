@@ -147,7 +147,7 @@ abstract class Common extends Base\AORM
 	 * @param string $string
 	 * @param null $glue
 	 * @throws Exception\ORM
-	 * @return string
+	 * @return string|array
 	 */
 	public function cProperties($string, $glue = NULL)
 	{
@@ -176,6 +176,41 @@ abstract class Common extends Base\AORM
 		}
 	}
 
+    /**
+     * Vrati pole ve formatu ['report.time'] = 'report.value'
+     * @example $orm->cProperties('report.time', 'report.value')
+     * @param string $string
+     * @param null $glue
+     * @throws Exception\ORM
+     * @return array
+     */
+    public function cPropertiesColumn($key, $value)
+    {
+        if (!preg_match('/^(.*)\.(.*)$/', $key, $keyM) || !preg_match('/^(.*)\.(.*)$/', $value, $valueM) ) {
+            throw new Exception\ORM('Vyber child property musi byt ve formatu child.property');
+        }
+
+        if ($keyM[1] != $valueM[1]){
+            throw new Exception\ORM('Klic a hodnota musi obe pochazet ze stejneho childa');
+        }
+
+        if (!isset($this->childs[$keyM[1]])) {
+            throw new Exception\ORM('Child ' . $keyM[1] . ' neni nadefinovan.');
+        }
+
+        if (!isset($this->childsData[$keyM[1]])) {
+            $this->children($keyM[1]);
+        }
+
+        $return = Array();
+
+        foreach ($this->childsData[$keyM[1]] as $index => $child) {
+            $return[$child->{$keyM[2]}] = $child->{$valueM[2]};
+        }
+
+        return $return;
+    }
+
 	/**
 	 * Nahraje count pres danou query
 	 * @param string $query
@@ -191,7 +226,6 @@ abstract class Common extends Base\AORM
 
 		return $this->queryBuilder->countByQuery($this, $query, $params);
 	}
-
 
 
 	/**

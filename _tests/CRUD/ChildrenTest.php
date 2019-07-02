@@ -37,6 +37,15 @@ class ChildrenTest extends CommonTestClass
 		$this->assertEquals('ls -laf', $testOrm->cProperties('logs.text', ' '));
 	}
 
+    /**
+     * @dataProvider providerBasic
+     */
+    public function testChildPropertiesColumn($connector, $testOrm)
+    {
+        $testOrm->primaryKey = 5;
+        $this->assertEquals(Array('ls -laf' => 'ls -laf'), $testOrm->cPropertiesColumn('logs.text', 'logs.text'));
+    }
+
 	/**
 	 * @expectedException ObjectRelationMapper\Exception\ORM
 	 */
