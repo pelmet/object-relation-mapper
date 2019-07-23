@@ -19,7 +19,7 @@ class SQLite extends DB
         $params = Array();
         foreach ($orm as $propertyName => $propertyValue) {
             $dbColumn = $orm->getDbField($propertyName);
-            $columns[] = $dbColumn . ' IS :' . $dbColumn;
+            $columns[] = $dbColumn . ' = :' . $dbColumn;
             $params[] = Array(':' . $dbColumn, $propertyValue);
         }
 
@@ -57,7 +57,7 @@ class SQLite extends DB
         $params = Array();
         foreach ($orm as $propertyName => $propertyValue) {
             $dbColumn = $orm->getDbField($propertyName);
-            $columns[] = $dbColumn . ' IS :' . $dbColumn;
+            $columns[] = $dbColumn . ' = :' . $dbColumn;
             $params[] = Array(':' . $dbColumn, $propertyValue);
         }
 
@@ -80,7 +80,7 @@ class SQLite extends DB
         $params = Array();
         foreach ($orm as $propertyName => $propertyValue) {
             $dbColumn = $orm->getDbField($propertyName);
-            $columns[] = $dbColumn . ' IS :' . $dbColumn;
+            $columns[] = $dbColumn . ' = :' . $dbColumn;
             $params[] = Array(':' . $dbColumn, $propertyValue);
         }
 
@@ -109,7 +109,7 @@ class SQLite extends DB
         $params = Array();
         foreach ($orm as $propertyName => $propertyValue) {
             $dbColumn = $orm->getDbField($propertyName);
-            $columns[] = $dbColumn . ' IS :' . $dbColumn;
+            $columns[] = $dbColumn . ' = :' . $dbColumn;
             $params[] = Array(':' . $dbColumn, $propertyValue);
         }
 

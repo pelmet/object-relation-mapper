@@ -12,7 +12,7 @@ class SQLite extends DB
      */
     public function exact($property, $value)
     {
-        $this->search[] = $this->dbFieldName($property) . ' IS ' . $this->addParameter($value);
+        $this->search[] = $this->dbFieldName($property) . ' = ' . $this->addParameter($value);
     }
 
     /**
