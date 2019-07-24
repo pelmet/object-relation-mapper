@@ -13,6 +13,29 @@ This project was created for several purposes listed below
 *  Make easy integration into any project/codespace
 *  Make ORM Modular by allowing to exchange any part of it
 
+GENERATING PHP DOC
+==================
+```php
+<?php
+
+$gen = new \ORM\OfflineCases();
+echo $gen->generatePHPDoc();
+
+# RESULT
+/*
+ * @property int id
+ * @method string id()
+ * @method string idFull()
+ * @method \ObjectRelationMapper\ColumnType\CInt getIdConfig()
+ * @method bool idIsChanged()
+ * @property \ORM\HttpChecks\Http[] httpChecks
+ * @method \ORM\HttpChecks\Http|NULL getFirstHttpChecks()
+ * @method ObjectRelationMapper\ColumnType\Child getChildHttpChecksConfig()
+ * @method bool primaryKeyIsChanged()
+*/
+
+```
+
 SETUP
 =====
 ORMs by default are set only by extending base classes.
