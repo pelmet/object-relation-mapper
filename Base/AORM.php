@@ -479,7 +479,7 @@ abstract class AORM extends Iterator
         foreach ($this->childs as $value) {
             $returnArray[] = ' * @property ' . $value->ormName . '[] $' . $value->alias;
             $returnArray[] = ' * @method ' . $value->ormName . '|NULL getFirst' . ucfirst($value->alias) . '()';
-            $returnArray[] = ' * @method ObjectRelationMapper\ColumnType\Child getChild' . ucfirst($value->alias) . 'Config()';
+            $returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\Child getChild' . ucfirst($value->alias) . 'Config()';
         }
 
         $returnArray[] = ' * @method bool primaryKeyIsChanged()';
