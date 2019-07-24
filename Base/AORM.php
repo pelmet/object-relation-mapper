@@ -469,7 +469,7 @@ abstract class AORM extends Iterator
         $returnArray = Array();
 
         foreach ($this->aliases as $value) {
-            $returnArray[] = ' * @property ' . $value->type . ' ' . $value->alias;
+            $returnArray[] = ' * @property ' . $value->type . ' $' . $value->alias;
             $returnArray[] = ' * @method string ' . $value->alias . '()';
             $returnArray[] = ' * @method string ' . $value->alias . 'Full()';
             $returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\C' . ucfirst($value->type) . ' get' . ucfirst($value->alias) . 'Config()';
@@ -477,7 +477,7 @@ abstract class AORM extends Iterator
         }
 
         foreach ($this->childs as $value) {
-            $returnArray[] = ' * @property ' . $value->ormName . '[] ' . $value->alias;
+            $returnArray[] = ' * @property ' . $value->ormName . '[] $' . $value->alias;
             $returnArray[] = ' * @method ' . $value->ormName . '|NULL getFirst' . ucfirst($value->alias) . '()';
             $returnArray[] = ' * @method ObjectRelationMapper\ColumnType\Child getChild' . ucfirst($value->alias) . 'Config()';
         }
