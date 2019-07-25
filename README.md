@@ -18,22 +18,105 @@ GENERATING PHP DOC
 ```php
 <?php
 
-$gen = new \ORM\OfflineCases();
-echo $gen->generatePHPDoc();
+class HttpChecks extends BaseYaml
+{
+    function setUp()
+    {
+        $this->addColumn('hc_id', 'id', 'int', '11');
+        $this->addColumn('hc_domain', 'domain', 'string', '1000');
+        $this->addColumn('hc_servers', 'servers', 'array', '65536');
+        $this->addColumn('hc_scheme', 'scheme', 'string', '20');
+        $this->addColumn('hc_dns', 'dns', 'int', '1');
+        $this->addColumn('hc_certificate', 'certificate', 'int', '1');
+        $this->addColumn('hc_http', 'http', 'int', '1');
+        $this->addColumn('hc_http_ok_response', 'httpOkResponse', 'array', '65536');
+        $this->addColumn('hc_group', 'group', 'string', '20');
 
-# RESULT
+        $this->addChild('\ORM\CheckResults', 'results', 'hc_id', 'hc_id');
+        $this->addChild('\ORM\Groups', 'groups', 'hc_group', 'g_id');
+
+        $this->setConfigDbPrimaryKey('hc_id');
+        $this->setConfigDbTable('HttpChecks-Test');
+        $this->setConfigDbServer('master');
+        $this->setConfigObject(__CLASS__);
+
+        $this->setReadOnly();
+    }
+}
+
+$gen = new \ORM\HttpChecks();
+echo $gen->generatePHPDocEssential();
 /*
- * @property int id
- * @method string id()
- * @method string idFull()
- * @method \ObjectRelationMapper\ColumnType\CInt getIdConfig()
- * @method bool idIsChanged()
- * @property \ORM\HttpChecks\Http[] httpChecks
- * @method \ORM\HttpChecks\Http|NULL getFirstHttpChecks()
- * @method ObjectRelationMapper\ColumnType\Child getChildHttpChecksConfig()
- * @method bool primaryKeyIsChanged()
+ * @property int $id
+ * @property string $domain
+ * @property array $servers
+ * @property string $scheme
+ * @property int $dns
+ * @property int $certificate
+ * @property int $http
+ * @property array $httpOkResponse
+ * @property string $group
+ * @property \ORM\CheckResults[] $results
+ * @method \ORM\CheckResults|NULL getFirstResults()
+ * @property \ORM\Groups[] $groups
+ * @method \ORM\Groups|NULL getFirstGroups()
 */
 
+echo $gen->generatePHPDocFull();
+/**
+   * @property int $id
+   * @property string $domain
+   * @property array $servers
+   * @property string $scheme
+   * @property int $dns
+   * @property int $certificate
+   * @property int $http
+   * @property array $httpOkResponse
+   * @property string $group
+   * @property \ORM\CheckResults[] $results
+   * @method \ORM\CheckResults|NULL getFirstResults()
+   * @property \ORM\Groups[] $groups
+   * @method \ORM\Groups|NULL getFirstGroups()
+   * @method string id()
+   * @method string idFull()
+   * @method \ObjectRelationMapper\ColumnType\CInt getIdConfig()
+   * @method bool idIsChanged()
+   * @method string domain()
+   * @method string domainFull()
+   * @method \ObjectRelationMapper\ColumnType\CString getDomainConfig()
+   * @method bool domainIsChanged()
+   * @method string servers()
+   * @method string serversFull()
+   * @method \ObjectRelationMapper\ColumnType\CArray getServersConfig()
+   * @method bool serversIsChanged()
+   * @method string scheme()
+   * @method string schemeFull()
+   * @method \ObjectRelationMapper\ColumnType\CString getSchemeConfig()
+   * @method bool schemeIsChanged()
+   * @method string dns()
+   * @method string dnsFull()
+   * @method \ObjectRelationMapper\ColumnType\CInt getDnsConfig()
+   * @method bool dnsIsChanged()
+   * @method string certificate()
+   * @method string certificateFull()
+   * @method \ObjectRelationMapper\ColumnType\CInt getCertificateConfig()
+   * @method bool certificateIsChanged()
+   * @method string http()
+   * @method string httpFull()
+   * @method \ObjectRelationMapper\ColumnType\CInt getHttpConfig()
+   * @method bool httpIsChanged()
+   * @method string httpOkResponse()
+   * @method string httpOkResponseFull()
+   * @method \ObjectRelationMapper\ColumnType\CArray getHttpOkResponseConfig()
+   * @method bool httpOkResponseIsChanged()
+   * @method string group()
+   * @method string groupFull()
+   * @method \ObjectRelationMapper\ColumnType\CString getGroupConfig()
+   * @method bool groupIsChanged()
+   * @method \ObjectRelationMapper\ColumnType\Child getChildResultsConfig()
+   * @method \ObjectRelationMapper\ColumnType\Child getChildGroupsConfig()
+   * @method bool primaryKeyIsChanged()
+ */
 ```
 
 SETUP
@@ -41,7 +124,6 @@ SETUP
 ORMs by default are set only by extending base classes.
 
 Every possible use case can be found in _tests folder, but to get you started
-
 
 ```php
 <?php

@@ -464,16 +464,31 @@ abstract class AORM extends Iterator
 		throw new EORM('Dynamicka funkce s nazvem ' . $function . ' nemuze byt spustena, neni totiz definovana.');
 	}
 
-    /**
-     * Return orm properties
-     * @return string
-     */
-    public function generatePHPDoc()
+	public function generatePHPDocEssential()
     {
         $returnArray = Array();
 
         foreach ($this->aliases as $value) {
             $returnArray[] = ' * @property ' . $value->type . ' $' . $value->alias;
+        }
+
+        foreach ($this->childs as $value) {
+            $returnArray[] = ' * @property ' . $value->ormName . '[] $' . $value->alias;
+            $returnArray[] = ' * @method ' . $value->ormName . '|NULL getFirst' . ucfirst($value->alias) . '()';
+        }
+
+        return implode("\n", $returnArray) . "\n";
+    }
+
+    /**
+     * Generate full PHPDoc With everything possible
+     * @return string
+     */
+    public function generatePHPDocFull()
+    {
+        $returnArray = Array();
+
+        foreach ($this->aliases as $value) {
             $returnArray[] = ' * @method string ' . $value->alias . '()';
             $returnArray[] = ' * @method string ' . $value->alias . 'Full()';
             $returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\C' . ucfirst($value->type) . ' get' . ucfirst($value->alias) . 'Config()';
@@ -481,14 +496,12 @@ abstract class AORM extends Iterator
         }
 
         foreach ($this->childs as $value) {
-            $returnArray[] = ' * @property ' . $value->ormName . '[] $' . $value->alias;
-            $returnArray[] = ' * @method ' . $value->ormName . '|NULL getFirst' . ucfirst($value->alias) . '()';
             $returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\Child getChild' . ucfirst($value->alias) . 'Config()';
         }
 
         $returnArray[] = ' * @method bool primaryKeyIsChanged()';
 
-        return implode("\n", $returnArray);
+        return $this->generatePHPDocEssential() . implode("\n", $returnArray) . "\n";
     }
 
     /**
