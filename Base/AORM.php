@@ -332,6 +332,9 @@ abstract class AORM extends Iterator
 		return array('data', 'childsData');
 	}
 
+    /**
+     * @throws EORM
+     */
 	public function __wakeup()
 	{
 		$this->__construct();
@@ -488,11 +491,12 @@ abstract class AORM extends Iterator
         return implode("\n", $returnArray);
     }
 
-	/**
-	 * Magic Method __isset
-	 * @param string $property
-	 * @return bool
-	 */
+    /**
+     * Magic Method __isset
+     * @param string $property
+     * @return bool
+     * @throws EORM
+     */
 	public function __isset($property)
 	{
 		if ($property == 'primaryKey') {
@@ -502,11 +506,12 @@ abstract class AORM extends Iterator
 		}
 	}
 
-	/**
-	 * Magic Method __empty
-	 * @param string $property
-	 * @return bool
-	 */
+    /**
+     * Magic Method __empty
+     * @param string $property
+     * @return bool
+     * @throws EORM
+     */
 	public function __empty($property)
 	{
 		if ($property == 'primaryKey') {
@@ -656,6 +661,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Rekne, zda je orm Spravne nakonfigurovano
+     * @throws EORM
 	 */
 	private function isConfigurationOk()
 	{
@@ -674,7 +680,7 @@ abstract class AORM extends Iterator
 	 * Nastavi order
 	 * @param string $column
 	 * @param string $direction
-	 * @throws \ObjectRelationMapper\Exception\ORM
+	 * @throws EORM
 	 */
 	public function setOrderingOrder($column, $direction = self::ORDERING_ASCENDING)
 	{
@@ -812,11 +818,12 @@ abstract class AORM extends Iterator
         return $this->columns;
     }
 
-	/**
-	 * Nahraje data do tridy z pole
-	 * @param array $loadData
+    /**
+     * Nahraje data do tridy z pole
+     * @param array $loadData
      * @return boolean
-	 */
+     * @throws EORM
+     */
 	protected function loadClassFromArray(Array $loadData)
 	{
 		if (!empty($loadData)) {
