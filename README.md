@@ -100,6 +100,43 @@ class Status extends \ORM\Base
 }
 ```
 
+SEARCH EXAMPLES
+===============
+```php
+<?php
+// REPLACING DAO
+namespace App\Search;
+
+class OfflineCases extends \ObjectRelationMapper\Search\Search
+{
+    public function __construct()
+    {
+        parent::__construct(new \ORM\OfflineCases());
+    }
+
+    public function getOfflineCasesListWithPager()
+    {
+        $this->addOrdering('created', self::ORDERING_DESCENDING);
+        $this->limit(20);
+        $this->child('httpChecks');
+
+        return $this->getResultsWithChildrenLoaded();
+    }
+    
+    public function runCustomQuery()
+    {
+        $query = 'SELECT qc_id, qc_time_start, qc_time_end, qc_status, qc_command FROM d_queued_commands WHERE qc_id  = :qc_id';
+        $params[] = [':qc_id', 5];
+        return $this->orm->load($this->connector->runCustomLoadQuery($query, $params));
+    }
+}
+
+// PRESENTER/MODULE
+$search = new \App\Search\OfflineCases();
+$this->template->offlineCases = $search->getOfflineCasesListWithPager();
+
+```
+
 MIGRATIONS
 ==========
 ```php

@@ -179,7 +179,8 @@ class SearchTest extends CommonTestClass
     public function testSearchRegexp($connector, $testOrm)
     {
         if ($connector === 'sqlite') {
-            $this->markTestSkipped('regexp is not implemented on sqlite by default');
+            //$this->markTestSkipped('regexp is not implemented on sqlite by default');
+            $this->assertTrue($connector === 'sqlite');
         } else {
             $search = new ObjectRelationMapper\Search\Search($testOrm);
             $search->regexp('command', 'alF$');
@@ -310,5 +311,25 @@ class SearchTest extends CommonTestClass
         $this->assertEquals(6, $results[0]->id);
         $this->assertEquals(7, $results[1]->id);
         $this->assertEquals(5, $results[2]->id);
+    }
+
+    /**
+     * @dataProvider providerSearch
+     */
+    public function testSearchRunCustomQuery($connector, $testOrm)
+    {
+        $search = new ObjectRelationMapper\Tests\Search($testOrm);
+
+        $query = 'SELECT d_queued_commands.qc_id, d_queued_commands.qc_time_start, d_queued_commands.qc_time_end, d_queued_commands.qc_status, d_queued_commands.qc_command FROM d_queued_commands WHERE d_queued_commands.qc_id  = :qc_id';
+        $params[] = [':qc_id', 5];
+        $result = $search->insertLoadQuery($query, $params, \PDO::FETCH_ASSOC);
+
+        $this->assertEquals(5, $result[0]['qc_id']);
+        $this->assertEquals(123456, $result[0]['qc_time_start']);
+        $this->assertEquals(12345678, $result[0]['qc_time_end']);
+        $this->assertEquals(5, $result[0]['qc_status']);
+        $this->assertEquals('ls -laf', $result[0]['qc_command']);
+        $this->assertEquals(1, count($result));
+
     }
 }

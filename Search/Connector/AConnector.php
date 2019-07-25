@@ -239,4 +239,9 @@ abstract class AConnector
         $queryBuilder = $this->orm->getQueryBuilder();
         return $queryBuilder->loadByQuery($this->orm, $this->composeLoadQuery(), $this->params, $fetchType);
     }
+
+    public function runCustomLoadQuery($query, Array $params, $fetchType = \PDO::FETCH_ASSOC)
+    {
+        return $this->orm->getQueryBuilder()->loadByQuery($this->orm, $query, $params, $fetchType);
+    }
 }

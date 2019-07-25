@@ -212,4 +212,13 @@ interface IConnector
      * @return array
      */
     public function getResultsInArray();
+
+    /**
+     * Runs direct query on current orm connector and returns the results
+     * @param $query
+     * @param array $params
+     * @param int $fetchType
+     * @return array
+     */
+    public function runCustomLoadQuery($query, Array $params, $fetchType = \PDO::FETCH_ASSOC);
 }
