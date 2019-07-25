@@ -215,7 +215,7 @@ interface IConnector
 
     /**
      * Runs direct query on current orm connector and returns the results
-     * @param $query
+     * @param string $query
      * @param array $params
      * @param int $fetchType
      * @return array
