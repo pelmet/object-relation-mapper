@@ -151,7 +151,8 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastaveni ORM Tridy
-	 * @return mixed
+	 * @return void
+     * @throws EORM
 	 */
 	abstract protected function setUp();
 
@@ -614,7 +615,7 @@ abstract class AORM extends Iterator
 	 * @param string $localKey
 	 * @param string $foreignKey
 	 * @param array $additionalParams
-	 * @throws \ObjectRelationMapper\Exception\ORM
+	 * @throws EORM
 	 */
 	protected function addChild($ormName, $phpAlias, $localKey, $foreignKey, $additionalParams = Array())
 	{
