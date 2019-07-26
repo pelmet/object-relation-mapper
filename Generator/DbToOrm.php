@@ -11,11 +11,17 @@ use ObjectRelationMapper\Connector\IConnector;
  */
 class DbToOrm
 {
-    protected $columns;
-    protected $children;
+    /** @var array */
+    protected $columns = [];
+
+    /** @var array */
+    protected $children = [];
+
+    /** @var array */
     protected $ormText = [];
 
-    protected $typeTrans = [
+    /** @var array */
+    protected static $typeTrans = [
         'char'       => 'string',
         'varchar'    => 'string',
         'tinytext'   => 'string',
@@ -33,14 +39,18 @@ class DbToOrm
         'float'      => 'decimal',
         'double'     => 'decimal',
         'decimal'    => 'decimal',
+        'datetime'   => 'timestamp',
     ];
 
-    protected $propertyTrans = [
-        'decimal'  => 'float',
-        'datetime' => 'string',
-        'date'     => 'string',
-        'enum'     => 'string'
+    /** @var array */
+    protected static $propertyTrans = [
+        'decimal'   => 'float',
+        'timestamp' => 'string',
+        'date'      => 'string',
+        'enum'      => 'string'
     ];
+
+    protected $usedPhpAliases = [];
 
     /**
      * Generator ORMka
@@ -52,9 +62,10 @@ class DbToOrm
      * @param string     $path
      * @param string     $colPrefix
      * @param string     $namespace
+     * @param bool       $childPhpAliasFromColumn
      * @throws \Exception
      */
-    public function __construct(IConnector $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix = null, $namespace = null)
+    public function __construct(IConnector $connector, $dbTable, $serverAlias, $ormName, $extendingOrm, $path, $colPrefix = null, $namespace = null, $childPhpAliasFromColumn = false)
     {
         $describe = $connector->query('DESCRIBE ' . $dbTable, [], $serverAlias);
         if (empty($describe)) {
@@ -83,10 +94,15 @@ class DbToOrm
             $this->addColumn($column['Field'], strtolower($matches[1]), $length);
         }
 
+        $schema = $connector->query('SELECT SCHEMA()', [], $serverAlias);
+        if (empty($schema)) {
+            throw new \Exception('Default schema not selected, cannnot determine relations!');
+        }
+        $schemaName = current(current($schema));
         foreach ($connector->query("SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE TABLE_NAME = '$dbTable' AND REFERENCED_TABLE_NAME IS NOT NULL;", [], $serverAlias) as $child) {
-            $this->addChild($child['COLUMN_NAME'], $child['REFERENCED_TABLE_NAME'], $child['REFERENCED_COLUMN_NAME']);
+WHERE TABLE_NAME = '$dbTable' AND TABLE_SCHEMA = '$schemaName' AND REFERENCED_TABLE_NAME IS NOT NULL;", [], $serverAlias) as $child) {
+            $this->addChild($child['COLUMN_NAME'], $child['REFERENCED_TABLE_NAME'], $child['REFERENCED_COLUMN_NAME'], $childPhpAliasFromColumn);
         }
 
         $this->addOrmLine('<?php');
@@ -108,9 +124,13 @@ WHERE TABLE_NAME = '$dbTable' AND REFERENCED_TABLE_NAME IS NOT NULL;", [], $serv
         $this->addOrmLine('/**');
 
         foreach ($this->columns as $columnName => $columnInfo) {
-            $this->addOrmLine('* @property ' . $columnInfo['property'] . ' $' . $this->toCamelCase($columnName, $colPrefix));
+            $this->addOrmLine(' * @property ' . $columnInfo['property'] . ' $' . $this->toCamelCase($columnName, $colPrefix));
         }
-        $this->addOrmLine('**/');
+        foreach ($this->children as $value) {
+            $this->addOrmLine(' * @property ' . $value['ormName'] . '[] $' . $value['phpAlias']);
+            $this->addOrmLine(' * @method ' . $value['ormName'] . '|NULL getFirst' . ucfirst($value['phpAlias']) . '()');
+        }
+        $this->addOrmLine(' **/');
 
         $this->addOrmLine('');
         $this->addOrmLine('class ' . $ormName . ' extends ' . $extendingOrm);
@@ -166,30 +186,42 @@ WHERE TABLE_NAME = '$dbTable' AND REFERENCED_TABLE_NAME IS NOT NULL;", [], $serv
      * @param string $columnName
      * @param string $childTable
      * @param string $childColumnName
+     * @param bool   $childPhpAliasFromColumn
      */
-    protected function addChild($columnName, $childTable, $childColumnName)
+    protected function addChild($columnName, $childTable, $childColumnName, $childPhpAliasFromColumn = false)
     {
+        $phpAliasSource = $childTable;
+        if ($childPhpAliasFromColumn) {
+            $phpAliasSource = preg_replace('#^(.+)_id$#i', '\\1', $columnName);
+        }
+        $phpAlias = $this->toCamelCase($phpAliasSource, '');
+        if (!isset($this->usedPhpAliases[$phpAlias])) {
+            $this->usedPhpAliases[$phpAlias] = 1;
+        } else {
+            $this->usedPhpAliases[$phpAlias]++;
+            $phpAlias = $phpAlias . $this->usedPhpAliases[$phpAlias];
+        }
         $this->children[$columnName] = [
             'ormName'    => $this->tableToClassName($childTable),
-            'phpAlias'   => $this->toCamelCase($childTable, ''),
+            'phpAlias'   => $phpAlias,
             'localKey'   => $columnName,
             'foreignKey' => $childColumnName
         ];
     }
 
-    protected function getColumnPhpType($column)
+    public static function getColumnPhpType($column)
     {
-        if (isset($this->typeTrans[$column])) {
-            return $this->typeTrans[$column];
+        if (isset(self::$typeTrans[$column])) {
+            return self::$typeTrans[$column];
         } else {
             return $column;
         }
     }
 
-    protected function getPhpPropertyType($column)
+    public static function getPhpPropertyType($column)
     {
-        if (isset($this->propertyTrans[$column])) {
-            return $this->propertyTrans[$column];
+        if (isset(self::$propertyTrans[$column])) {
+            return self::$propertyTrans[$column];
         } else {
             return $column;
         }
