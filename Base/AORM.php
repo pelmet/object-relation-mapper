@@ -6,6 +6,7 @@ use ObjectRelationMapper\ColumnType\IColumn;
 use ObjectRelationMapper\ConfigStorage\AStorage;
 use ObjectRelationMapper\ConfigStorage\IStorage;
 use ObjectRelationMapper\Exception\ORM as EORM;
+use ObjectRelationMapper\Generator\DbToOrm;
 use ObjectRelationMapper\QueryBuilder\ABuilder;
 
 /**
@@ -469,7 +470,7 @@ abstract class AORM extends Iterator
         $returnArray = Array();
 
         foreach ($this->aliases as $value) {
-            $returnArray[] = ' * @property ' . $value->type . ' $' . $value->alias;
+            $returnArray[] = ' * @property ' . DbToOrm::getPhpPropertyType(DbToOrm::getColumnPhpType($value->type)) . ' $' . $value->alias;
         }
 
         foreach ($this->childs as $value) {
