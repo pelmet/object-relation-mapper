@@ -51,7 +51,7 @@ abstract class Common extends Base\AORM
 	 * @example $orm->cProperty('user.getAllRights, [", ", "//", "adsfdsaf"]')
 	 * @param string $string
 	 * @throws Exception\ORM
-	 * @return string
+	 * @return mixed
 	 */
 	public function cProperty($string)
 	{
