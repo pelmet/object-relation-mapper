@@ -324,6 +324,14 @@ class DB extends ABuilder
     /**
      * @inheritdoc
      */
+    public function execByQuery(AORM $orm, $query, $params)
+    {
+       return $this->connector->exec($query, $params, $orm->getConfigDbServer());
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function describe(AORM $orm)
     {
         $query = 'DESCRIBE '.$orm->getConfigDbTable();

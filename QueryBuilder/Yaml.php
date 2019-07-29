@@ -284,6 +284,14 @@ class Yaml extends ABuilder
         throw new \ObjectRelationMapper\Exception\QueryBuilder("Cant be implemented");
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function execByQuery(AORM $orm, $query, $params)
+    {
+        throw new \ObjectRelationMapper\Exception\QueryBuilder("Cant be implemented");
+    }
+
     public function describe(AORM $orm)
     {
         throw new \ObjectRelationMapper\Exception\QueryBuilder("Cant be implemented");

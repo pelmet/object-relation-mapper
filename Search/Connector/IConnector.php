@@ -221,4 +221,12 @@ interface IConnector
      * @return array
      */
     public function runCustomLoadQuery($query, Array $params, $fetchType = \PDO::FETCH_ASSOC);
+
+    /**
+     * Runs direct exec on current orm connector and returns the results
+     * @param string $query
+     * @param array $params
+     * @return bool
+     */
+    public function runCustomExecQuery($query, Array $params);
 }

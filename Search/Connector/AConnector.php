@@ -244,4 +244,9 @@ abstract class AConnector
     {
         return $this->orm->getQueryBuilder()->loadByQuery($this->orm, $query, $params, $fetchType);
     }
+
+    public function runCustomExecQuery($query, Array $params)
+    {
+        return $this->orm->getQueryBuilder()->execByQuery($this->orm, $query, $params);
+    }
 }

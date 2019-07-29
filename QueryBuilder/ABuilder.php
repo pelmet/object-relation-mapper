@@ -22,9 +22,18 @@ abstract class ABuilder
 	 * @param AORM $orm
 	 * @param string $query
 	 * @param array $params
+     * @param int $fetchType
 	 * @return array
 	 */
 	abstract public function loadByQuery(AORM $orm, $query, $params, $fetchType = \PDO::FETCH_ASSOC);
+
+    /**
+     * @param AORM $orm
+     * @param string $query
+     * @param array $params
+     * @return bool
+     */
+    abstract public function execByQuery(AORM $orm, $query, $params);
 
 	/**
 	 * @param AORM $orm
