@@ -572,7 +572,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Nastavi primarni klic
-	 * @param string $primaryKey
+	 * @param mixed $primaryKey
 	 */
 	protected function setPrimaryKey($primaryKey)
 	{
@@ -891,7 +891,7 @@ abstract class AORM extends Iterator
 			echo '   "' . $key . '" = ';
 			var_dump($value);
 		}
-		return ob_get_clean();
+		return (string)ob_get_clean();
 	}
 
 	/**

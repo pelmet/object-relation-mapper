@@ -21,6 +21,7 @@ abstract class ASearch
      * Standardni construct
      * @param ORM $orm
      * @throws Exception\SearchException
+     * @throws \ReflectionException
      */
 	public function __construct(ORM $orm)
 	{
@@ -77,6 +78,7 @@ abstract class ASearch
 	/**
 	 * Vrati count
 	 * @return int
+     * @throws \ObjectRelationMapper\Exception\ORM
 	 */
 	public function getCount()
 	{
@@ -85,7 +87,7 @@ abstract class ASearch
 
 	/**
 	 * Vrati vsechny vysledky
-     * @return array
+     * @return ORM[]
      */
     public function getResults()
 	{
@@ -100,7 +102,7 @@ abstract class ASearch
 	/**
 	 * Naplni jine ORM daty z vyhledavani
 	 * @param ORM $orm
-	 * @return array
+	 * @return ORM[]
 	 */
 	public function fillDifferentORM(ORM $orm)
 	{

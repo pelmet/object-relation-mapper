@@ -197,7 +197,7 @@ interface IConnector
 
     /**
      * Returns all params in array
-     * @return Array
+     * @return array
      */
     public function getParams();
 
