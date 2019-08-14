@@ -89,7 +89,7 @@ abstract class Common extends Base\AORM
 	/**
 	 * Vrati kolekci ze zadaneho dotazu
 	 * @param array $loadData
-	 * @return array
+	 * @return $this[]
 	 */
 	public function loadMultiple($loadData = NULL)
 	{
