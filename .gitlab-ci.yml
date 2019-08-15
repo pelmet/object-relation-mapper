@@ -98,4 +98,4 @@ phpstan:
   stage: phpstan
   script:
     - composer global require "phpstan/phpstan=0.10.3"
-    - phpstan analyze -l 4 --autoload-file=_tests/_ps-autoload.php Base QueryBuilder ColumnType ConfigStorage Connector DataExchange DataMiner Exception Search
+    - phpstan analyze -l 5 --autoload-file=_tests/_ps-autoload.php Base QueryBuilder ColumnType ConfigStorage Connector DataExchange DataMiner Exception Search
