@@ -32,7 +32,9 @@ class Yaml extends ABuilder
     {
         if(!is_file($this->getFilename($orm))){
             $file = fopen($this->getFilename($orm), "w");
-            fclose($file);
+            if(is_resource($file)){
+                fclose($file);
+            }
             file_put_contents($this->getFilename($orm), "---\nvalues:\n...");
         }
 

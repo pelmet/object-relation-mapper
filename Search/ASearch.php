@@ -58,7 +58,7 @@ abstract class ASearch
         foreach ($params as $param) {
             list($key, $value) = $param;
             if (is_numeric($value)) {
-                $query = str_replace($key, $value, $query);
+                $query = str_replace($key, (string)$value, $query);
             } else {
                 $query = str_replace($key, "'" . is_string($value) ? $value : json_encode($value) . "'", $query);
             }

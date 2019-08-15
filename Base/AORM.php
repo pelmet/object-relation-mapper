@@ -731,7 +731,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vrati nazev policka dle aliasu v php
-	 * @param string $fieldName
+	 * @param mixed $fieldName
 	 * @param bool $includeTableName
 	 * @throws EORM
 	 * @return string
@@ -769,7 +769,7 @@ abstract class AORM extends Iterator
 	 * @param mixed $glue
 	 * @param bool $includeTableName
 	 * @param array $exclude
-	 * @return string|array
+	 * @return mixed
 	 */
 	public function getAllDbFieldsInternal($glue = NULL, $includeTableName = false, Array $exclude = Array())
 	{
