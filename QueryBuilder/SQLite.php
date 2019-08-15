@@ -93,7 +93,7 @@ class SQLite extends DB
         if (isset($query[0]['count'])) {
             return $query[0]['count'];
         } else {
-            return Array();
+            return 0;
         }
     }
 
@@ -129,7 +129,7 @@ class SQLite extends DB
         if (isset($query)) {
             return $query;
         } else {
-            return Array();
+            return 0;
         }
     }
 

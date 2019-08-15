@@ -68,7 +68,7 @@ abstract class ASearch
 
 	/**
 	 * Vrati count query
-	 * @return mixed
+	 * @return string
 	 */
 	public function getCountQuery()
 	{

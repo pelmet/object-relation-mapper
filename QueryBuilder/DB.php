@@ -217,7 +217,7 @@ class DB extends ABuilder
 		if (isset($query[0]['count'])) {
 			return $query[0]['count'];
 		} else {
-			return Array();
+			return 0;
 		}
 	}
 
@@ -231,7 +231,7 @@ class DB extends ABuilder
 		if (isset($query[0]['count'])) {
 			return $query[0]['count'];
 		} else {
-			return Array();
+			return 0;
 		}
 	}
 
