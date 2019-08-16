@@ -123,9 +123,9 @@ abstract class ASearch
         $this->connector->limit($pager->getLimit());
     }
 
-    public function getResultsWithChildrenLoaded()
+    public function getResultsWithChildrenLoaded($rows = Array())
     {
-        return $this->connector->getResultsWithChildrenLoaded();
+        return $this->connector->getResultsWithChildrenLoaded($rows);
     }
 
 

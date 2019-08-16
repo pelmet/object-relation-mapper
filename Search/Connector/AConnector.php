@@ -187,9 +187,11 @@ abstract class AConnector
     /**
      * @return array
      */
-    public function getResultsWithChildrenLoaded()
+    public function getResultsWithChildrenLoaded($rows = Array())
     {
-        $rows = $this->getQueryBuilderResults();
+        if(empty($rows)){
+            $rows = $this->getQueryBuilderResults();
+        }
 
         $primaryOrmAliases = new ResultProcess($this->orm);
         $results = $additionalOrmsAliases = array();

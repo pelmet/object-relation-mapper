@@ -203,9 +203,10 @@ interface IConnector
 
     /**
      * Return results in objects with children
+     * @param array $rows
      * @return array
      */
-    public function getResultsWithChildrenLoaded();
+    public function getResultsWithChildrenLoaded($rows = Array());
 
     /**
      * Return results in array
