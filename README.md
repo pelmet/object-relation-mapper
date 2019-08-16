@@ -187,36 +187,109 @@ SEARCH EXAMPLES
 ```php
 <?php
 // REPLACING DAO
-namespace App\Search;
+namespace App\Search\Results;
 
-class OfflineCases extends \ObjectRelationMapper\Search\Search
+class Domain extends \ObjectRelationMapper\Search\Search
 {
+    /**
+     * @var \ORM\Results\Domain
+     */
+    protected $orm;
+
     public function __construct()
     {
-        parent::__construct(new \ORM\OfflineCases());
-    }
-
-    public function getOfflineCasesListWithPager()
-    {
-        $this->addOrdering('created', self::ORDERING_DESCENDING);
-        $this->limit(20);
-        $this->child('httpChecks');
-
-        return $this->getResultsWithChildrenLoaded();
+        parent::__construct(new \ORM\Results\Domain());
     }
     
-    public function runCustomQuery()
+    /**
+    * @param $id
+    * @return \ORM\Results\Domain[]
+    */
+    public function returnResultsDescWithChildrenLoaded($id)
     {
-        $query = 'SELECT qc_id, qc_time_start, qc_time_end, qc_status, qc_command FROM d_queued_commands WHERE qc_id  = :qc_id';
-        $params[] = [':qc_id', 5];
-        return $this->orm->load($this->connector->runCustomLoadQuery($query, $params));
+        $this->exact('domainId', $id);
+        $this->exact('finished', 1);
+        $this->addOrdering('created', self::ORDERING_DESCENDING);
+        $this->limit(22);
+
+        $results = $this->getResults();
+
+        foreach($results as &$result){
+            $result->children('servers');
+            $result->children('domain');
+        }
+
+        return $results;
+    }
+
+    public function cleanupOldResults(int $timeToKeep): bool
+    {
+        $exec = 'DELETE FROM '.$this->orm->getConfigDbTable().' WHERE '.$this->orm->createdFull().' < :created';
+        $params[] = [':created', time() - $timeToKeep];
+        return $this->connector->runCustomExecQuery($exec, $params);
+    }
+
+    public function getLastXResponseTimes($id, $limit)
+    {
+        $http = new \ORM\Results\Domain\Server();
+
+        $query = '
+            SELECT '.$http->responseTime().', '.$http->server().' FROM 
+                (SELECT '.$this->orm->createdFull().', '.$http->responseTimeFull().', '.$http->serverFull().' FROM '.$this->orm->getConfigDbTable().' 
+                LEFT JOIN '.$http->getConfigDbTable().' ON '.$this->orm->idFull().' = '.$http->resultIdFull().' 
+                WHERE '.$this->orm->domainIdFull().' = :hc_id AND '.$http->responseTimeFull().' IS NOT NULL
+                AND '.$this->orm->finishedFull().' = :finished
+                ORDER BY '.$this->orm->createdFull().' DESC 
+                LIMIT 2000) 
+            ORDER BY '.$this->orm->created().' ASC';
+        $params[] = [':hc_id', $id];
+        $params[] = [':finished', 1];
+
+        $return = [];
+        foreach ($this->connector->runCustomLoadQuery($query, $params) as $response){
+            if(array_key_exists($response['rds_server'], $return) && count($return[$response['rds_server']]) === $limit){
+                break;
+            }
+            $return[$response['rds_server']][] = $response['rds_response_time'];
+        }
+
+        return $return;
+    }
+
+    public function getAverageResponseTime($id)
+    {
+        $http = new \ORM\Results\Domain\Server();
+        $query = '
+            SELECT AVG('.$http->responseTimeFull().') FROM '.$this->orm->getConfigDbTable().' 
+            LEFT JOIN '.$http->getConfigDbTable().' ON '.$this->orm->idFull().' = '.$http->resultIdFull().' 
+            WHERE '.$this->orm->domainIdFull().' = :hc_id AND '.$http->responseTimeFull().' IS NOT NULL
+            AND '.$this->orm->finishedFull().' = :finished';
+        $params[] = [':hc_id', $id];
+        $params[] = [':finished', 1];
+        return array_values($this->connector->runCustomLoadQuery($query, $params)[0])[0];
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getCountResponseStatus($id)
+    {
+        $http = new \ORM\Results\Domain\Server();
+        $query = '
+            SELECT COUNT('.$http->responseCodeFull().') AS count, '.$http->responseCodeFull().' FROM '.$this->orm->getConfigDbTable().' 
+            LEFT JOIN '.$http->getConfigDbTable().' ON '.$this->orm->idFull().' = '.$http->resultIdFull().' 
+            WHERE '.$this->orm->domainIdFull().' = :hc_id AND '.$http->responseTimeFull().' IS NOT NULL 
+            AND '.$this->orm->finishedFull().' = :finished
+            GROUP BY '.$http->responseCodeFull();
+        $params[] = [':hc_id', $id];
+        $params[] = [':finished', 1];
+        return $this->connector->runCustomLoadQuery($query, $params);
     }
 }
-
 // PRESENTER/MODULE
-$search = new \App\Search\OfflineCases();
-$this->template->offlineCases = $search->getOfflineCasesListWithPager();
-
+$search = new \App\Search\Results\Domain();
+$search->cleanupOldResults(86400);
 ```
 
 MIGRATIONS
