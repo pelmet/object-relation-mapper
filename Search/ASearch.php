@@ -49,21 +49,25 @@ abstract class ASearch
     /**
      * Vrati Query s parametry, vhodne spise na testovani
      * @return string
+     * @internal For dev testing only
      */
     public function getQueryString()
     {
         $query = $this->connector->composeLoadQuery();
         $params = $this->connector->getParams();
-        krsort($params);
+        $translate = [];
         foreach ($params as $param) {
             list($key, $value) = $param;
             if (is_numeric($value)) {
-                $query = str_replace($key, (string)$value, $query);
+                $translate[$key] = $value;
+            } elseif (is_null($value)) {
+                $translate[$key] = "NULL";
             } else {
-                $query = str_replace($key, "'" . is_string($value) ? $value : json_encode($value) . "'", $query);
+                $translate[$key] = "'" . (is_string($value) ? $value : json_encode($value)) . "'";
             }
         }
-        return $query;
+
+        return strtr($query, $translate);
     }
 
 	/**
