@@ -1,2 +1,11 @@
-.idea/
+# Hidden files from various IDEs & Operating Systems.
+.DS_Store
+.buildpath
+.project
+.settings
+.idea
 nbproject/
+
+# phpunit
+phpunit
+

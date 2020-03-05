@@ -366,7 +366,7 @@ abstract class AORM extends Iterator
 
     /**
      * Odnastavi hodnotu property
-     * @param $property
+     * @param string $property
      * @throws EORM
      */
 	public function __unset($property)

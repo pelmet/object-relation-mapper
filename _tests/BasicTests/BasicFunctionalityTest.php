@@ -170,7 +170,7 @@ class BasicFunctionalityTest extends CommonTestClass
     public function testGetPropertyConfig($connector, $testOrm)
     {
         $configProperty = $testOrm->getCommandConfig();
-        $this->assertIsObject($configProperty);
+        $this->assertEquals(true, is_object($configProperty));
         $this->assertEquals('command', $configProperty->alias);
     }
 
@@ -180,7 +180,7 @@ class BasicFunctionalityTest extends CommonTestClass
     public function testGetChildConfig($connector, $testOrm)
     {
         $configChild = $testOrm->getChildLogsConfig();
-        $this->assertIsObject($configChild);
+        $this->assertEquals(true, is_object($configChild));
         $this->assertEquals('logs', $configChild->alias);
     }
 
