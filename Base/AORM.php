@@ -766,7 +766,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Vrati delku sloupecku v DB
-	 * @param string $fieldName
+	 * @param string $column
 	 * @throws EORM
 	 * @return string
 	 */
