@@ -153,7 +153,7 @@ abstract class AORM extends Iterator
 	/**
 	 * Nastaveni ORM Tridy
 	 * @return void
-     * @throws EORM
+	 * @throws EORM
 	 */
 	abstract protected function setUp();
 
@@ -333,9 +333,9 @@ abstract class AORM extends Iterator
 		return array('data', 'childsData');
 	}
 
-    /**
-     * @throws EORM
-     */
+	/**
+	 * @throws EORM
+	 */
 	public function __wakeup()
 	{
 		$this->__construct();
@@ -466,51 +466,51 @@ abstract class AORM extends Iterator
 	}
 
 	public function generatePHPDocEssential()
-    {
-        $returnArray = Array();
+	{
+		$returnArray = Array();
 
-        foreach ($this->aliases as $value) {
-            $returnArray[] = ' * @property ' . DbToOrm::getPhpPropertyType(DbToOrm::getColumnPhpType($value->type)) . ' $' . $value->alias;
-        }
+		foreach ($this->aliases as $value) {
+			$returnArray[] = ' * @property ' . DbToOrm::getPhpPropertyType(DbToOrm::getColumnPhpType($value->type)) . ' $' . $value->alias;
+		}
 
-        foreach ($this->childs as $value) {
-            $returnArray[] = ' * @property ' . $value->ormName . '[] $' . $value->alias;
-            $returnArray[] = ' * @method ' . $value->ormName . '|NULL getFirst' . ucfirst($value->alias) . '()';
-        }
+		foreach ($this->childs as $value) {
+			$returnArray[] = ' * @property ' . $value->ormName . '[] $' . $value->alias;
+			$returnArray[] = ' * @method ' . $value->ormName . '|NULL getFirst' . ucfirst($value->alias) . '()';
+		}
 
-        return implode("\n", $returnArray) . "\n";
-    }
+		return implode("\n", $returnArray) . "\n";
+	}
 
-    /**
-     * Generate full PHPDoc With everything possible
-     * @return string
-     */
-    public function generatePHPDocFull()
-    {
-        $returnArray = Array();
+	/**
+	 * Generate full PHPDoc With everything possible
+	 * @return string
+	 */
+	public function generatePHPDocFull()
+	{
+		$returnArray = Array();
 
-        foreach ($this->aliases as $value) {
-            $returnArray[] = ' * @method string ' . $value->alias . '()';
-            $returnArray[] = ' * @method string ' . $value->alias . 'Full()';
-            $returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\C' . ucfirst($value->type) . ' get' . ucfirst($value->alias) . 'Config()';
-            $returnArray[] = ' * @method bool ' . $value->alias . 'IsChanged()';
-        }
+		foreach ($this->aliases as $value) {
+			$returnArray[] = ' * @method string ' . $value->alias . '()';
+			$returnArray[] = ' * @method string ' . $value->alias . 'Full()';
+			$returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\C' . ucfirst($value->type) . ' get' . ucfirst($value->alias) . 'Config()';
+			$returnArray[] = ' * @method bool ' . $value->alias . 'IsChanged()';
+		}
 
-        foreach ($this->childs as $value) {
-            $returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\Child getChild' . ucfirst($value->alias) . 'Config()';
-        }
+		foreach ($this->childs as $value) {
+			$returnArray[] = ' * @method \ObjectRelationMapper\ColumnType\Child getChild' . ucfirst($value->alias) . 'Config()';
+		}
 
-        $returnArray[] = ' * @method bool primaryKeyIsChanged()';
+		$returnArray[] = ' * @method bool primaryKeyIsChanged()';
 
-        return $this->generatePHPDocEssential() . implode("\n", $returnArray) . "\n";
-    }
+		return $this->generatePHPDocEssential() . implode("\n", $returnArray) . "\n";
+	}
 
-    /**
-     * Magic Method __isset
-     * @param string $property
-     * @return bool
-     * @throws EORM
-     */
+	/**
+	 * Magic Method __isset
+	 * @param string $property
+	 * @return bool
+	 * @throws EORM
+	 */
 	public function __isset($property)
 	{
 		if ($property == 'primaryKey') {
@@ -520,12 +520,12 @@ abstract class AORM extends Iterator
 		}
 	}
 
-    /**
-     * Magic Method __empty
-     * @param string $property
-     * @return bool
-     * @throws EORM
-     */
+	/**
+	 * Magic Method __empty
+	 * @param string $property
+	 * @return bool
+	 * @throws EORM
+	 */
 	public function __empty($property)
 	{
 		if ($property == 'primaryKey') {
@@ -675,7 +675,7 @@ abstract class AORM extends Iterator
 
 	/**
 	 * Rekne, zda je orm Spravne nakonfigurovano
-     * @throws EORM
+	 * @throws EORM
 	 */
 	private function isConfigurationOk()
 	{
@@ -765,6 +765,21 @@ abstract class AORM extends Iterator
 	}
 
 	/**
+	 * Vrati delku sloupecku v DB
+	 * @param string $fieldName
+	 * @throws EORM
+	 * @return string
+	 */
+	public function getLength($column)
+	{
+		if (isset($this->columns[$column])) {
+			return $this->columns[$column]->length;
+		} else {
+			throw new EORM('Db Length pro column ' . $column . ' neexistuje');
+		}
+	}
+
+	/**
 	 * Vrati vsechna DB POLE bud v poli nebo spojene pres glue
 	 * @param mixed $glue
 	 * @param bool $includeTableName
@@ -828,16 +843,16 @@ abstract class AORM extends Iterator
 	}
 
 	public function getColumns()
-    {
-        return $this->columns;
-    }
+	{
+		return $this->columns;
+	}
 
-    /**
-     * Nahraje data do tridy z pole
-     * @param array $loadData
-     * @return boolean
-     * @throws EORM
-     */
+	/**
+	 * Nahraje data do tridy z pole
+	 * @param array $loadData
+	 * @return boolean
+	 * @throws EORM
+	 */
 	protected function loadClassFromArray(Array $loadData)
 	{
 		if (!empty($loadData)) {
@@ -851,7 +866,7 @@ abstract class AORM extends Iterator
 			$this->isLoaded = false;
 		}
 
-        return $this->isLoaded;
+		return $this->isLoaded;
 	}
 
 	/**
@@ -904,13 +919,13 @@ abstract class AORM extends Iterator
 		$this->mfuConfig[$alias][$parameter] = true;
 	}
 
-    /**
-     * Vrati data ormka primo v poli
-     * @return array
-     */
+	/**
+	 * Vrati data ormka primo v poli
+	 * @return array
+	 */
 	public function getData()
-    {
-        return $this->data;
-    }
+	{
+		return $this->data;
+	}
 
 }
