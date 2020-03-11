@@ -207,7 +207,7 @@ abstract class ORM extends Common implements Base\IORM
 		foreach ($this as $propertyName => $propertyValue)
 		{
 			$dbColumn = $this->getDbField($propertyName);
-			if(strlen($propertyValue) > $this->getLength($dbColumn))
+			if(mb_strlen($propertyValue) > $this->getLength($dbColumn))
 			{
 				throw new DataTooLong("Data too long for column ". $dbColumn.". Data: ".$propertyValue);
 			}
@@ -223,7 +223,7 @@ abstract class ORM extends Common implements Base\IORM
 		foreach ($this as $propertyName => $propertyValue)
 		{
 			$dbColumn = $this->getDbField($propertyName);
-			if(strlen($propertyValue) > $this->getLength($dbColumn))
+			if(mb_strlen($propertyValue) > $this->getLength($dbColumn))
 			{
 				$propertyValue = mb_strimwidth($propertyValue, 0, $this->getLength($dbColumn));
 				$this->$propertyName = $propertyValue;
