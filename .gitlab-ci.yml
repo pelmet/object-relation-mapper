@@ -10,7 +10,7 @@ stages:
   - phpstan
 
 lint-php55:
-  image: docker.xcroco.com/docker/centos-7/php/php55/testing
+  image: docker.xcroco.com/docker/centos-7/php/php55/build
   tags:
     - docker
   stage: lint
@@ -18,7 +18,7 @@ lint-php55:
     - find ./ -type f -name '*.php' | xargs -I {} php -l {}
 
 lint-php70:
-  image: docker.xcroco.com/docker/centos-7/php/php70/testing
+  image: docker.xcroco.com/docker/centos-7/php/php70/build
   tags:
     - docker
   stage: lint
@@ -26,7 +26,7 @@ lint-php70:
     - find ./ -type f -name '*.php' | xargs -I {} php -l {}
 
 lint-php71:
-  image: docker.xcroco.com/docker/centos-7/php/php71/testing
+  image: docker.xcroco.com/docker/centos-7/php/php71/build
   tags:
     - docker
   stage: lint
@@ -35,7 +35,7 @@ lint-php71:
 
 
 test-php55:
-  image: docker.xcroco.com/docker/centos-7/php/php55/testing
+  image: docker.xcroco.com/docker/centos-7/php/php55/build
   tags:
     - docker
   services:
@@ -54,7 +54,7 @@ test-php55:
     - phpunit
 
 test-php70:
-  image: docker.xcroco.com/docker/centos-7/php/php70/testing
+  image: docker.xcroco.com/docker/centos-7/php/php70/build
   tags:
     - docker
   services:
@@ -73,7 +73,7 @@ test-php70:
     - phpunit
 
 test-php71:
-  image: docker.xcroco.com/docker/centos-7/php/php71/testing
+  image: docker.xcroco.com/docker/centos-7/php/php71/build
   tags:
     - docker
   services:
@@ -92,7 +92,7 @@ test-php71:
     - phpunit
 
 phpstan:
-  image: docker.xcroco.com/docker/centos-7/php/php71/testing
+  image: docker.xcroco.com/docker/centos-7/php/php71/build
   tags:
     - docker
   stage: phpstan
