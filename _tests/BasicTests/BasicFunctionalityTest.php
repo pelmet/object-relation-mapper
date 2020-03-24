@@ -113,6 +113,77 @@ class BasicFunctionalityTest extends CommonTestClass
 		$this->assertEquals(false, $testOrm->primaryKeyIsChanged());
 	}
 
+    /**
+     * @dataProvider providerBasic
+     */
+	public function testChildSetGetGetFirstUnset($connector, $testOrm)
+    {
+        $this->assertEquals(null, $testOrm->logs);
+        $this->assertEquals(null, $testOrm->getFirstLogs());
+
+        $testOrm->logs = [$testOrm];
+
+        $this->assertEquals($testOrm, $testOrm->getFirstLogs());
+
+        unset($testOrm->logs);
+
+        $this->assertNull($testOrm->getFirstLogs());
+    }
+
+    /**
+     * @dataProvider providerBasic
+     */
+    public function testUnsetProperty($connector, $testOrm)
+    {
+        $testOrm->status = 5;
+        $testOrm->command = 'ls -la';
+        unset($testOrm->command);
+        $this->assertEquals(5, $testOrm->status);
+        $this->assertEquals(null, $testOrm->command);
+        $this->assertEquals(true, $testOrm->statusIsChanged());
+        $this->assertEquals(false, $testOrm->commandIsChanged());
+    }
+
+    /**
+     * @dataProvider providerBasic
+     */
+    public function testUnsetPrimaryKey($connector, $testOrm)
+    {
+        $testOrm->id = 44;
+        unset($testOrm->primaryKey);
+        $this->assertEquals(null, $testOrm->id);
+        $this->assertEquals($testOrm->primaryKey, $testOrm->id);
+        $this->assertEquals(false, $testOrm->idIsChanged());
+        $this->assertEquals(false, $testOrm->primaryKeyIsChanged());
+
+        $testOrm->primaryKey = 45;
+        unset($testOrm->id);
+        $this->assertEquals(null, $testOrm->id);
+        $this->assertEquals($testOrm->primaryKey, $testOrm->id);
+        $this->assertEquals(false, $testOrm->idIsChanged());
+        $this->assertEquals(false, $testOrm->primaryKeyIsChanged());
+    }
+
+    /**
+     * @dataProvider providerBasic
+     */
+    public function testGetPropertyConfig($connector, $testOrm)
+    {
+        $configProperty = $testOrm->getCommandConfig();
+        $this->assertEquals(true, is_object($configProperty));
+        $this->assertEquals('command', $configProperty->alias);
+    }
+
+    /**
+     * @dataProvider providerBasic
+     */
+    public function testGetChildConfig($connector, $testOrm)
+    {
+        $configChild = $testOrm->getChildLogsConfig();
+        $this->assertEquals(true, is_object($configChild));
+        $this->assertEquals('logs', $configChild->alias);
+    }
+
 	/**
 	 * @dataProvider providerBasic
 	 */

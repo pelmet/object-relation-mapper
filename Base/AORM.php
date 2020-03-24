@@ -364,6 +364,28 @@ abstract class AORM extends Iterator
 		}
 	}
 
+    /**
+     * Odnastavi hodnotu property
+     * @param string $property
+     * @throws EORM
+     */
+	public function __unset($property)
+    {
+        if (isset($this->aliases[$property])) {
+            unset($this->changedVariables[$property]);
+            if ($this->basicConfiguration['AliasPrimaryKey'] == $property && $this->changedPrimaryKey != NULL) {
+                $this->changedPrimaryKey = null;
+            }
+            unset($this->data[$property]);
+        } elseif (isset($this->childs[$property])) {
+            unset($this->childsData[$property]);
+        } elseif ($property == 'primaryKey') {
+            $this->unsetPrimaryKey();
+        }  else {
+            throw new EORM($property . ' neni v ' . $this->getConfigObject() . ' nadefinovana.');
+        }
+    }
+
 	/**
 	 * Vrati konfiguraci nastaeni primarniho klice
 	 * @return mixed
@@ -578,6 +600,14 @@ abstract class AORM extends Iterator
 	{
 		$this->{$this->basicConfiguration['AliasPrimaryKey']} = $primaryKey;
 	}
+
+    /**
+     * Odnastavi primarni klic
+     */
+	protected function unsetPrimaryKey()
+    {
+        unset($this->{$this->basicConfiguration['AliasPrimaryKey']});
+    }
 
 	/**
 	 * Nastavi primarni klic
