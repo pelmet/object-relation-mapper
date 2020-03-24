@@ -4,6 +4,7 @@ namespace ObjectRelationMapper;
 
 
 
+use ObjectRelationMapper\Exception\DataTooLong;
 use ObjectRelationMapper\Search\Columns;
 /**
  * Class ObjectRelationMapper
@@ -130,8 +131,8 @@ abstract class ORM extends Common implements Base\IORM
 		}
 
 		if($this->isLoaded()){
-            $this->changedVariables = Array();
-        }
+			$this->changedVariables = Array();
+		}
 
 		if ($this->afterLoad() === false) {
 			return false;
@@ -194,6 +195,40 @@ abstract class ORM extends Common implements Base\IORM
 		}
 
 		return true;
+	}
+
+	/**
+	 * Zkontroluje delky hodnot podle definic v ORM
+	 * @throws Exception\ORM
+	 * @throws DataTooLong
+	 */
+	protected function checkColumnsLengths()
+	{
+		foreach ($this as $propertyName => $propertyValue)
+		{
+			$dbColumn = $this->getDbField($propertyName);
+			if(mb_strlen($propertyValue) > $this->getLength($dbColumn))
+			{
+				throw new DataTooLong("Data too long for column ". $dbColumn.". Data: ".$propertyValue);
+			}
+		}
+	}
+
+	/**
+	 * Opravi delky hodnot podle definic v ORM
+	 * @throws Exception\ORM
+	 */
+	protected function fixColumnsLengths()
+	{
+		foreach ($this as $propertyName => $propertyValue)
+		{
+			$dbColumn = $this->getDbField($propertyName);
+			if(mb_strlen($propertyValue) > $this->getLength($dbColumn))
+			{
+				$propertyValue = mb_strimwidth($propertyValue, 0, $this->getLength($dbColumn));
+				$this->$propertyName = $propertyValue;
+			}
+		}
 	}
 
 	/**
@@ -300,18 +335,18 @@ abstract class ORM extends Common implements Base\IORM
 		return $this->getConfigDbTable();
 	}
 
-    /**
-     * @param Columns $columns
-     * @param array $row
-     */
-    public function loadFromRowUsingColumns(Columns $columns, Array $row)
-    {
-        $this->beforeLoad();
-        $dbTable = $this->getConfigDbTable();
-        $columnsList = $columns->getColumns();
-        foreach($columnsList AS $alias => $field){
-            $this->$alias = $row[$dbTable.'.'.$field];
-        }
-        $this->afterLoad();
-    }
+	/**
+	 * @param Columns $columns
+	 * @param array $row
+	 */
+	public function loadFromRowUsingColumns(Columns $columns, Array $row)
+	{
+		$this->beforeLoad();
+		$dbTable = $this->getConfigDbTable();
+		$columnsList = $columns->getColumns();
+		foreach($columnsList AS $alias => $field){
+			$this->$alias = $row[$dbTable.'.'.$field];
+		}
+		$this->afterLoad();
+	}
 }
