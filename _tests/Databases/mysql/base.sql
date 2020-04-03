@@ -16,3 +16,17 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands_logs` (
   `qcl_text` varchar(2000) COLLATE utf8_unicode_ci NOT NULL DEFAULT "",
   PRIMARY KEY (`qcl_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+
+DROP TABLE IF EXISTS d_validate_types;
+CREATE TABLE IF NOT EXISTS `d_validate_types` (
+  `qc_int` int(10) NOT NULL AUTO_INCREMENT,
+  `qc_string` varchar(10) COLLATE utf8mb4_unicode_ci NULL DEFAULT "",
+  `qc_decimal` decimal(5,2) NULL,
+  `qc_boolean` tinyint(1) NULL,
+  `qc_date` date NULL,
+  `qc_time` int(11) NULL DEFAULT 1,
+  `qc_text` TEXT COLLATE utf8mb4_unicode_ci NULL DEFAULT "",
+  `qc_char` char(3) COLLATE utf8mb4_unicode_ci NULL DEFAULT "",
+  `qc_enum` enum('abc','def','ghi','jkl'),
+  PRIMARY KEY (`qc_int`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ;
