@@ -15,7 +15,7 @@ class CChar extends AColumn implements IColumn
 	}
 
 	/**
-	 * @param string $value
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public function validate($value)

@@ -12,7 +12,7 @@ class CText extends AColumn implements IColumn
 	/**
 	 * Zvaliduje danou hodnotu a vrati true/false
 	 *
-	 * @param string $value
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public function validate($value)
