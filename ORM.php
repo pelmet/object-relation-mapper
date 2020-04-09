@@ -4,6 +4,7 @@ namespace ObjectRelationMapper;
 
 
 
+use ObjectRelationMapper\ColumnType\IColumn;
 use ObjectRelationMapper\Exception\DataTooLong;
 use ObjectRelationMapper\Search\Columns;
 /**
@@ -197,19 +198,18 @@ abstract class ORM extends Common implements Base\IORM
 		return true;
 	}
 
-	/**
-	 * Zkontroluje delky hodnot podle definic v ORM
-	 * @throws Exception\ORM
-	 * @throws DataTooLong
-	 */
-	protected function checkColumnsLengths()
+    /**
+     * Zkontroluje delky hodnot podle definic v ORM
+     */
+	public function checkColumnsLengths()
 	{
-		foreach ($this as $propertyName => $propertyValue)
-		{
-			$dbColumn = $this->getDbField($propertyName);
-			if(mb_strlen($propertyValue) > $this->getLength($dbColumn))
-			{
-				throw new DataTooLong("Data too long for column ". $dbColumn.". Data: ".$propertyValue);
+		foreach ($this as $propertyName => $propertyValue) {
+			if (isset($this->changedVariables[$propertyName]) && !is_null($propertyValue)) {
+				/** @var IColumn $column */
+				$column = $this->aliases[$propertyName];
+				if (false === $column->validate($propertyValue)) {
+					throw new DataTooLong("Data too long for column `$propertyName`.");
+				}
 			}
 		}
 	}

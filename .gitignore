@@ -8,3 +8,8 @@ nbproject/
 
 # phpunit
 phpunit
+
+#dev
+.bin/
+.vendor/
+composer.lock

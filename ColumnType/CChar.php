@@ -15,11 +15,14 @@ class CChar extends AColumn implements IColumn
 	}
 
 	/**
-	 * @param string $value
+	 * @param mixed $value
 	 * @return bool
 	 */
 	public function validate($value)
 	{
-		return ((is_string($value)) && (mb_strlen($value) == $this->length));
+		$canBeConvertedToString = is_scalar($value) || (
+				is_object($value) && method_exists($value, '__toString')
+			);
+		return ($canBeConvertedToString && (mb_strlen((string)$value) == $this->length));
 	}
 }
