@@ -2,6 +2,7 @@
 
 namespace ObjectRelationMapper\Search\Connector;
 
+use ObjectRelationMapper\Base\AORM;
 use ObjectRelationMapper\ORM;
 use ObjectRelationMapper\Search\ResultProcess;
 
@@ -60,18 +61,19 @@ abstract class AConnector
     {
         if (!isset($this->additionalOrms[$childName])) {
             $child = $this->orm->{'getChild' . ucfirst($childName) . 'Config'}();
+            /** @var ORM $orm */
             $orm = new $child->ormName();
             $this->additionalOrms[$childName] = $orm;
 
-            $join = ' ' . $joinType . ' JOIN ' . $orm->getConfigDbTable() . ' ON
-					' . $this->orm->getConfigDbTable() . '.' . $child->localKey . ' = ' . $orm->getConfigDbTable() . '.' . $child->foreignKey . ' ';
+            $join = ' ' . $joinType . ' JOIN ' . $orm->getConfigDbTable() . ' ' . $childName . ' ON
+					' . $this->orm->getConfigDbTable() . '.' . $child->localKey . ' = ' . $childName . '.' . $child->foreignKey . ' ';
 
             foreach ($additionalCols as $col => $value) {
-                $join .= ' AND ' . $orm->getDbField($col, true) . ' ' . $matching . ' ' . $this->addParameter($value) . ' ';
+                $join .= ' AND ' . $childName . '.' . $orm->getDbField($col) . ' ' . $matching . ' ' . $this->addParameter($value) . ' ';
             }
 
             $this->joinTables[$childName] = $join;
-            $this->selectCols[$childName] = $orm->getAllDbFields(NULL, true);
+            $this->selectCols[$childName] = $orm->getAllDbFieldsWithAlias($childName);
         }
 
         return new $this->additionalOrms[$childName];
@@ -85,7 +87,8 @@ abstract class AConnector
     protected function dbFieldName($field)
     {
         if (preg_match('/(.*)\.(.*)/', $field, $matches)) {
-            return $this->getOrmDbColumn($this->addChild($matches[1]), $matches[2]);
+        	// child field
+            return $matches[1].'.'.$this->addChild($matches[1])->getDbField($matches[2]);
         } else {
             $this->aliasExists($field);
             return $this->getOrmDbColumn($this->orm, $field);

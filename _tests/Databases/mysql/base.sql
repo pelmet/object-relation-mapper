@@ -17,6 +17,15 @@ CREATE TABLE IF NOT EXISTS `d_queued_commands_logs` (
   PRIMARY KEY (`qcl_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
+DROP TABLE IF EXISTS d_queued_commands_fogs;
+CREATE TABLE IF NOT EXISTS `d_queued_commands_fogs` (
+  `qcf_id` int(11) NOT NULL AUTO_INCREMENT,
+  `qc_id_1` int(11) NOT NULL,
+  `qc_id_2` int(11) NOT NULL,
+  `qcf_text` varchar(2000) COLLATE utf8_unicode_ci NOT NULL DEFAULT "",
+  PRIMARY KEY (`qcf_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+
 DROP TABLE IF EXISTS d_validate_types;
 CREATE TABLE IF NOT EXISTS `d_validate_types` (
   `qc_int` int(10) NOT NULL AUTO_INCREMENT,

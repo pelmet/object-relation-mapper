@@ -59,6 +59,17 @@ class CommonTestClass extends \PHPUnit\Framework\TestCase
         return array_diff_key($orms, Array('yml' => 0));
     }
 
+	public function providerSearchChild()
+	{
+		$orms = Array();
+
+		foreach($this->queryBuilders as $builderType => $builder){
+			$orms[$builderType] = Array($builderType, new \ObjectRelationMapper\Tests\ORMTestChildFogs(NULL, $builder));
+		}
+
+		return array_diff_key($orms, Array('yml' => 0));
+	}
+
     /**
      * @param string $type
      * @return \PDO
