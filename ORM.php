@@ -38,6 +38,25 @@ abstract class ORM extends Common implements Base\IORM
 	}
 
 	/**
+	 * @param string $aliasName
+	 * @param null $glue
+	 * @param array $exclude
+	 * @return array|string
+	 */
+	public function getAllDbFieldsWithAlias($aliasName, $glue = NULL, Array $exclude = Array())
+	{
+		$columnsWithAlias = [];
+		foreach ($this->getAllDbFields(null, false, $exclude) as $column) {
+			$columnsWithAlias[] = "$aliasName.$column";
+		}
+		if (!is_null($glue)) {
+			return implode($glue, $columnsWithAlias);
+		} else {
+			return $columnsWithAlias;
+		}
+	}
+
+	/**
 	 * Insert Dat
 	 * @return bool
 	 */

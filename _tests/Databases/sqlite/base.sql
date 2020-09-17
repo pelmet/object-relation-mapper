@@ -15,4 +15,11 @@ CREATE TABLE "d_queued_commands_logs" (
   "qc_id" varchar(20) NULL,
   "qcl_text" varchar(2000) NULL
 );
+DROP TABLE IF EXISTS "d_queued_commands_fogs";
+CREATE TABLE "d_queued_commands_fogs" (
+  "qcf_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+  "qc_id_1" INTEGER NOT NULL,
+  "qc_id_2" INTEGER NOT NULL,
+  "qcf_text" varchar(2000) NULL
+);
 END TRANSACTION;

@@ -116,7 +116,7 @@ class SearchTest extends CommonTestClass
 
         $results = $search->getCount();
 
-        $this->assertEquals(5, $results);
+        $this->assertEquals(6, $results);
     }
 
     /**
@@ -202,7 +202,7 @@ class SearchTest extends CommonTestClass
 
 		$results = $search->getCount();
 
-		$this->assertEquals(5, $results);
+		$this->assertEquals(6, $results);
 	}
 
 	/**
@@ -253,6 +253,34 @@ class SearchTest extends CommonTestClass
 		$this->assertEquals(3, $results[0]->logs[1]->id);
 		$this->assertEquals(4, $results[1]->logs[0]->id);
 		$this->assertFalse(isset($results[1]->logs[1]));
+	}
+
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchWithChildrenWithSearchChildWithConstraint($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->exact('logs.text', 'child test');
+
+		$results = $search->getResultsWithChildrenLoaded();
+		$this->assertNotEmpty($results);
+		$this->assertEquals(12, $results[0]->status);
+		$this->assertEquals(5, $results[0]->logs[0]->id);
+	}
+
+	/**
+	 * @dataProvider providerSearchChild
+	 */
+	public function testSearchWithChildrenWithTwoSameSearchChild($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->exact('queuedCommand1.command', 'child');
+		$search->exact('queuedCommand2.status', '12');
+
+		$results = $search->getResultsWithChildrenLoaded();
+		$this->assertNotEmpty($results);
+		$this->assertEquals("child test", $results[0]->text);
 	}
 
     /**
