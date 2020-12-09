@@ -21,7 +21,7 @@ class SearchTest extends CommonTestClass
 
 		$this->assertNotEmpty($results);
 		$this->assertEquals(5, $results[0]->id);
-        $this->assertEquals(6, $results[1]->id);
+		$this->assertEquals(6, $results[1]->id);
 	}
 
 	/**
@@ -93,104 +93,118 @@ class SearchTest extends CommonTestClass
 		$this->assertEquals(5, $results[0]->id);
 	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testCountNothing($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->null('status');
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testCountNothing($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->null('status');
 
-        $results = $search->getCount();
+		$results = $search->getCount();
 
-        $this->assertEquals(0, $results);
-    }
+		$this->assertEquals(0, $results);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testCount($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->notNull('command');
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testCount($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->notNull('command');
 
-        $results = $search->getCount();
+		$results = $search->getCount();
 
-        $this->assertEquals(6, $results);
-    }
+		$this->assertEquals(6, $results);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchLikeReal($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->like('command', 'ls -al%');
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testCountGroup($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->groupBy('command');
+		$search->notNull('command');
 
-        $results = $search->getResults();
+		$results = $search->getCount();
 
-        $this->assertNotEmpty($results);
-        $this->assertEquals(9, $results[0]->id);
-    }
+		$this->assertEquals(3, $results);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchNotLike($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->notLike('command', 'ls -la%');
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchLikeReal($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->like('command', 'ls -al%');
 
-        $results = $search->getResults();
+		$results = $search->getResults();
 
-        $this->assertNotEmpty($results);
-        $this->assertEquals(9, $results[0]->id);
-    }
+		$this->assertNotEmpty($results);
+		$this->assertEquals(9, $results[0]->id);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchBetween($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->valueBetween(9, 'id', 'status');
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchNotLike($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->notLike('command', 'ls -la%');
 
-        $results = $search->getCount();
+		$results = $search->getResults();
 
-        $this->assertEquals(3, $results);
-    }
+		$this->assertNotEmpty($results);
+		$this->assertEquals(9, $results[0]->id);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchPropertyBetween($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->propertyBetween('status', 11, 12);
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchBetween($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->valueBetween(9, 'id', 'status');
 
-        $results = $search->getCount();
+		$results = $search->getCount();
 
-        $this->assertEquals(3, $results);
-    }
+		$this->assertEquals(3, $results);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchRegexp($connector, $testOrm)
-    {
-        if ($connector === 'sqlite') {
-            //$this->markTestSkipped('regexp is not implemented on sqlite by default');
-            $this->assertTrue($connector === 'sqlite');
-        } else {
-            $search = new ObjectRelationMapper\Search\Search($testOrm);
-            $search->regexp('command', 'alF$');
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchPropertyBetween($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->propertyBetween('status', 11, 12);
 
-            $results = $search->getResults();
+		$results = $search->getCount();
 
-            $this->assertNotEmpty($results);
-            $this->assertEquals(9, $results[0]->id);
-        }
-    }
+		$this->assertEquals(3, $results);
+	}
+
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchRegexp($connector, $testOrm)
+	{
+		if ($connector === 'sqlite') {
+			//$this->markTestSkipped('regexp is not implemented on sqlite by default');
+			$this->assertTrue($connector === 'sqlite');
+		} else {
+			$search = new ObjectRelationMapper\Search\Search($testOrm);
+			$search->regexp('command', 'alF$');
+
+			$results = $search->getResults();
+
+			$this->assertNotEmpty($results);
+			$this->assertEquals(9, $results[0]->id);
+		}
+	}
 
 	/**
 	 * @dataProvider providerSearch
@@ -214,13 +228,13 @@ class SearchTest extends CommonTestClass
 		$search->null('command');
 
 		$results = $search->getResults();
-        $this->assertNotEmpty($results);
-        $this->assertEquals(10, $results[0]->id);
+		$this->assertNotEmpty($results);
+		$this->assertEquals(10, $results[0]->id);
 	}
 
-    /**
-     * @dataProvider providerSearch
-     */
+	/**
+	 * @dataProvider providerSearch
+	 */
 	public function testSearchWithChildrenWithoutSearchChild($connector, $testOrm)
 	{
 		$search = new ObjectRelationMapper\Search\Search($testOrm);
@@ -235,9 +249,9 @@ class SearchTest extends CommonTestClass
 		$this->assertTrue(!isset($results[1]->logs[1]));
 	}
 
-    /**
-     * @dataProvider providerSearch
-     */
+	/**
+	 * @dataProvider providerSearch
+	 */
 	public function testSearchWithChildrenWithSearchChild($connector, $testOrm)
 	{
 		$search = new ObjectRelationMapper\Search\Search($testOrm);
@@ -283,17 +297,17 @@ class SearchTest extends CommonTestClass
 		$this->assertEquals("child test", $results[0]->text);
 	}
 
-    /**
-     * @dataProvider providerSearch
-     */
+	/**
+	 * @dataProvider providerSearch
+	 */
 	public function testSearchIn($connector, $testOrm)
 	{
 		$search = new ObjectRelationMapper\Search\Search($testOrm);
-		$search->in('id', array(7, 5));
+		$search->in('id', [7, 5]);
 		$results = $search->getResults();
 
-		$toCheck = array();
-		foreach($results As $result){
+		$toCheck = [];
+		foreach ($results as $result) {
 			$toCheck[$result->id] = $result;
 		}
 
@@ -304,17 +318,17 @@ class SearchTest extends CommonTestClass
 		$this->assertFalse(isset($toCheck[12]));
 	}
 
-    /**
-     * @dataProvider providerSearch
-     */
+	/**
+	 * @dataProvider providerSearch
+	 */
 	public function testSearchNotIn($connector, $testOrm)
 	{
 		$search = new ObjectRelationMapper\Search\Search($testOrm);
-		$search->notIn('id', array(5, 6, 7));
+		$search->notIn('id', [5, 6, 7]);
 		$results = $search->getResults();
 
-		$toCheck = array();
-		foreach($results As $result){
+		$toCheck = [];
+		foreach ($results as $result) {
 			$toCheck[$result->id] = $result;
 		}
 
@@ -326,38 +340,38 @@ class SearchTest extends CommonTestClass
 		$this->assertTrue(isset($toCheck[8]));
 	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchOrderByField($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Search\Search($testOrm);
-        $search->in('id', array(5,6,7));
-        $search->addFieldOrdering('id', array(6,7,5));
-        $results = $search->getResults();
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchOrderByField($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Search\Search($testOrm);
+		$search->in('id', [5, 6, 7]);
+		$search->addFieldOrdering('id', [6, 7, 5]);
+		$results = $search->getResults();
 
-        $this->assertEquals(6, $results[0]->id);
-        $this->assertEquals(7, $results[1]->id);
-        $this->assertEquals(5, $results[2]->id);
-    }
+		$this->assertEquals(6, $results[0]->id);
+		$this->assertEquals(7, $results[1]->id);
+		$this->assertEquals(5, $results[2]->id);
+	}
 
-    /**
-     * @dataProvider providerSearch
-     */
-    public function testSearchRunCustomQuery($connector, $testOrm)
-    {
-        $search = new ObjectRelationMapper\Tests\Search($testOrm);
+	/**
+	 * @dataProvider providerSearch
+	 */
+	public function testSearchRunCustomQuery($connector, $testOrm)
+	{
+		$search = new ObjectRelationMapper\Tests\Search($testOrm);
 
-        $query = 'SELECT d_queued_commands.qc_id, d_queued_commands.qc_time_start, d_queued_commands.qc_time_end, d_queued_commands.qc_status, d_queued_commands.qc_command FROM d_queued_commands WHERE d_queued_commands.qc_id  = :qc_id';
-        $params[] = [':qc_id', 5];
-        $result = $search->insertLoadQuery($query, $params, \PDO::FETCH_ASSOC);
+		$query = 'SELECT d_queued_commands.qc_id, d_queued_commands.qc_time_start, d_queued_commands.qc_time_end, d_queued_commands.qc_status, d_queued_commands.qc_command FROM d_queued_commands WHERE d_queued_commands.qc_id  = :qc_id';
+		$params[] = [':qc_id', 5];
+		$result = $search->insertLoadQuery($query, $params, \PDO::FETCH_ASSOC);
 
-        $this->assertEquals(5, $result[0]['qc_id']);
-        $this->assertEquals(123456, $result[0]['qc_time_start']);
-        $this->assertEquals(12345678, $result[0]['qc_time_end']);
-        $this->assertEquals(5, $result[0]['qc_status']);
-        $this->assertEquals('ls -laf', $result[0]['qc_command']);
-        $this->assertEquals(1, count($result));
+		$this->assertEquals(5, $result[0]['qc_id']);
+		$this->assertEquals(123456, $result[0]['qc_time_start']);
+		$this->assertEquals(12345678, $result[0]['qc_time_end']);
+		$this->assertEquals(5, $result[0]['qc_status']);
+		$this->assertEquals('ls -laf', $result[0]['qc_command']);
+		$this->assertEquals(1, count($result));
 
-    }
+	}
 }
