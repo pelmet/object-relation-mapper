@@ -8,20 +8,34 @@ class DB extends AConnector implements IConnector
      * Vrati text count query
      * @return string
      */
-    public function composeCountQuery()
-    {
-        $query = 'SELECT count(' . $this->orm->getConfigDbTable() . '.' . $this->orm->getConfigDbPrimaryKey() . ') AS count FROM ' . $this->orm->getConfigDbTable() . ' ';
+	public function composeCountQuery()
+	{
+		$query = '';
 
-        if (!empty($this->joinTables)) {
-            $query .= ' ' . implode(' ', $this->joinTables);
-        }
+		if (!empty($this->group)) {
+			// if the query uses GROUP BY we have to call COUNT on sub-query
+			$query .= 'SELECT COUNT( sub.' . $this->orm->getConfigDbPrimaryKey() . ') AS count
+			FROM (SELECT ' . $this->orm->getConfigDbTable() . '.' . $this->orm->getConfigDbPrimaryKey() . '';
+		} else {
+			$query .= 'SELECT count(' . $this->orm->getConfigDbTable() . '.' . $this->orm->getConfigDbPrimaryKey() . ') AS count';
+		}
 
-        if (!empty($this->search)) {
-            $query .= ' WHERE ' . implode($this->imploder, $this->search);
-        }
+		$query .= ' FROM ' . $this->orm->getConfigDbTable() . ' ';
 
-        return $query;
-    }
+		if (!empty($this->joinTables)) {
+			$query .= ' ' . implode(' ', $this->joinTables);
+		}
+
+		if (!empty($this->search)) {
+			$query .= ' WHERE ' . implode($this->imploder, $this->search);
+		}
+
+		if (!empty($this->group)) {
+			$query .= ' GROUP BY ' . implode(', ', $this->group) . ') AS sub';
+		}
+
+		return $query;
+	}
 
     /**
      * Vrati load query
